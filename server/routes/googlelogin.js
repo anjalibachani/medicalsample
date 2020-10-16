@@ -1,14 +1,16 @@
 const { response } = require('express');
 const {OAuth2Client} = require('google-auth-library');
-const db = require('./dbconnect')
-const clientId = "759402856-mqu91hihug6s865np34bv3ssonr5ntgj.apps.googleusercontent.com";
-const client = new OAuth2Client("759402856-mqu91hihug6s865np34bv3ssonr5ntgj.apps.googleusercontent.com");
+const db = require('../db/dbconnect')
+const config = require('../config/config.json');
+
+const clientId = config.clientId;
+const client = new OAuth2Client(clientId);
 
 async function googlelogin(req,res){
     console.log("google login called");
     const {tokenId} = req.body;
 
-    client.verifyIdToken({idToken: tokenId, audience: "759402856-mqu91hihug6s865np34bv3ssonr5ntgj.apps.googleusercontent.com"}).then(response=>{
+    client.verifyIdToken({idToken: tokenId, audience: clientId}).then(response=>{
         const {email_verified, name, email} = response.payload;
         console.log(email_verified, name,email);
         console.log(response);

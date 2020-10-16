@@ -1,6 +1,6 @@
 
 const crypto = require('crypto');
-const db = require('./dbconnect');
+const db = require('../db/dbconnect');
 
 const getsha1 = function(input){
     return crypto.createHash('sha1').update((input)).digest('hex')

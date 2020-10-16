@@ -4,7 +4,8 @@ const mysql = require('mysql');
 const cors = require('cors');
 const login = require('./routes/login');
 const googlelogin = require('./routes/googlelogin');
-const db = require('./routes/dbconnect')
+const db = require('./db/dbconnect')
+const config = require('../config/config.json');
 
 const app = express();
 app.use(bodyparser.urlencoded({extended: true}));
@@ -16,37 +17,8 @@ app.use(function(req, res, next) {
     next();
 });
 
-// const db= mysql.createConnection({
-//     host : 'localhost',
-//     user : 'root',
-//     password : 'root',
-//     database : 'medical_sample_db'
-// });
+port = config.port;
 
-// db.connect((err)=>{
-//     if(err){
-//         throw(err);
-//     }
-//     console.log("Mysql connected...");
-// })
-
-app.get('/',(req,res)=>{
-    res.send("node index");
-});
-//create db
-app.get('/createdb',(req,res)=>{
-    let sql = 'CREATE DATABASE medical_sample_db';
-    db.query(sql,(err, result)=>{
-        if(err) throw err;
-        console.log(result);
-        res.send("database created ....")
-    })
-});
-
-
-// app.use('/api',router);
-
-port = 5000
 app.listen(port,()=>{
     console.log(`server started on ${port}`);
 })

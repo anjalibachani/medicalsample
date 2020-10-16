@@ -1,0 +1,10 @@
+{
+  "database": {
+    "host": "localhost",
+    "user": "root",
+    "password": "password",
+    "database": "medical_sample_db"
+  },
+  "port":"5000",
+  "clientId":"759402856-mqu91hihug6s865np34bv3ssonr5ntgj.apps.googleusercontent.com"
+}
