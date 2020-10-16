@@ -3,7 +3,7 @@
 ## Usage
 
 ```
--  Change database credentials in server/config/config.json.
+Change database credentials in server/config/config.json.
 ```
 
 ```
