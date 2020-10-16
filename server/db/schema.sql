@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `statuses` (
 );
 
 CREATE TABLE IF NOT EXISTS `transaction_history` (
-	`transaction_id` int NOT NULL,
+	`transaction_id` int NOT NULL AUTO_INCREMENT,
 	`user_id` int NOT NULL,
 	`timestamp` TIMESTAMP NOT NULL,
 	`desciption` TEXT NOT NULL,
