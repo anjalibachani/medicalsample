@@ -2,7 +2,7 @@
   "database": {
     "host": "localhost",
     "user": "root",
-    "password": "password",
+    "password": "root",
     "database": "medical_sample_db"
   },
   "port":"5000",

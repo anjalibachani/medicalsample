@@ -5,7 +5,7 @@ const cors = require('cors');
 const login = require('./routes/login');
 const googlelogin = require('./routes/googlelogin');
 const db = require('./db/dbconnect')
-const config = require('../config/config.json');
+const config = require('./config/config.json');
 
 const app = express();
 app.use(bodyparser.urlencoded({extended: true}));
