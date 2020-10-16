@@ -4,7 +4,7 @@ import React from 'react';
 import GoogleLogin from 'react-google-login';
 import './Login.css';
 import Axios from 'axios';
-import addsamples from './addsamples'
+
 
 class Login extends React.Component{
     constructor(props){

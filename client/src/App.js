@@ -9,10 +9,11 @@ import {
 } from "react-router-dom";
 import { Navbar, Nav, Container, ButtonGroup,Button } from "react-bootstrap";
 import CustomHeaderButton from "./components/CustomHeaderButton";
+import AddSamples from "./components/AddSamples";
 
 function App() {
   return (
-    <div className="App">
+    <div>
       {/* <Login/> */}
       <Navbar className="bg-light">
         <Navbar.Brand className="mr-auto">
@@ -28,7 +29,7 @@ function App() {
           </Nav.Link>
         </Nav>
       </Navbar>
-      <Container fluid="true">
+      <Container fluid>
         <Router basename=".">
           <div>
             <ButtonGroup>
@@ -48,9 +49,9 @@ function App() {
             <hr />
 
             <Switch>
-              {/* <Route path="/" exact={true} component={AddSamples} />
+              <Route path="/" exact={true} component={AddSamples} />
               <Route path="/AddSamples" component={AddSamples} />
-              <Route path="/ViewSamples" component={ViewSamples} />
+              {/* <Route path="/ViewSamples" component={ViewSamples} />
               <Route path="/Reports" component={Reports} />
               <Route path="/ViewShipments" component={ViewShipments} />
               <Route path="/AddShipments" component={AddShipments} />
