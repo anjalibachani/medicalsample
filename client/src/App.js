@@ -50,7 +50,7 @@ function App() {
 
             <Switch>
               <Route path="/" exact={true} component={AddSamples} />
-              {/* <Route path="/AddSamples" component={AddSamples} /> */}
+              <Route path="/AddSamples" component={AddSamples} />
               {/* <Route path="/ViewSamples" component={ViewSamples} />
               <Route path="/Reports" component={Reports} />
               <Route path="/ViewShipments" component={ViewShipments} />
