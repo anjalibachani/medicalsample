@@ -1,0 +1,281 @@
+{
+    "types": [
+        {
+            "name": "Blood",
+            "values": [
+                {
+                    "fieldName": "ID",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Date",
+                    "fieldType": "date"
+                },
+                {
+                    "fieldName": "Eval",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Fasted",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Aliquots",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Additives",
+                    "fieldType": "multicheckbox",
+                    "values": [
+                        "Heparin",
+                        "EDTA"
+                    ]
+                },
+                {
+                    "fieldName": "Initial storage conditions",
+                    "fieldType": "select",
+                    "values": [
+                        "-20C",
+                        "-80C",
+                        "4C"
+                    ]
+                },
+                {
+                    "fieldName": "Sub study",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Sub study Name",
+                    "fieldType": "select",
+                    "values": [
+                        "Scola-Exposome",
+                        "MOX-IN"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Urine",
+            "values": [
+                {
+                    "fieldName": "ID",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Date",
+                    "fieldType": "date"
+                },
+                {
+                    "fieldName": "Eval",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Aliquots",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Additives",
+                    "fieldType": "multicheckbox",
+                    "values": [
+                        "BHT"
+                    ]
+                },
+                {
+                    "fieldName": "Initial storage conditions",
+                    "fieldType": "select",
+                    "values": [
+                        "-20C",
+                        "-80C",
+                        "4C"
+                    ]
+                },
+                {
+                    "fieldName": "Sub study",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Sub study Name",
+                    "fieldType": "select",
+                    "values": [
+                        "Scola-Exposome",
+                        "MOX-IN"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Hair",
+            "values": [
+                {
+                    "fieldName": "ID",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Date",
+                    "fieldType": "date"
+                },
+                {
+                    "fieldName": "Eval",
+                    "fieldType": "text"
+                }
+            ]
+        },
+        {
+            "name": "Serum",
+            "values": [
+                {
+                    "fieldName": "ID",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Date",
+                    "fieldType": "date"
+                },
+                {
+                    "fieldName": "Eval",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Fasted",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Aliquots",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Foil wrapping",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Other treatments",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Initial storage conditions",
+                    "fieldType": "select",
+                    "values": [
+                        "-20C",
+                        "-80C"
+                    ]
+                },
+                {
+                    "fieldName": "Sub study",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Sub study Name",
+                    "fieldType": "select",
+                    "values": [
+                        "Scola-Exposome",
+                        "MOX-IN"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Plasma",
+            "values": [
+                {
+                    "fieldName": "ID",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Date",
+                    "fieldType": "date"
+                },
+                {
+                    "fieldName": "Eval",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Fasted",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Aliquots",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Additives",
+                    "fieldType": "multicheckbox",
+                    "values": [
+                        "Heparin",
+                        "MPA"
+                    ]
+                },
+                {
+                    "fieldName": "Foil wrapping",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Other treatments",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Initial storage conditions",
+                    "fieldType": "select",
+                    "values": [
+                        "-20C",
+                        "-80C"
+                    ]
+                },
+                {
+                    "fieldName": "Sub study",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Sub study Name",
+                    "fieldType": "select",
+                    "values": [
+                        "Scola-Exposome",
+                        "MOX-IN"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Tooth",
+            "values": [
+                {
+                    "fieldName": "ID",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Date",
+                    "fieldType": "date"
+                },
+                {
+                    "fieldName": "Eval",
+                    "fieldType": "text"
+                }
+            ]
+        },
+        {
+            "name": "Silicone wristband",
+            "values": [
+                {
+                    "fieldName": "ID",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Date",
+                    "fieldType": "date"
+                },
+                {
+                    "fieldName": "Eval",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Initial storage conditions",
+                    "fieldType": "select",
+                    "values": [
+                        "-20C",
+                        "4C",
+                        "Room temperature"
+                    ]
+                }
+            ]
+        }
+    ]
+}

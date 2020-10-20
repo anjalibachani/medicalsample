@@ -6,6 +6,7 @@ const login = require('./routes/login');
 const googlelogin = require('./routes/googlelogin');
 const db = require('./db/dbconnect')
 const config = require('./config/config.json');
+const samples = require('./routes/samples');
 
 const app = express();
 app.use(bodyparser.urlencoded({extended: true}));
@@ -16,7 +17,7 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-
+app.use('/samples', samples);
 port = config.port;
 
 app.listen(port,()=>{
@@ -24,4 +25,4 @@ app.listen(port,()=>{
 })
 app.post("/api/login",login);
 app.post("/api/googlelogin", googlelogin);
-app.get('/test',(req,res)=>{res.send({result:"test success"})});
+app.get('/test', (req, res) => { res.send({ result: "test success" }) });
