@@ -16,16 +16,12 @@ import resetpass from './components/resetpass';
 function App() {
   return (
     <div>
-      {/* <Login/> */}
       <Navbar className="bg-light">
         <Navbar.Brand className="mr-auto">
           <h2>SAM Research Database</h2>
         </Navbar.Brand>
         <Nav className="justify-content-end">
           <Nav.Link href="/login">Log in</Nav.Link>
-          {/* <Button variant="outline-dark" size="lg" onClick={<Login />}>
-            Login
-          </Button> */}
           <Nav.Link href="/help.html" target="_blank">
             Help
           </Nav.Link>
@@ -34,28 +30,35 @@ function App() {
       <Container fluid>
         <Router basename=".">
           <div>
-            <ButtonGroup>
-              <CustomHeaderButton href="/AddSamples" text="Add Samples" />
-              <CustomHeaderButton
-                href="/ViewSamples"
-                text="Filter and Export"
-              />
-              <CustomHeaderButton href="/Reports" text="Reports" />
-              <CustomHeaderButton
-                href="/AddShipments"
-                text="Create a Shipment"
-              />
-              <CustomHeaderButton href="/ViewShipments" text="See Shipments" />
-            </ButtonGroup>
-
+            {(() => {
+              if (localStorage.getItem("user_id") !== null) {
+                return (
+                  <ButtonGroup>
+                    <CustomHeaderButton href="/AddSamples" text="Add Samples" />
+                    <CustomHeaderButton
+                      href="/ViewSamples"
+                      text="Filter and Export"
+                    />
+                    <CustomHeaderButton href="/Reports" text="Reports" />
+                    <CustomHeaderButton
+                      href="/AddShipments"
+                      text="Create a Shipment"
+                    />
+                    <CustomHeaderButton
+                      href="/ViewShipments"
+                      text="See Shipments"
+                    />
+                  </ButtonGroup>
+                );
+              }
+            })()}
             <hr />
-
             <Switch>
-              <Route path="/" exact={true} component={AddSamples} />
+              <Route path="/" exact={true} component={Login} />
               <Route path="/AddSamples" component={AddSamples} />
-              <Route path="/login" component={Login}/>
-              <Route path="/forgot-pass" component={forgotpass}/>
-              <Route path="/reset-pass/:id" component={resetpass}/>
+              <Route path="/login" component={Login} />
+              <Route path="/forgot-pass" component={forgotpass} />
+              <Route path="/reset-pass/:id" component={resetpass} />
               {/* <Route path="/ViewSamples" component={ViewSamples} />
               <Route path="/Reports" component={Reports} />
               <Route path="/ViewShipments" component={ViewShipments} />
