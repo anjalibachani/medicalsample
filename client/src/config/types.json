@@ -20,6 +20,22 @@
                     "fieldType": "checkbox"
                 },
                 {
+                    "fieldName": "Unrestricted consent for samples",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Hb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Pb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Density",
+                    "fieldType": "text"
+                },
+                {
                     "fieldName": "Aliquots",
                     "fieldType": "text"
                 },
@@ -74,6 +90,22 @@
                     "fieldType": "text"
                 },
                 {
+                    "fieldName": "Unrestricted consent for samples",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Hb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Pb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Density",
+                    "fieldType": "text"
+                },
+                {
                     "fieldName": "Additives",
                     "fieldType": "multicheckbox",
                     "values": [
@@ -117,6 +149,22 @@
                 {
                     "fieldName": "Eval",
                     "fieldType": "text"
+                },
+                {
+                    "fieldName": "Unrestricted consent for samples",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Hb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Pb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Density",
+                    "fieldType": "text"
                 }
             ]
         },
@@ -146,6 +194,22 @@
                 {
                     "fieldName": "Foil wrapping",
                     "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Unrestricted consent for samples",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Hb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Pb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Density",
+                    "fieldType": "text"
                 },
                 {
                     "fieldName": "Other treatments",
@@ -191,6 +255,22 @@
                 {
                     "fieldName": "Fasted",
                     "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Unrestricted consent for samples",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Hb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Pb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Density",
+                    "fieldType": "text"
                 },
                 {
                     "fieldName": "Aliquots",
@@ -248,6 +328,22 @@
                 {
                     "fieldName": "Eval",
                     "fieldType": "text"
+                },
+                {
+                    "fieldName": "Unrestricted consent for samples",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Hb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Pb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Density",
+                    "fieldType": "text"
                 }
             ]
         },
@@ -274,8 +370,123 @@
                         "4C",
                         "Room temperature"
                     ]
+                },
+                {
+                    "fieldName": "Unrestricted consent for samples",
+                    "fieldType": "checkbox"
+                },
+                {
+                    "fieldName": "Hb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Pb",
+                    "fieldType": "text"
+                },
+                {
+                    "fieldName": "Density",
+                    "fieldType": "text"
                 }
             ]
+        },
+        {
+          "name": "Water",
+          "values": [
+            {
+              "fieldName": "ID",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Date",
+              "fieldType": "date"
+            },
+            {
+              "fieldName": "Eval",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Unrestricted consent for samples",
+              "fieldType": "checkbox"
+            },
+            {
+              "fieldName": "Hb",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Pb",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Density",
+              "fieldType": "text"
+            }
+          ]
+        },
+        {
+          "name": "Soil",
+          "values": [
+            {
+              "fieldName": "ID",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Date",
+              "fieldType": "date"
+            },
+            {
+              "fieldName": "Eval",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Unrestricted consent for samples",
+              "fieldType": "checkbox"
+            },
+            {
+              "fieldName": "Hb",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Pb",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Density",
+              "fieldType": "text"
+            }
+          ]
+        },
+        {
+          "name": "Dust",
+          "values": [
+            {
+              "fieldName": "ID",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Date",
+              "fieldType": "date"
+            },
+            {
+              "fieldName": "Eval",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Unrestricted consent for samples",
+              "fieldType": "checkbox"
+            },
+            {
+              "fieldName": "Hb",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Pb",
+              "fieldType": "text"
+            },
+            {
+              "fieldName": "Density",
+              "fieldType": "text"
+            }
+          ]
         }
     ]
 }

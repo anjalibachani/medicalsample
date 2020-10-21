@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
+import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
-import Select from 'react-select';
 
 export default class FormFields extends Component {
     constructor(props) {
@@ -22,7 +21,8 @@ export default class FormFields extends Component {
             <div>
                 {fields.map(item => {
                     if (item.fieldType === "text") {
-                        return (<InputGroup className="mb-3">
+                        return (
+                        <InputGroup className="mb-3">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
