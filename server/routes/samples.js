@@ -3,10 +3,6 @@ const router = express.Router();
 const db = require("../db/dbconnect");
 
 router.get("/add", (req, res) => {
-    // db.query('SELECT * FROM `samples` WHERE `samples_key` = "1"', (error, results, fields) => {
-    //     console.log(results);
-    // });
-    
     var sample = {
       sample_id: 456,
       eval: 1,
@@ -46,7 +42,6 @@ router.get("/add", (req, res) => {
       console.log(results.insertId);
     });
     console.log(query.sql);
-
     }
     });
 

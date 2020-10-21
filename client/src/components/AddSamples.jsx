@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
+import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
 import Select from 'react-select';
 import FormFields from './FormFields';
+// import CommonFields from './CommonFields';
 
 // import CustomAlertBanner from './CustomAlertBanner'
 
@@ -14,53 +15,56 @@ const sampleTypes = require("../config/types.json");
 /* AddSamples: this is the interface for entering new sample information into
  * the database.
  */
-
- const phpServerURL =""
+const phpServerURL = ""
 class AddSamples extends Component {
 	constructor(props) {
-    	super(props);
-        this.state = {
+		super(props);
+		this.inputRef = React.createRef();
+		this.state = {
 			types: [],
 			selectedOption: null,
-			formFields:[]
+			formFields: []
 		}
-    }
+	}
 	componentDidMount() {
-		let array=[]
+		let array = []
 		sampleTypes.types.forEach(element => {
-			array.push( { value: element.name, label: element.name });
-		});	
+			array.push({ value: element.name, label: element.name });
+		});
 		this.setState({ types: array });
 	}
 	handleChange = selectedOption => {
-    this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value));
-	console.log(`Option selected:`, selectedOption);
-	
+		// this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value));
+		//this.setState({ formFields: [] });
+		this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
 	};
-	getMappingFiledsByType = name => {	
+	getMappingFiledsByType = name => {
 		sampleTypes.types.forEach(element => {
 			if (element.name === name) {
-				this.setState({formFields:element.values});
+				this.setState({ formFields: element.values });
+
 			}
 		});
 	}
-	render() { 
-		const {types, selectedOption,formFields} = this.state ;
+	render() {
+		const { types, selectedOption, formFields } = this.state;
 		return (
-			<Form.Row><div>
-				<Select
-					isSearchable={true}
-					value={selectedOption}
-					onChange={this.handleChange}
-					options={types}
-				/>
-				<hr />
-				<FormFields fields={formFields} />
+			<div>
+				<Form.Row><div>
+					<Select
+						isSearchable={true}
+						value={selectedOption}
+						onChange={this.handleChange}
+						options={types}
+					/>
+					<hr />
+					<FormFields fields={formFields} />
+				</div>
+				</Form.Row>
 			</div>
-			</Form.Row>
-           );
+		);
 	}
-	
+
 }
 
 export default AddSamples;
