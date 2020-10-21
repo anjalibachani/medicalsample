@@ -10,6 +10,8 @@ import {
 import { Navbar, Nav, Container, ButtonGroup,Button } from "react-bootstrap";
 import CustomHeaderButton from "./components/CustomHeaderButton";
 import AddSamples from "./components/AddSamples";
+import forgotpass from './components/forgotpass';
+import resetpass from './components/resetpass';
 
 function App() {
   return (
@@ -51,6 +53,9 @@ function App() {
             <Switch>
               <Route path="/" exact={true} component={AddSamples} />
               <Route path="/AddSamples" component={AddSamples} />
+              <Route path="/login" component={Login}/>
+              <Route path="/forgot-pass" component={forgotpass}/>
+              <Route path="/reset-pass/:id" component={resetpass}/>
               {/* <Route path="/ViewSamples" component={ViewSamples} />
               <Route path="/Reports" component={Reports} />
               <Route path="/ViewShipments" component={ViewShipments} />
