@@ -8,7 +8,7 @@ const JWT_RESET_KEY = "resetpass";
 function forgotpassword(req,res){
     const email_id = req.body.email_id ;
     console.log(email_id);   
-    db.query('SELECT * from medical_sample_db.users WHERE email_id = ?',[email_id], async function(error, results, fields){
+    db.query('SELECT * from users WHERE email_id = ?',[email_id], async function(error, results, fields){
         if(error){
             return res.status(400).json({message:"error occued"})
         }
@@ -29,7 +29,7 @@ function forgotpassword(req,res){
                     //     console.log(buffer);
                         
                     // })
-                    db.query('UPDATE medical_sample_db.users set resetlink = ?, timeout = ? WHERE user_id = ?',[token,123567654334,user_id], async function(error, results,fields){
+                    db.query('UPDATE users set resetlink = ?, timeout = ? WHERE user_id = ?',[token,Date.now()+1200000,user_id], async function(error, results,fields){
                         if(!error){
                             transporter.sendMail({
                                 from: 'merle22@ethereal.email', // sender address

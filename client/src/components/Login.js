@@ -4,6 +4,9 @@ import React from 'react';
 import GoogleLogin from 'react-google-login';
 import './Login.css';
 import Axios from 'axios';
+import { Redirect } from 'react-router-dom';
+const config = require('../config/config.json')
+const AddSamples = require('./AddSamples');
 
 class Login extends React.Component{
     constructor(props){
@@ -12,6 +15,9 @@ class Login extends React.Component{
             email_id : "",
             password : "",
             error : "",
+            alertVisibility: false,
+            alertText: 'Please enter all required fields.',
+            alertVariant: 'danger'
         }
         // const success_responseGoogle = (response)=>{
         //     console.log("login success")
@@ -46,7 +52,7 @@ class Login extends React.Component{
         alert(
             `Logged in successfully welcome ${response.profileObj.name} . \n See console for full profile object.`
         );
-        Axios.post('http://localhost:5000/api/googlelogin',{tokenId:response.tokenId}).then((response)=>{
+        Axios.post(`http://${config.server.host}:${config.server.port}/api/googlelogin`,{tokenId:response.tokenId}).then((response)=>{
                 console.log("token id sent to server");
                 if(response.status === 200){
                     console.log("received 200 OK");
@@ -58,7 +64,6 @@ class Login extends React.Component{
                     localStorage.setItem('token',response.data.token);
                 }
                 else{
-                    this.props.showError("Invalid email or password");
                     console.log("login failed")
                     alert(`Login failed with response ${response.data.message}`)
                 }
@@ -73,11 +78,13 @@ class Login extends React.Component{
     handleEmailchange(e){
         this.setState({
             email_id:e.target.value,
+            alertVisibility: false,
         })
     }
     handlePasswordChange(e){
         this.setState({
             password:e.target.value,
+            alertVisibility:false,
         })
     }
     handleLogin =async e=>{
@@ -98,16 +105,22 @@ class Login extends React.Component{
                     localStorage.setItem('user_id',response.data.user_id);
                     localStorage.setItem('email_id',this.state.email_id);
                     localStorage.setItem('token',response.data.token);
+                    
                 }
                 else{
-                    this.props.showError("Invalid email or password");
+                    this.setState({
+                        alertVisibility: true,
+                        alertText: "Invalid Email or Password"
+                    });
                     console.log("login failed")
-                    alert(`Login failed with response ${response.data.message}`)
                 }
             });
         }
         else{
-            alert(`Enter email and password to login`)
+            this.setState({
+                alertVisibility: true,
+                alertText:"Invalid email or password"
+            });
             return this.setState({error: 'Enter email id and password to login'})
         }
     };
@@ -118,6 +131,9 @@ class Login extends React.Component{
                 <h1>Salud Ambiental Montevideo</h1>
                 <h3>Understandig the Effects of Complex Exposures On Child Learnig and Behaviour</h3>
                 <div className="login_form">
+                    <div classname="diplay-alert">
+                    {this.state.alertVisibility &&<p class="warning">{this.state.alertText}</p>}
+                    </div>
                     <div id="field">
                         {/* <label>Email ID</label> */}
                         <input id = "input" type="email" placeholder="enter email id" value={this.state.email_id} onChange={this.handleEmailchange}/>
@@ -126,7 +142,7 @@ class Login extends React.Component{
                         {/* <label>Password</label> */}
                         <input id = "input" type="password" placeholder = "enter password" value = {this.state.password} onChange={this.handlePasswordChange}/>
                     </div>
-
+                    <a href="./forgot-pass" style={{marginLeft:120, color:'white'}}>Forgot Password</a>
                     <input id = "loginbutton" type="submit" value="Login" onClick={this.handleLogin}/>
 
                     <div className="googlelogin">

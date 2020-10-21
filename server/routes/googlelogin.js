@@ -20,7 +20,7 @@ async function googlelogin(req,res){
         console.log(response);
         if(email_verified){
             console.log("email verified and querying DB")
-            db.query('SELECT * from medical_sample_db.users WHERE email_id = ?',[email], async function(error, results, fields){
+            db.query('SELECT * from users WHERE email_id = ?',[email], async function(error, results, fields){
                 if(error){
                     return res.status(500).json({message:"server error"})
                 }else if (results.length>0){
