@@ -2,21 +2,33 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
+import SaveModal from './SaveModal';
 
+const initialState = {
+};
 export default class FormFields extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            show: false
         }
     }
     static propTypes = {
         prop: PropTypes
     }
-    save = () =>{
-        console.log(this.state);
+    clearFields = () => {
+        this.props.clearFormFields();   
+    }
+    handleClose = () => {
+        this.setState({ show: false });
+    }
+    save = () => {
+        this.setState({show:true});
     }
     render() {
         const { fields } = this.props;
+        const { show } = this.state;
+        console.log(this.state);
         return (
             <div>
                 {fields.map(item => {
@@ -76,8 +88,12 @@ export default class FormFields extends Component {
                                     <InputGroup.Prepend>
                                         <InputGroup.Checkbox
                                             id={item}
-                                            checked={this.state[item]}
-                                            onChange={e => this.setState({ [item]: e.target.checked })} />
+                                            checked={this.state[item.fieldName[item]]}
+                                            onChange={e => this.setState({
+                                                [item.fieldName]:{
+                                                    [item]: e.target.checked 
+                                                }
+                                            })} />
                                     </InputGroup.Prepend>
                                     <Form.Control value={item} />
                                 </InputGroup>
@@ -87,15 +103,11 @@ export default class FormFields extends Component {
                 })}
                 <hr />
                 <div>
-                    <Button variant="outline-dark" size="lg" onClick={this.clearFields}>
-                        Clear
-                        </Button>
-                    <Button variant="outline-dark" size="lg" onClick={this.saveAndAddAnother}>
-                        Save and add another
-                        </Button>
-                    <Button variant="primary" size="lg" onClick={this.save}>
+                    <Button variant="outline-dark" size="lg" onClick={this.clearFields}> Clear</Button>
+                    <Button variant="primary" size="lg" onClick={this.save} >
                         Save
-                        </Button>
+                    </Button>
+                    <SaveModal handleClose={this.handleClose} data={this.state}/> 
                 </div>
             </div>
         )

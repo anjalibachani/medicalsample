@@ -33,6 +33,9 @@ class AddSamples extends Component {
 		});
 		this.setState({ types: array });
 	}
+	clearFormFields = () => {
+		this.setState({formFields:[]});
+	}
 	handleChange = selectedOption => {
 		// this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value));
 		//this.setState({ formFields: [] });
@@ -58,7 +61,7 @@ class AddSamples extends Component {
 						options={types}
 					/>
 					<hr />
-					<FormFields fields={formFields} />
+					<FormFields fields={formFields} clearFormFields={this.clearFormFields}/>
 				</div>
 				</Form.Row>
 			</div>
