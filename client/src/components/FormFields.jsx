@@ -88,12 +88,8 @@ export default class FormFields extends Component {
                                     <InputGroup.Prepend>
                                         <InputGroup.Checkbox
                                             id={item}
-                                            checked={this.state[item.fieldName[item]]}
-                                            onChange={e => this.setState({
-                                                [item.fieldName]:{
-                                                    [item]: e.target.checked 
-                                                }
-                                            })} />
+                                            checked={this.state[item]}
+                                            onChange={e => this.setState({ [item]: e.target.checked })} />
                                     </InputGroup.Prepend>
                                     <Form.Control value={item} />
                                 </InputGroup>
