@@ -41,7 +41,7 @@ class resetpass extends React.Component{
             e.preventDefault();
             if(this.state.password===this.state.confirmPassword){
                 console.log(`before ${this.state.email_id}`);
-                Axios.post(`http://${config.server.host}:${config.server.port}/api/reset-password/${this.state.resetid}`,{email_id:this.state.email_id}).then((response)=>{
+                Axios.post(`http://${config.server.host}:${config.server.port}/api/reset-password/${this.state.resetid}`,{password:this.state.password}).then((response)=>{
                     if(response.status === 200){
                         console.log("received 200 OK");
                         

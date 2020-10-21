@@ -28,7 +28,7 @@ function resetpassword(req,res){
                 if(error){
                     return res.status(500).json({message:"server error"})
                 }
-                if(results[0].timeout < getTime()){
+                if(results[0].timeout < Date.now()){
                     return res.status(400).json({message:"Link expired try requesting a new link"})
                 }
                 if(results.length>0){

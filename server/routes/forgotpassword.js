@@ -29,7 +29,7 @@ function forgotpassword(req,res){
                     //     console.log(buffer);
                         
                     // })
-                    db.query('UPDATE users set resetlink = ?, timeout = ? WHERE user_id = ?',[token,getTime()+1200000,user_id], async function(error, results,fields){
+                    db.query('UPDATE users set resetlink = ?, timeout = ? WHERE user_id = ?',[token,Date.now()+1200000,user_id], async function(error, results,fields){
                         if(!error){
                             transporter.sendMail({
                                 from: 'merle22@ethereal.email', // sender address
