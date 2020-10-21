@@ -13,7 +13,7 @@ async function login(req,res){
     console.log(password);
 
     
-    db.query('SELECT * from medical_sample_db.users WHERE email_id = ?',[email_id], async function(error, results, fields){
+    db.query('SELECT * from users WHERE email_id = ?',[email_id], async function(error, results, fields){
         if(error){
             return res.status(400).json({message:"error occued"})
         }

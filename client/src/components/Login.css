@@ -56,3 +56,17 @@ h3{
 span{
     font-size: 24px;
 }
+.diplay-alert{
+    display: block;
+    margin:10px;
+    background-color: #e26167;
+    color: #c02a31;
+}
+.warning{
+    color:'red';
+    display:block;
+    background-color: #f3b8bb;
+    margin:20px;
+    align-self: center;
+    text-align: center;
+}
