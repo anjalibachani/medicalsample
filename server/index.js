@@ -7,6 +7,8 @@ const googlelogin = require('./routes/googlelogin');
 const db = require('./db/dbconnect')
 const config = require('./config/config.json');
 const samples = require('./routes/samples');
+const forgotpassword = require('./routes/forgotpassword');
+const resetpassword = require('./routes/resetpassword');
 
 const app = express();
 app.use(bodyparser.urlencoded({extended: true}));
@@ -25,4 +27,6 @@ app.listen(port,()=>{
 })
 app.post("/api/login",login);
 app.post("/api/googlelogin", googlelogin);
+app.post("/api/forgot-password",forgotpassword)
+app.post("/api/reset-password/:id",resetpassword)
 app.get('/test', (req, res) => { res.send({ result: "test success" }) });

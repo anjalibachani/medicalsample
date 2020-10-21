@@ -1,24 +1,58 @@
+
 .login{
     display:flex;
-    align-content: center;
-    justify-content: center;
     flex-direction: column;
     height: 80vh;
-    width: 80vw;
-    margin-left: 10vw;
-    margin-top: 10vh;
+    background-color:#005bbb;
 }
 
 .login_form{
-    background-color: rgb(255, 255, 255);
     flex-direction: column;
     height: 250px;
     width:300px;
-    align-self: center;
+    margin-left: 900px;
+    border-color: 005bbb;
 }
 
 #input{
-    margin-top:20px;
-    margin-left:10px;
-    padding: 10px;
+    height: 30px;
+    margin-top: 20px;
+    width: 240px;
+    border-radius: 20px;
+    text-align: center;
+    outline: none;
+}
+h1{
+    font-size: 72px;
+    margin-bottom: 0px;
+    color: #FFFFFF;
+}
+h3{
+    font-size: 36px;
+    color: #FFFFFF;
+}
+#loginbutton{
+    width: 240px;
+    height: 30px;
+    margin-top: 20px;
+    border-radius: 20px;
+    background-color: #c02a31;
+    color: #FFFFFF;
+}
+.googlelogin{
+    margin-top: 20px;
+    width:240px;
+    border-radius: 20px;
+    vertical-align: super;
+}
+.google-btn{
+    float:none;
+    position:static;
+    display:block;
+    margin:auto;
+    height: max-content;
+    width:max-content;
+}
+span{
+    font-size: 24px;
 }
