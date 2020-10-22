@@ -27,8 +27,7 @@ export default class FormFields extends Component {
     }
     render() {
         const { fields } = this.props;
-        const { show } = this.state;
-        console.log(this.state);
+        console.log("state in formfields: ", this.state);
         return (
             <div>
                 {fields.map(item => {
@@ -44,6 +43,7 @@ export default class FormFields extends Component {
                                 onChange={e => this.setState({ [item.fieldName]: e.target.value })} />
                         </InputGroup>)
                     } else if (item.fieldType === "date") {
+                        this.state[item.fieldName] = new Date()
                         return (<InputGroup className="mb-3">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -83,6 +83,7 @@ export default class FormFields extends Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
+                            {console.log(item.values)}
                             {item.values.map(item =>
                                 <InputGroup>
                                     <InputGroup.Prepend>

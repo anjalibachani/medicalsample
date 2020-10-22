@@ -38,7 +38,7 @@ class AddSamples extends Component {
 	}
 	handleChange = selectedOption => {
 		// this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value));
-		//this.setState({ formFields: [] });
+		// this.setState({ formFields: [] });
 		this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
 	};
 	getMappingFiledsByType = name => {
@@ -51,6 +51,7 @@ class AddSamples extends Component {
 	}
 	render() {
 		const { types, selectedOption, formFields } = this.state;
+		console.log('firmfields: ', formFields);
 		return (
 			<div>
 				<Form.Row><div>

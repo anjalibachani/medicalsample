@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import { Modal,Button } from 'react-bootstrap';
+import { formatISO } from "date-fns";
 
 function SaveModal(props) {
     const { data, handleClose } = props;
-    console.log("data: ", data);
+    // console.log("data: ", data);
     return (
         <>
           <Modal show={data.show} onHide={handleClose} backdrop="static" keyboard={false}>
@@ -14,10 +15,16 @@ function SaveModal(props) {
             <Modal.Body>
                     {
                         Object.keys(data).filter((i,k) => k >0).map((key) => {
-                            console.log(key + ":" + data[key]);
-                            let res = data[key];
+                            let res = data[key].toString();
+                            if (res === 'true') {
+                                res = "Yes"
+                            }
+                            if (res === 'false') {
+                                res = "No"
+                            }
                             if (key == "Date")
-                                res = data[key].toISOString().split('T')[0];
+                                // res = res.toISOString().split('T')[0];
+                                res = formatISO(data[key], { representation: 'date' })    
                             return (
                                 <p>
                                     <p>{key}:{res}</p>
