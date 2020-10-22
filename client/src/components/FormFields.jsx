@@ -56,6 +56,8 @@ export default class FormFields extends Component {
                             />
                         </InputGroup>)
                     } else if (item.fieldType === "select") {
+                        this.state[item.fieldName] = item.values[0]
+                        // console.log(this.state[item.fieldName])
                         return (<InputGroup className="mb-3">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
