@@ -9,9 +9,10 @@
 .login_form{
     flex-direction: column;
     height: 250px;
-    width:300px;
+    width:350px;
     margin-left: 900px;
     border-color: 005bbb;
+    margin-top: 7%;
 }
 
 #input{
@@ -39,7 +40,7 @@ h3{
     background-color: #c02a31;
     color: #FFFFFF;
 }
-.googlelogin{
+/* .googlelogin{
     margin-top: 20px;
     width:240px;
     border-radius: 20px;
@@ -52,7 +53,7 @@ h3{
     margin:auto;
     height: max-content;
     width:max-content;
-}
+} */
 span{
     font-size: 24px;
 }
