@@ -1,16 +1,14 @@
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto');
 const db = require('../db/dbconnect');
+const config = require('../config/config.json')
 
 const getsha1 = function(input){
     return crypto.createHash('sha1').update((input)).digest('hex')
 }
-const JWT_SECRET = "asdf"
 async function login(req,res){
     const email_id = req.body.email_id ;
     const password = req.body.password;
-    console.log(email_id);
-    console.log(password);
 
     
     db.query('SELECT * from users WHERE email_id = ?',[email_id], async function(error, results, fields){
@@ -19,19 +17,16 @@ async function login(req,res){
         }
         else{
             if(results.length>0){
-                console.log(results)
-                console.log(password)
                 //const comparison = await bcrypt.compare(password, results[0].password)
                 const comparison = (results[0].password === getsha1(password))
-                console.log(results[0].user_id);
-                console.log(results[0].email_id);
-                console.log(`comparison ${comparison}`)
-                console.log(getsha1(password),password,results[0].password)
+                // console.log(results[0].user_id);
+                // console.log(results[0].email_id);
+                // console.log(`comparison ${comparison}`)
+                // console.log(getsha1(password),password,results[0].password)
                 if(comparison){
                     results[0].password = undefined
-                    const token = jwt.sign({result:results[0]}, JWT_SECRET,{expiresIn:"1h"})
-                    console.log({token:token, message:"login successful"})
-                    return res.status(200).json({token:token, user_id:results[0].user_id,  message:"login successful"})
+                    const token = jwt.sign({result:results[0]}, config.JWT_SECRET,{expiresIn:"1h"})
+                    return res.status(200).json({token:token, user_id:results[0].user_id, admin:results[0].admin, message:"login successful"})
                 }
                 else{
                     return res.status(202).json({message:"Invalid email or password"})

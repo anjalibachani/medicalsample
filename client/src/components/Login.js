@@ -1,12 +1,11 @@
-//import { response } from 'express';
 import React from 'react';
-//import reactDOM from 'react-dom';
 import GoogleLogin from 'react-google-login';
 import './Login.css';
 import Axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import CustomAlertBanner from "./CustomAlertBanner";
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
+import { parseWithOptions } from 'date-fns/fp';
 
 const config = require('../config/config.json')
 const AddSamples = require('./AddSamples');
@@ -38,12 +37,13 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem("isLoggedIn", true);
                     localStorage.setItem("isAdmin", response.data.admin);
+                    this.redirectToAddsamples();
                 }
                 else{
-                   this.setState({
-                     alertVisibility: true,
-                     alertText: "Invalid Email",
-                   });
+                  this.setState({
+                    alertVisibility: true,
+                    alertText: "This email id doesn't exist",
+                  });
                 }
             });
     }
@@ -66,6 +66,11 @@ class Login extends React.Component{
             alertVisibility:false,
         })
     }
+
+    redirectToAddsamples = ()=>{
+      this.props.history.push('/AddSamples')
+    }
+
     handleLogin =async e=>{
         
         if(this.state.email_id && this.state.password){
@@ -78,7 +83,7 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('isLoggedIn', true);
                     localStorage.setItem("isAdmin", response.data.admin);
-                    // return <Redirect to="/somewhere" />;
+                    this.redirectToAddsamples();
                 }
                 else{
                     this.setState({
@@ -98,62 +103,76 @@ class Login extends React.Component{
     };
 
     render(){
-        return (
-          <div className="login">
-            <h1>Salud Ambiental Montevideo</h1>
-            <h3>
-              Understanding the Effects of Complex Exposures On Child Learning
-              and Behaviour
-            </h3>
-            <div className="login_form">
-              {this.state.alertVisibility && (
-                <CustomAlertBanner
-                  variant={this.state.alertVariant}
-                  text={this.state.alertText}
-                />
-              )}
-              <Form>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    value={this.state.email_id}
-                    onChange={this.handleEmailchange}
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="formBasicPassword">
-                  <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    value={this.state.password}
-                    onChange={this.handlePasswordChange}
-                  />
-                </Form.Group>
-                <Form.Group controlId="formBasicButton">
-                  <Button
-                    className="mr-5"
-                    variant="secondary"
-                    type="submit"
-                    onClick={this.handleLogin}
-                  >
-                    Log In
-                  </Button>
-                  <Button className="ml-4" href="/forgot-pass">
-                    Forgot Password?
-                  </Button>
-                </Form.Group>
-                <GoogleLogin
-                  clientId="759402856-mqu91hihug6s865np34bv3ssonr5ntgj.apps.googleusercontent.com"
-                  buttonText="SignIn with Google"
-                  onSuccess={this.success_responseGoogle}
-                  onFailure={this.error_responseGoogle}
-                  cookiePolicy={"single_host_origin"}
-                />
-              </Form>
-              </div>
-            </div>
-        );
+      return(
+        <div>
+          {(() => {
+            if (localStorage.getItem("user_id") === null) {
+              return (
+                <div className="login">
+                  <h1>Salud Ambiental Montevideo</h1>
+                  <h3>
+                    Understanding the Effects of Complex Exposures On Child Learning
+                    and Behaviour
+                  </h3>
+                  <div className="login_form">
+                    {this.state.alertVisibility && (
+                      <CustomAlertBanner
+                        variant={this.state.alertVariant}
+                        text={this.state.alertText}
+                      />
+                    )}
+                    <Form>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Control
+                          type="email"
+                          placeholder="Enter email"
+                          value={this.state.email_id}
+                          onChange={this.handleEmailchange}
+                        />
+                      </Form.Group>
+      
+                      <Form.Group controlId="formBasicPassword">
+                        <Form.Control
+                          type="password"
+                          placeholder="Password"
+                          value={this.state.password}
+                          onChange={this.handlePasswordChange}
+                        />
+                      </Form.Group>
+                      <Form.Group controlId="formBasicButton">
+                        <Button
+                          className="mr-5"
+                          variant="secondary"
+                          type="submit"
+                          onClick={this.handleLogin}
+                        >
+                          Log In
+                        </Button>
+                        <Button className="ml-4" href="/forgot-pass">
+                          Forgot Password?
+                        </Button>
+                      </Form.Group>
+                      <GoogleLogin
+                        clientId="759402856-mqu91hihug6s865np34bv3ssonr5ntgj.apps.googleusercontent.com"
+                        styles={{width:500}}
+                        buttonText="SignIn with Google"
+                        onSuccess={this.success_responseGoogle}
+                        onFailure={this.error_responseGoogle}
+                        cookiePolicy={"single_host_origin"}
+                      />
+                    </Form>
+                    </div>
+                  </div>
+              );
+            }
+            else {
+              return (<Redirect to="/AddSamples" />)
+            }
+          })()}
+        </div>
+      )
+          
+          
     }
 }
 

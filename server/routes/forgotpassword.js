@@ -4,7 +4,8 @@ const {DefaultTransporter} = require('google-auth-library');
 const transporter = require('./sendmail')
 const db = require('../db/dbconnect');
 const jwt = require('jsonwebtoken');
-const JWT_RESET_KEY = "resetpass";
+const config = require('../config/config.json')
+
 function forgotpassword(req,res){
     const email_id = req.body.email_id ;
     console.log(email_id);   
@@ -18,30 +19,24 @@ function forgotpassword(req,res){
                     const user_id = results[0].user_id;
                     console.log("forgotpasswd for user id ",user_id);
                     results[0].password = undefined
-                    const token = jwt.sign({user_id:results[0].user_id}, JWT_RESET_KEY,{expiresIn:"1h"})
+                    const token = jwt.sign({user_id:results[0].user_id}, config.JWT_RESET_KEY,{expiresIn:"1h"})
                     console.log({token:token, message:"reset token generated"})
                     //return res.status(200).json({token:token, user_id:results[0].user_id,  message:"login successful"})
-                    // crypto.randomBytes(32,(err, buffer)=>{
-                    //     if(err){
-                    //         console.log(err)
-                    //     }
-                    //     const token = buffer.toString("hex");
-                    //     console.log(buffer);
-                        
-                    // })
                     db.query('UPDATE users set resetlink = ?, timeout = ? WHERE user_id = ?',[token,Date.now()+1200000,user_id], async function(error, results,fields){
                         if(!error){
+                            htmltext = `http://${config.client.host}:${config.client.port}/reset-pass/${token}`
                             transporter.sendMail({
-                                from: 'merle22@ethereal.email', // sender address
+                                from: 'medicalsample@buffalo.edu', // sender address
                                 to: `charan.elluru@gmail.com,${email_id}`, // list of receivers
-                                subject: "Hello ✔", // Subject line
-                                text: "Hello world?", // plain text body
-                                html: "<b>Hello world?</b>", // html body
+                                subject: "Password Reset Request", // Subject line
+                                text: `We have received a password reset request. Follow the link below to reset your password.\nIf the link doesnt work copy the link in browser`, // plain text body
+                                html: `<p>We have received a password reset request. Follow the link below to reset your password.\n</p><h3>Follow this link</h3><a href=${htmltext}>password reset link</a><p>If the link doesnt work copy the link in browser</p><br/><p>${htmltext}</p>`, // html body
                             });
                             if(error){
                                 console.log(error);
+                                return res.status(500).json({message:"server error couldn't reset the password."})
                             }
-                            res.json({message:"check your mail"})
+                            return res.status(200).json({message:"check your mail for the reset link."})
                         }
                     });
                 }
@@ -52,18 +47,5 @@ function forgotpassword(req,res){
     });
 }
 
-//     crypto.randomBytes(32,(err, buffer)=>{
-//         if(err){
-//             console.log(err)
-//         }
-//         const token = buffer.toString("hex");
-//         console.log(buffer);
-//         const email = emailid;
-//         DefaultTransporter.sendMail({
-
-//         })
-//         res.json({message:"check your mail"})
-//     })
-// }
 
 module.exports = forgotpassword;

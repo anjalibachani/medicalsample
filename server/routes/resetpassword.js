@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const {DefaultTransporter} = require('google-auth-library');
 const transporter = require('./sendmail')
 const db = require('../db/dbconnect');
-const JWT_RESET_KEY = "resetpass";
+const config = require('../config/config.json')
 
 
 const getsha1 = function(input){
@@ -13,11 +13,12 @@ const getsha1 = function(input){
 function resetpassword(req,res){
     //console.log(req)
     console.log("reset pass func called")
+    //console.log(req.match.params.id)
     console.log(req.params.id)
     const token = req.params.id
     const password = req.body.password
     console.log("resetpass: ",req.body);
-    jwt.verify(token,JWT_RESET_KEY,(err,decoded)=>{
+    jwt.verify(token,config.JWT_RESET_KEY,(err,decoded)=>{
         console.log("error",err);
         console.log("decoded ",decoded)
         if(err){
