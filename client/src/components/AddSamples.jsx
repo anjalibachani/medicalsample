@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
 import Select from 'react-select';
 import FormFields from './FormFields';
+import Header from './Header';
+
 // import CommonFields from './CommonFields';
 
 // import CustomAlertBanner from './CustomAlertBanner'
@@ -33,9 +36,12 @@ class AddSamples extends Component {
 		});
 		this.setState({ types: array });
 	}
+	clearFormFields = () => {
+		this.setState({ formFields: [] });
+	}
 	handleChange = selectedOption => {
 		// this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value));
-		//this.setState({ formFields: [] });
+		// this.setState({ formFields: [] });
 		this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
 	};
 	getMappingFiledsByType = name => {
@@ -48,19 +54,31 @@ class AddSamples extends Component {
 	}
 	render() {
 		const { types, selectedOption, formFields } = this.state;
+		console.log('firmfields: ', formFields);
 		return (
 			<div>
-				<Form.Row><div>
-					<Select
-						isSearchable={true}
-						value={selectedOption}
-						onChange={this.handleChange}
-						options={types}
-					/>
-					<hr />
-					<FormFields fields={formFields} />
-				</div>
-				</Form.Row>
+				{(() => {
+					if (localStorage.getItem("user_id") !== null) {
+						return (
+							<>
+								<Header />
+								<Form.Row>
+									<div>
+										<Select 
+										isSearchable={true}
+										value={selectedOption}
+										onChange={this.handleChange}
+										options={types}
+									/>
+										<hr />
+										<FormFields fields={formFields} clearFormFields={this.clearFormFields} />
+									</div>	</Form.Row>
+							</>
+						);
+					} else {
+						return (<Redirect to="/login" />)
+					}
+				})()}
 			</div>
 		);
 	}

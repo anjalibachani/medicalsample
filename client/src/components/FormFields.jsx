@@ -2,21 +2,32 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
+import SaveModal from './SaveModal';
 
+const initialState = {
+};
 export default class FormFields extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            show: false
         }
     }
     static propTypes = {
         prop: PropTypes
     }
-    save = () =>{
-        console.log(this.state);
+    clearFields = () => {
+        this.props.clearFormFields();   
+    }
+    handleClose = () => {
+        this.setState({ show: false });
+    }
+    save = () => {
+        this.setState({show:true});
     }
     render() {
         const { fields } = this.props;
+        console.log("state in formfields: ", this.state);
         return (
             <div>
                 {fields.map(item => {
@@ -32,6 +43,7 @@ export default class FormFields extends Component {
                                 onChange={e => this.setState({ [item.fieldName]: e.target.value })} />
                         </InputGroup>)
                     } else if (item.fieldType === "date") {
+                        this.state[item.fieldName] = new Date()
                         return (<InputGroup className="mb-3">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -44,6 +56,8 @@ export default class FormFields extends Component {
                             />
                         </InputGroup>)
                     } else if (item.fieldType === "select") {
+                        this.state[item.fieldName] = item.values[0]
+                        // console.log(this.state[item.fieldName])
                         return (<InputGroup className="mb-3">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -71,6 +85,7 @@ export default class FormFields extends Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
+                            {console.log(item.values)}
                             {item.values.map(item =>
                                 <InputGroup>
                                     <InputGroup.Prepend>
@@ -87,15 +102,11 @@ export default class FormFields extends Component {
                 })}
                 <hr />
                 <div>
-                    <Button variant="outline-dark" size="lg" onClick={this.clearFields}>
-                        Clear
-                        </Button>
-                    <Button variant="outline-dark" size="lg" onClick={this.saveAndAddAnother}>
-                        Save and add another
-                        </Button>
-                    <Button variant="primary" size="lg" onClick={this.save}>
+                    <Button variant="outline-dark" size="lg" onClick={this.clearFields}> Clear</Button>
+                    <Button variant="primary" size="lg" onClick={this.save} >
                         Save
-                        </Button>
+                    </Button>
+                    <SaveModal handleClose={this.handleClose} data={this.state}/> 
                 </div>
             </div>
         )
