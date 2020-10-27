@@ -11,7 +11,9 @@ const config = require('../config/config.json')
 const AddSamples = require('./AddSamples');
 
 class Login extends React.Component{
+    
     constructor(props){
+      console.log("login called")
         super(props)
         this.state={
             email_id : "",
@@ -171,8 +173,6 @@ class Login extends React.Component{
           })()}
         </div>
       )
-          
-          
     }
 }
 

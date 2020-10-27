@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Navbar, Nav, Container, ButtonGroup, Button } from "react-bootstrap";
 import CustomHeaderButton from "./CustomHeaderButton";
+import { Redirect } from 'react-router-dom';
+
 export default class Header extends Component {
     static propTypes = {
         prop: PropTypes
@@ -14,7 +16,7 @@ export default class Header extends Component {
                         <h2>SAM Research Database</h2>
                     </Navbar.Brand>
                     <Nav className="justify-content-end">
-                        <Nav.Link href="/logout">Log Out</Nav.Link>
+                        <Nav.Link href="/logout" >Log Out</Nav.Link>
                         <Nav.Link href="/manage" target="_blank">Manage </Nav.Link>
                     </Nav>
                 </Navbar>
@@ -41,3 +43,4 @@ export default class Header extends Component {
         )
     }
 }
+
