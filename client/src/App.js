@@ -12,6 +12,7 @@ import CustomHeaderButton from "./components/CustomHeaderButton";
 import AddSamples from "./components/AddSamples";
 import forgotpass from './components/forgotpass';
 import resetpass from './components/resetpass';
+import Logout from './components/Logout'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/AddSamples" component={AddSamples} />
           <Route path="/forgot-pass" component={forgotpass} />
           <Route path="/reset-pass/:id" component={resetpass} />
+          <Route path="/logout" component={Logout}/>
           {/* <Route path="/ViewSamples" component={ViewSamples} />
           <Route path="/Reports" component={Reports} />
           <Route path="/ViewShipments" component={ViewShipments} />
