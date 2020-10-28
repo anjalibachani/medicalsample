@@ -4,11 +4,11 @@ import { Modal, Button, Container, Row, Col } from 'react-bootstrap';
 import { formatISO } from "date-fns";
 
 function SaveModal(props) {
-    const { data, handleClose } = props;
+    const { data, handleClose,show } = props;
     // console.log("data: ", data);
     return (
         <>
-            <Modal size="lg" show={data.show} onHide={handleClose} backdrop="static" keyboard={false}>
+            <Modal size="lg" show={show} onHide={handleClose} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Edit or Save</Modal.Title>
                 </Modal.Header>

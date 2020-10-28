@@ -3,13 +3,14 @@ import PropTypes from 'prop-types'
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import SaveModal from './SaveModal';
-
+import _ from 'lodash';
 
 export default class FormFields extends Component {
     constructor(props) {
         super(props);
         var initialState = {
-            show: false
+            show: false,
+             data: {}
         }
         this.state = initialState
         
@@ -18,11 +19,13 @@ export default class FormFields extends Component {
         prop: PropTypes
     }
     clearFields = () => {
-        this.props.clearFormFields();
-        var initialState1 = {
-            show: false
-        }
-        this.setState({ initialState1 });
+        const state = {
+            data: _.omit(this.state.data, Object.keys(this.state.data))
+          };
+          
+          this.setState(state, () => {
+            this.props.clearFormFields();
+          });
     }
     handleClose = () => {
         this.setState({ show: false });
@@ -48,11 +51,15 @@ export default class FormFields extends Component {
                             </InputGroup.Prepend>
                             <FormControl
                                 id={item.fieldName}
-                                value={this.state[item.fieldName]}
-                                onChange={e => this.setState({ [item.fieldName]: e.target.value })} />
+                                value={this.state.data[item.fieldName]}
+                                onChange={e => {
+                                    let data = this.state.data;
+                                    data[item.fieldName] = e.target.value
+                                    this.setState({ data: data })}
+                                    } />
                             </InputGroup></Col>)
                     } else if (item.fieldType === "date") {
-                        this.state[item.fieldName] = new Date()
+                        this.state.data[item.fieldName] = new Date()
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -60,12 +67,16 @@ export default class FormFields extends Component {
                             <DatePicker
                                 className="form-control"
                                 fixedHeight={false}
-                                selected={this.state[item.fieldName]}
-                                onChange={e => this.setState({ [item.fieldName]: e })}
+                                selected={this.state.data[item.fieldName]}
+                                onChange={e => {
+                                    let data = this.state.data;
+                                    data[item.fieldName] = e
+                                    this.setState({ data: data })}
+                                    }
                             />
                         </InputGroup></Col>)
                     } else if (item.fieldType === "select") {
-                        this.state[item.fieldName] = item.values[0]
+                        this.state.data[item.fieldName] = item.values[0]
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -73,8 +84,12 @@ export default class FormFields extends Component {
                             <Form.Control
                                 id={item.fieldName}
                                 as="select"
-                                value={this.state[item.fieldName]}
-                                onChange={e => this.setState({ [item.fieldName]: e.target.value })}>
+                                value={this.state.data[item.fieldName]}
+                                onChange={e => {
+                                    let data = this.state.data;
+                                    data[item.fieldName] = e.target.value
+                                    this.setState({ data: data })}
+                                    }>
                                 {item.values.map(e => <option>{e}</option>)}
                             </Form.Control>
                         </InputGroup></Col>)
@@ -83,8 +98,12 @@ export default class FormFields extends Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Checkbox
                                     id={item.fieldName}
-                                    checked={this.state[item.fieldName]}
-                                    onChange={e => this.setState({ [item.fieldName]: e.target.checked })} />
+                                    checked={this.state.data[item.fieldName]}
+                                    onChange={e => {
+                                        let data = this.state.data;
+                                        data[item.fieldName] = e.target.checked
+                                        this.setState({ data: data })}
+                                        } />
                             </InputGroup.Prepend>
                             <Form.Control value={item.fieldName} />
                     </InputGroup></Col>)
@@ -98,8 +117,12 @@ export default class FormFields extends Component {
                                     <InputGroup.Prepend>
                                         <InputGroup.Checkbox
                                             id={item}
-                                            checked={this.state[item]}
-                                            onChange={e => this.setState({ [item]: e.target.checked })} />
+                                            checked={this.state.data[item]}
+                                            onChange={e => {
+                                                let data = this.state.data;
+                                                data[item.fieldName] = e.target.checked
+                                                this.setState({ data: data })}
+                                                } />
                                     </InputGroup.Prepend>
                                     <Form.Control value={item} />
                                 </InputGroup>
@@ -114,10 +137,10 @@ export default class FormFields extends Component {
                 <>
                     <Button className="ml-2" variant="outline-dark" size="lg"  onClick={this.clearFields}> Clear</Button>
                     <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save} > Save </Button>
-                    <SaveModal handleClose={this.handleClose} data={this.state} />
                  </>
                 :
                 null}
+                 <SaveModal handleClose={this.handleClose} data={this.state.data} show={this.state.show} />
             </div>
         )
     }
