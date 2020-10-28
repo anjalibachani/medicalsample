@@ -1,6 +1,8 @@
 import React from 'react';
 import './Login.css';
 import Axios from 'axios';
+import CustomAlertBanner from "./CustomAlertBanner";
+import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
 const config = require('../config/config.json')
 
 class resetpass extends React.Component{
@@ -29,6 +31,11 @@ class resetpass extends React.Component{
         })
     }
 
+    redirectToLogin = ()=>{
+        console.log("in redirect in forgot pass")
+        this.props.history.push('/login')
+    }
+
     handleConfirmPassword(e){
         this.setState({
             confirmPassword:e.target.value,
@@ -41,10 +48,18 @@ class resetpass extends React.Component{
             e.preventDefault();
             if(this.state.password===this.state.confirmPassword){
                 console.log(`before ${this.state.email_id}`);
+                console.log(this.resetid)
                 Axios.post(`http://${config.server.host}:${config.server.port}/api/reset-password/${this.state.resetid}`,{password:this.state.password}).then((response)=>{
+                    console.log(response)
                     if(response.status === 200){
                         console.log("received 200 OK");
-                        
+                        this.redirectToLogin()
+                    }
+                    else if(response.status === 401){
+                        this.setState({
+                            alertVisibility:true,
+                            alertText: response.data.message
+                        })
                     }
                     else{
                         this.setState({
@@ -57,6 +72,7 @@ class resetpass extends React.Component{
             }else{
                 this.setState({
                     alertVisibility:true,
+                    alertText:"passwords doesn't match"
                 })
                 console.log("passwords doesnt match")
             }
@@ -74,17 +90,43 @@ class resetpass extends React.Component{
         return(
             <div className="login">
                 <div className="reset-form">
-                    <div classname="diplay-alert">
-                        {this.state.alertVisibility &&<p class="warning">{this.state.alertText}</p>}
-                    </div>
-                    <div id="field">
-                        {/* <label>Email ID</label> */}
-                        <input id = "input" type="password" placeholder="enter new password" value={this.state.handlePassword} onChange={this.handlePassword}/>
-                    </div>
-                    <div>
-                    <input id = "input" type="password" placeholder="confirm password" value={this.state.handlePassword} onChange={this.handleConfirmPassword}/>
-                    </div>
-                    <input id = "forgotpass" type="submit" value="send reset link" onClick={this.handleReset}/>
+                <h1>Salud Ambiental Montevideo</h1>
+                <div className="login_form">
+                {this.state.alertVisibility && (
+                        <CustomAlertBanner
+                        variant={this.state.alertVariant}
+                        text={this.state.alertText}
+                        />
+                    )}
+                    <Form>
+                        <Form.Group controlId="formBasicPassword">
+                            <Form.Control
+                                type="password"
+                                placeholder="Password"
+                                value={this.state.password}
+                                onChange={this.handlePassword}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="formBasicPassword">
+                            <Form.Control
+                                type="password"
+                                placeholder="confirm Password"
+                                value={this.state.confirmPassword}
+                                onChange={this.handleConfirmPassword}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formBasicButton">
+                            <Button
+                                className="mr-1"
+                                type="submit"
+                                onClick={this.handleReset}
+                            >
+                            Reset Password
+                            </Button>
+                        </Form.Group>
+                    </Form>
+                </div>
                 </div>
             </div>
         )

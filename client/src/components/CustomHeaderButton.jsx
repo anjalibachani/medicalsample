@@ -13,7 +13,7 @@ class CustomHeaderButton extends Component {
     render() {
         return (
 			<Link to={this.props.href}>
-            	<Button variant={this.state.variant} size="lg">{this.props.text}</Button>
+                <Button variant={this.state.variant} size="lg">{this.props.text}</Button>
 			</Link>
         );
     }

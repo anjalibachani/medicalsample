@@ -3,11 +3,11 @@ const SendGridTransport = require('nodemailer-sendgrid-transport');
 
 
 const transporter = createTransport({
-    host: 'smtp.ethereal.email',
+    host: 'hobbes.cse.buffalo.edu',
     port: 587,
     auth: {
-        user: 'merle22@ethereal.email',
-        pass: 'xjeP97Syaq6vPMKwt7'
+        user: '',
+        pass: ''
     }
 });
 
