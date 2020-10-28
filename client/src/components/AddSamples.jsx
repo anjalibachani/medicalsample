@@ -54,6 +54,7 @@ class AddSamples extends Component {
 	}
 	render() {
 		const { types, selectedOption, formFields } = this.state;
+		// console.log((selectedOption));
 		console.log('firmfields: ', formFields);
 		return (
 			<div>
@@ -66,25 +67,24 @@ class AddSamples extends Component {
 								<Row>
 									<Col md="auto">
 										<h3 className="text-dark">Add samples:</h3>
-									</Col>
+										</Col>
+										<Col md="auto">
+											<h5 className="ml-5 mt-1 text-dark">Please Select Sample Type:</h5>
+										</Col>
+										<Col md="4">
+											<Select
+												label="Sample Type"
+												placeholder="Select Sample Type"
+												isSearchable={true}
+												value={selectedOption}
+												onChange={this.handleChange}
+												options={types}
+											/>
+										</Col>
 								</Row>
-								<Row className="w-50">
-									<Col>
-										<h5 className="text-dark">Please Select Sample Type:</h5>
-									</Col>
-									<Col>
-										<Select
-											label="Sample Type"
-											placeholder="Select Sample Type"
-											isSearchable={true}
-											value={selectedOption}
-											onChange={this.handleChange}
-											options={types}
-										/>
-									</Col>
-									</Row></Container>
+								</Container>
 								<hr/>
-								<FormFields fields={formFields} clearFormFields={this.clearFormFields} />
+								<FormFields fields={formFields} clearFormFields={this.clearFormFields} sampleType={selectedOption}/>
 							</>
 						);
 					} else {
