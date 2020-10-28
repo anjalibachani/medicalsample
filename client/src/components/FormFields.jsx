@@ -32,6 +32,8 @@ export default class FormFields extends Component {
     }
     render() {
         const { fields } = this.props;
+        const { sampleType } = this.props;
+        console.log("sampleType",sampleType);
         console.log("state in formfields: ", this.state);
         return (
             <div>
@@ -109,16 +111,13 @@ export default class FormFields extends Component {
                 </Container>
                 <hr />
                 {fields.length != 0 ?
-                    <>
-                        <Button className="ml-2" variant="outline-dark" size="lg"  onClick={this.clearFields}> Clear</Button>
-                        <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save} >
-                            Save
-                    </Button>
-                        <SaveModal handleClose={this.handleClose} data={this.state} />
-                    </>
+                <>
+                    <Button className="ml-2" variant="outline-dark" size="lg"  onClick={this.clearFields}> Clear</Button>
+                    <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save} > Save </Button>
+                    <SaveModal handleClose={this.handleClose} data={this.state} />
+                 </>
                 :
                 null}
-                
             </div>
         )
     }
