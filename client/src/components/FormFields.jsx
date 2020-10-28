@@ -1,23 +1,28 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
+import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import SaveModal from './SaveModal';
 
-const initialState = {
-};
+
 export default class FormFields extends Component {
     constructor(props) {
         super(props);
-        this.state = {
+        var initialState = {
             show: false
         }
+        this.state = initialState
+        
     }
     static propTypes = {
         prop: PropTypes
     }
     clearFields = () => {
-        this.props.clearFormFields();   
+        this.props.clearFormFields();
+        var initialState1 = {
+            show: false
+        }
+        this.setState({ initialState1 });
     }
     handleClose = () => {
         this.setState({ show: false });
@@ -30,10 +35,12 @@ export default class FormFields extends Component {
         console.log("state in formfields: ", this.state);
         return (
             <div>
+                <Container fluid>
+                    <Row>
                 {fields.map(item => {
                     if (item.fieldType === "text") {
-                        return (
-                        <InputGroup className="mb-3">
+                        return (<Col className ="custom-col" md="auto">
+                        <InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
@@ -41,10 +48,10 @@ export default class FormFields extends Component {
                                 id={item.fieldName}
                                 value={this.state[item.fieldName]}
                                 onChange={e => this.setState({ [item.fieldName]: e.target.value })} />
-                        </InputGroup>)
+                            </InputGroup></Col>)
                     } else if (item.fieldType === "date") {
                         this.state[item.fieldName] = new Date()
-                        return (<InputGroup className="mb-3">
+                        return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
@@ -54,11 +61,10 @@ export default class FormFields extends Component {
                                 selected={this.state[item.fieldName]}
                                 onChange={e => this.setState({ [item.fieldName]: e })}
                             />
-                        </InputGroup>)
+                        </InputGroup></Col>)
                     } else if (item.fieldType === "select") {
                         this.state[item.fieldName] = item.values[0]
-                        // console.log(this.state[item.fieldName])
-                        return (<InputGroup className="mb-3">
+                        return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
@@ -69,9 +75,9 @@ export default class FormFields extends Component {
                                 onChange={e => this.setState({ [item.fieldName]: e.target.value })}>
                                 {item.values.map(e => <option>{e}</option>)}
                             </Form.Control>
-                        </InputGroup>)
+                        </InputGroup></Col>)
                     } else if (item.fieldType === "checkbox") {
-                        return (<InputGroup className="mb-3">
+                        return (<Col className ="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Checkbox
                                     id={item.fieldName}
@@ -79,13 +85,12 @@ export default class FormFields extends Component {
                                     onChange={e => this.setState({ [item.fieldName]: e.target.checked })} />
                             </InputGroup.Prepend>
                             <Form.Control value={item.fieldName} />
-                        </InputGroup>)
+                    </InputGroup></Col>)
                     } else if (item.fieldType === "multicheckbox") {
-                        return (<InputGroup className="mb-3">
+                        return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
-                            {console.log(item.values)}
                             {item.values.map(item =>
                                 <InputGroup>
                                     <InputGroup.Prepend>
@@ -97,17 +102,23 @@ export default class FormFields extends Component {
                                     <Form.Control value={item} />
                                 </InputGroup>
                             )}
-                        </InputGroup>)
+                </InputGroup></Col>)
                     }
                 })}
+                    </Row>
+                </Container>
                 <hr />
-                <div>
-                    <Button variant="outline-dark" size="lg" onClick={this.clearFields}> Clear</Button>
-                    <Button variant="primary" size="lg" onClick={this.save} >
-                        Save
+                {fields.length != 0 ?
+                    <>
+                        <Button className="ml-2" variant="outline-dark" size="lg"  onClick={this.clearFields}> Clear</Button>
+                        <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save} >
+                            Save
                     </Button>
-                    <SaveModal handleClose={this.handleClose} data={this.state}/> 
-                </div>
+                        <SaveModal handleClose={this.handleClose} data={this.state} />
+                    </>
+                :
+                null}
+                
             </div>
         )
     }

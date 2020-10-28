@@ -37,8 +37,8 @@ export default class Header extends Component {
                             text="See Shipments"
                         />
                     </ButtonGroup>
-                    <hr />
                 </Container>
+                <hr />
             </div>
         )
     }

@@ -38,3 +38,10 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+
+@media (min-width: 768px){
+.custom-col.col-md-auto {
+    -ms-flex: 0 0 auto;
+    width: 50%;
+}
+}
