@@ -258,7 +258,7 @@ class CreateShipments extends Component {
 
 	render() {
 		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
-			console.log(response);});
+			console.log(response.data);});
 			
 		//This variable, and the following chunk of code, are necessary so that the
 		//shipment table doesn't disappear when there are no samples added!
