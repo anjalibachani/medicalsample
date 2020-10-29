@@ -52,7 +52,7 @@ class Login extends React.Component{
     error_responseGoogle(response){
         this.setState({
           alertVisibility: true,
-          alertText: "Invalid Email",
+          alertText: "THis email doesn't exist",
         });
     }
 

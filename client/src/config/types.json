@@ -40,14 +40,6 @@
                     "fieldType": "text"
                 },
                 {
-                    "fieldName": "Additives",
-                    "fieldType": "multicheckbox",
-                    "values": [
-                        "Heparin",
-                        "EDTA"
-                    ]
-                },
-                {
                     "fieldName": "Initial storage conditions",
                     "fieldType": "select",
                     "values": [
@@ -66,6 +58,14 @@
                     "values": [
                         "Scola-Exposome",
                         "MOX-IN"
+                    ]
+                },
+                 {
+                    "fieldName": "Additives",
+                    "fieldType": "multicheckbox",
+                    "values": [
+                        "Heparin",
+                        "EDTA"
                     ]
                 }
             ]
@@ -277,14 +277,6 @@
                     "fieldType": "text"
                 },
                 {
-                    "fieldName": "Additives",
-                    "fieldType": "multicheckbox",
-                    "values": [
-                        "Heparin",
-                        "MPA"
-                    ]
-                },
-                {
                     "fieldName": "Foil wrapping",
                     "fieldType": "checkbox"
                 },
@@ -310,6 +302,13 @@
                     "values": [
                         "Scola-Exposome",
                         "MOX-IN"
+                    ]
+                }, {
+                    "fieldName": "Additives",
+                    "fieldType": "multicheckbox",
+                    "values": [
+                        "Heparin",
+                        "MPA"
                     ]
                 }
             ]

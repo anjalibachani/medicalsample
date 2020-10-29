@@ -284,10 +284,11 @@ class CreateShipments extends Component {
 
 		return (
 			<div>
+				<Header />
 				{this.state.alertVisibility &&
 					<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
 				}
-				<h3>Create shipments:</h3>
+				<h2 align="left">&nbsp;&nbsp;&nbsp;Create Shipments:</h2>
 				<Row>
 					<Col>
 						<InputGroup className="mb-3">
