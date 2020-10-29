@@ -2,7 +2,7 @@
 
 ## Usage
 
--- Development server
+ - Development server
 ```
 Change database credentials in server/config/config.json.
 ```
@@ -18,8 +18,7 @@ In client directory, run below script
 # Install dependencies && Start
 npm install & npm start
 ```
-
--- Production Deployment process
+- Production Deployment process
 ```
 Change database credentials in server/config/config.json.
 ```
