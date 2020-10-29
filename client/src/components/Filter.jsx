@@ -4,6 +4,8 @@ import { Form, Row, Col } from 'react-bootstrap';
 /* Dependency: react-datepicker */
 import DatePicker from 'react-datepicker'
 
+//const phpServerURL = require('../config/serverconfig').phpServerURL;
+
 /* A filter is a single, duplicable row of fields where a 
  * user can specify the type, value and equality condition 
  * to use when filtering. */
@@ -49,6 +51,7 @@ class Filter extends Component {
 							<option>does not equal</option>
 							<option>greater than</option>
 							<option>less than</option>
+
 						</Form.Control>
 					</Form.Group>
 				)

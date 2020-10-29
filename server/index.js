@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require("path");
 const bodyparser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
@@ -11,6 +12,11 @@ const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
 
 const app = express();
+app.use(express.static(path.join(__dirname, "../client/build")));
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+});
+
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
 app.use(cors({origin:true}));

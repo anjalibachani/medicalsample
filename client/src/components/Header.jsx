@@ -33,12 +33,12 @@ export default class Header extends Component {
                             text="Create a Shipment"
                         />
                         <CustomHeaderButton
-                            href="/ViewShipments"
+                            href="/ViewShipment"
                             text="See Shipments"
                         />
                     </ButtonGroup>
-                    <hr />
                 </Container>
+                <hr />
             </div>
         )
     }

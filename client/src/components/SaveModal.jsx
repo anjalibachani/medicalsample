@@ -1,20 +1,20 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Modal,Button } from 'react-bootstrap';
+import { Modal, Button, Container, Row, Col } from 'react-bootstrap';
 import { formatISO } from "date-fns";
 
 function SaveModal(props) {
-    const { data, handleClose } = props;
+    const { data, handleClose,show } = props;
     // console.log("data: ", data);
     return (
         <>
-          <Modal show={data.show} onHide={handleClose} backdrop="static" keyboard={false}>
-            <Modal.Header closeButton>
-                <Modal.Title>Edit or Save</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
+            <Modal size="lg" show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit or Save</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
                     {
-                        Object.keys(data).filter((i,k) => k >0).map((key) => {
+                        Object.keys(data).filter((i, k) => k > 0).map((key) => {
                             let res = data[key].toString();
                             if (res === 'true') {
                                 res = "Yes"
@@ -24,22 +24,25 @@ function SaveModal(props) {
                             }
                             if (key == "Date")
                                 // res = res.toISOString().split('T')[0];
-                                res = formatISO(data[key], { representation: 'date' })    
+                                res = formatISO(data[key], { representation: 'date' })
                             return (
-                                <p>
-                                    <p>{key}:{res}</p>
-                                </p>
+                                <>
+                                    <Row>
+                                        <Col md="4">{key}</Col>:
+                                        <Col>{res}</Col>
+                                    </Row>
+                                </>
                             )
                         })
 
-                   }
-            </Modal.Body>
-            <Modal.Footer>
+                    }
+                </Modal.Body>
+                <Modal.Footer>
                     <Button variant="outline-dark" size="lg" onClick={handleClose}>Edit</Button>
-                <Button variant="outline-dark" size="lg">Save and add another</Button>
-                <Button variant="primary" size="lg" > Save</Button>
-            </Modal.Footer>
-            </Modal>  
+                    <Button variant="outline-dark" size="lg">Save and add another</Button>
+                    <Button variant="primary" size="lg" > Save</Button>
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }

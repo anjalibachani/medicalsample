@@ -37,7 +37,7 @@ class AddSamples extends Component {
 		this.setState({ types: array });
 	}
 	clearFormFields = () => {
-		this.setState({ formFields: [] });
+		this.setState({ selectedOption: null, formFields: [] });
 	}
 	handleChange = selectedOption => {
 		// this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value));
@@ -54,6 +54,7 @@ class AddSamples extends Component {
 	}
 	render() {
 		const { types, selectedOption, formFields } = this.state;
+		// console.log((selectedOption));
 		console.log('firmfields: ', formFields);
 		return (
 			<div>
@@ -62,17 +63,28 @@ class AddSamples extends Component {
 						return (
 							<>
 								<Header />
-								<Form.Row>
-									<div>
-										<Select 
-										isSearchable={true}
-										value={selectedOption}
-										onChange={this.handleChange}
-										options={types}
-									/>
-										<hr />
-										<FormFields fields={formFields} clearFormFields={this.clearFormFields} />
-									</div>	</Form.Row>
+								<Container fluid>
+								<Row>
+									<Col md="auto">
+										<h3 className="text-dark">Add samples:</h3>
+										</Col>
+										<Col md="auto">
+											<h5 className="ml-5 mt-1 text-dark">Please Select Sample Type:</h5>
+										</Col>
+										<Col md="4">
+											<Select
+												label="Sample Type"
+												placeholder="Select Sample Type"
+												isSearchable={true}
+												value={selectedOption}
+												onChange={this.handleChange}
+												options={types}
+											/>
+										</Col>
+								</Row>
+								</Container>
+								<hr/>
+								<FormFields fields={formFields} clearFormFields={this.clearFormFields} sampleType={selectedOption}/>
 							</>
 						);
 					} else {
