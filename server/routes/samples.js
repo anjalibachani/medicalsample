@@ -24,6 +24,7 @@ router.get("/add", (req, res) => {
       edta: 1,
       heparin: 0,
       mpa: 1,
+      fasted: null
     };
     var query = db.query("INSERT INTO `samples` SET ?", sample, (error,results,fields)=>{
       if (error) throw error;

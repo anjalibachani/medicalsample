@@ -78,7 +78,7 @@ class Login extends React.Component{
         if(this.state.email_id && this.state.password){
             e.preventDefault();
             Axios.post(`http://${config.server.host}:${config.server.port}/api/login`,{email_id:this.state.email_id, password: this.state.password}).then((response)=>{
-                console.log(response);
+              console.log(response);
                 if (response.status === 200) {
                     localStorage.setItem('user_id',response.data.user_id);
                     localStorage.setItem('email_id',this.state.email_id);

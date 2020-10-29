@@ -40,13 +40,28 @@ class Filter extends Component {
 						</Form.Control>
 					</Form.Group>
 				)
-			} else {
+			} 
+			else if (this.state.type === 'Location') {
+				return (
+					<Form.Group controlId="isOrIsnt">
+						<Form.Control 
+							as="select"
+							onChange={this.handleEquality}>
+								<option>equals</option>
+								<option>does not equal</option>
+						</Form.Control>
+					</Form.Group>
+				)
+			} 
+			else {
 				return (
 					<Form.Group controlId="isOrIsnt">
 						<Form.Control as="select"
 							onChange={this.handleEquality}>
 							<option>equals</option>
 							<option>does not equal</option>
+							<option>greater than</option>
+							<option>less than</option>
 						</Form.Control>
 					</Form.Group>
 				)
@@ -147,6 +162,7 @@ class Filter extends Component {
 								<option>Other treatments</option>
 								<option>Foil wrapped</option>
 								<option>Unrestricted consent</option>
+								<option>Location</option>
 							</Form.Control>
 						</Form.Group>
 					</Col>
@@ -180,6 +196,7 @@ class Filter extends Component {
 	 * (either 'equals' or 'does not equal') */
 	handleEquality(e) {
 		var equalityVal;
+		var greaterthanVal;
 		if (e.target.value === 'equals' ||
 			e.target.value === 'include' ) {
 			equalityVal = true;
@@ -187,9 +204,15 @@ class Filter extends Component {
 			e.target.value === 'do not include') {
 			equalityVal = false;
 		}
-
+		  else if (e.target.value === 'greater than') {
+			greaterthanVal = true;
+	}
+		  else if (e.target.value === 'less than' ) {
+			greaterthanVal = false;
+	}
 		this.setState ({ equality: equalityVal });
-		this.props.retVals(this.state.type, equalityVal, this.state.value, this.props.number);
+		this.setState({equality: greaterthanVal});
+		this.props.retVals(this.state.type, equalityVal,greaterthanVal, this.state.value, this.props.number);
 	}
 
 	/* When a user changes the value to filter... */

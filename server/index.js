@@ -9,6 +9,7 @@ const config = require('./config/config.json');
 const samples = require('./routes/samples');
 const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
+const addshipment = require('./routes/addshipment');
 
 const app = express();
 app.use(bodyparser.urlencoded({extended: true}));
@@ -20,6 +21,7 @@ app.use(function(req, res, next) {
     next();
 });
 app.use('/samples', samples);
+app.use('/addshipment',addshipment);
 port = config.port;
 
 app.listen(port,()=>{

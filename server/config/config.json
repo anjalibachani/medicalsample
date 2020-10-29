@@ -1,9 +1,9 @@
 {
   "database": {
     "host": "localhost",
-    "user": "root",
-    "password": "root",
-    "database": "medical_sample_db"
+    "user": "medsample_user",
+    "password": "ChangeMe!",
+    "database": "medsample_db"
   },
   "client":{
     "host": "localhost",
