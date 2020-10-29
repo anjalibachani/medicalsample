@@ -17,18 +17,22 @@ import resetpass from './components/resetpass';
 import AddShipments from './components/AddShipments';
 import ViewShipment from './components/ViewShipment';
 import Logout from './components/Logout'
+import filterandExports from './components/filterandExports';
 
 function App() {
   return (
+    
     <div className="App">
       <Router basename=".">
         <Switch>
           <Route path="/" exact={true} component={Login} />
           <Route path="/login" exact={true} component={Login} />
-          <Route path="/AddSamples" component={AddSamples} />
+          <Route path="/AddSamples" component={AddSamples } />
           <Route path="/forgot-pass" component={forgotpass} />
           <Route path="/reset-pass/:id" component={resetpass} />
-          <Route path="/logout" component={Logout} />
+          <Route path="/logout" component={Logout}/>
+          <Route path="/filterandExports" component={filterandExports}/>
+
           {/* <Route path="/ViewSamples" component={ViewSamples} />
           <Route path="/Reports" component={Reports} />*/}
           <Route path="/ViewShipment" component={ViewShipment} />
