@@ -6,8 +6,6 @@ import Header from './Header';
 import { formatISO } from "date-fns";
 import axios from 'axios';
 
-const child = require("../config/child.json");
-
 export default class AddChild extends Component {
     constructor(props) {
         super(props);
