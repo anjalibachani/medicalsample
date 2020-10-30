@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
 
-router.get("/add", (req, res) => {
+router.post("/add", (req, res) => {
     var sample = {
       sample_id: 456,
       eval: 1,

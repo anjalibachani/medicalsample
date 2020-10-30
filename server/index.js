@@ -11,7 +11,7 @@ const samples = require('./routes/samples');
 const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
 const addshipment = require('./routes/addshipment');
-
+const child = require('./routes/child');
 const app = express();
 // app.use(express.static(path.join(__dirname, "../client/build")));
 // app.get("/*", (req, res) => {
@@ -27,6 +27,7 @@ app.use(function(req, res, next) {
     next();
 });
 app.use('/samples', samples);
+app.use("/child", child);
 app.use('/addshipment',addshipment);
 port = config.port;
 

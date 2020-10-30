@@ -22,6 +22,7 @@ export default class Header extends Component {
                 </Navbar>
                 <Container fluid>
                     <ButtonGroup>
+                        <CustomHeaderButton href="/AddChild" text="Add Child" />
                         <CustomHeaderButton href="/AddSamples" text="Add Samples" />
                         <CustomHeaderButton
                             href="/filterandExports"
