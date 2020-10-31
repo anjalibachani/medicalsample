@@ -171,7 +171,6 @@ class ViewSamples extends Component {
     */
 	getFilterValues = (type, equality, value, key) => {
 		var filterVals = this.state.returnedFilterValues;
-		  
         if (type === "Date") {
             value = this.getDateFormat(value);
         }
