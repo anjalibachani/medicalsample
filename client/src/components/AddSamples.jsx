@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
 import Select from 'react-select';
 import FormFields from './FormFields';
-import Header from './Header';
+import Header from './Header';	
 
 // import CommonFields from './CommonFields';
 

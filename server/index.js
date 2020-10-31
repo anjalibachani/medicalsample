@@ -10,12 +10,13 @@ const config = require('./config/config.json');
 const samples = require('./routes/samples');
 const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
-
+const addshipment = require('./routes/addshipment');
+const child = require('./routes/child');
 const app = express();
-app.use(express.static(path.join(__dirname, "../client/build")));
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
-});
+// app.use(express.static(path.join(__dirname, "../client/build")));
+// app.get("/*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+// });
 
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
@@ -26,6 +27,8 @@ app.use(function(req, res, next) {
     next();
 });
 app.use('/samples', samples);
+app.use("/child", child);
+app.use('/addshipment',addshipment);
 port = config.port;
 
 app.listen(port,()=>{
