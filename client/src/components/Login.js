@@ -39,7 +39,7 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem("isLoggedIn", true);
                     localStorage.setItem("isAdmin", response.data.admin);
-                    this.redirectToAddsamples();
+                    this.  redirectToHome();
                 }
                 else{
                   this.setState({
@@ -69,8 +69,8 @@ class Login extends React.Component{
         })
     }
 
-    redirectToAddsamples = ()=>{
-      this.props.history.push('/AddSamples')
+      redirectToHome = ()=>{
+      this.props.history.push('/Home')
     }
 
     handleLogin =async e=>{
@@ -85,7 +85,7 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('isLoggedIn', true);
                     localStorage.setItem("isAdmin", response.data.admin);
-                    this.redirectToAddsamples();
+                    this.  redirectToHome();
                 }
                 else{
                     this.setState({
@@ -168,7 +168,7 @@ class Login extends React.Component{
               );
             }
             else {
-              return (<Redirect to="/AddSamples" />)
+              return <Redirect to="/Home" />;
             }
           })()}
         </div>

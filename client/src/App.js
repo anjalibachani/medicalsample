@@ -19,6 +19,7 @@ import AddChild from './components/AddChild';
 import ViewShipment from './components/ViewShipment';
 import Logout from './components/Logout'
 import filterandExports from './components/filterandExports';
+import Header from "./components/Header";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Switch>
           <Route path="/" exact={true} component={Login} />
           <Route path="/login" exact={true} component={Login} />
+          <Route path="/Home" exact={true} component={Header} />
           <Route path="/AddChild" component={AddChild} />
           <Route path="/AddSamples" component={AddSamples} />
           <Route path="/forgot-pass" component={forgotpass} />

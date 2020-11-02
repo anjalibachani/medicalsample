@@ -4,21 +4,15 @@ import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Container
 import Select from 'react-select';
 import FormFields from './FormFields';
 import Header from './Header';	
-
-// import CommonFields from './CommonFields';
-
-// import CustomAlertBanner from './CustomAlertBanner'
-
-/* Note: DatePicker is an additional dependency, NOT included in
- * react-bootstrap! Documentation can be found at https://reactdatepicker.com/
- */
+import axios from 'axios';
+import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+
+
 const sampleTypes = require("../config/types.json");
-/* AddSamples: this is the interface for entering new sample information into
- * the database.
- */
-const phpServerURL = ""
+const config = require('../config/config.json')
+
 class AddSamples extends Component {
 	constructor(props) {
 		super(props);
@@ -26,8 +20,13 @@ class AddSamples extends Component {
 		this.state = {
 			types: [],
 			selectedOption: null,
-			formFields: []
+			formFields: [],
+			sampleIdOptions:[]
 		}
+	}
+	async getsampleIdOptions() {
+		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
+		this.setState({ sampleIdOptions: res.data.options })
 	}
 	componentDidMount() {
 		let array = []
@@ -40,8 +39,6 @@ class AddSamples extends Component {
 		this.setState({ selectedOption: null, formFields: [] });
 	}
 	handleChange = selectedOption => {
-		// this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value));
-		// this.setState({ formFields: [] });
 		this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
 	};
 	getMappingFiledsByType = name => {
@@ -54,7 +51,7 @@ class AddSamples extends Component {
 	}
 	render() {
 		const { types, selectedOption, formFields } = this.state;
-		// console.log((selectedOption));
+		console.log("sampleIdOptions:",this.state.sampleIdOptions)
 		console.log('firmfields: ', formFields);
 		return (
 			<div>
@@ -70,6 +67,16 @@ class AddSamples extends Component {
 										</Col>
 										<Col md="auto">
 											<h5 className="ml-5 mt-1 text-dark">Please Select Sample Type:</h5>
+										</Col>
+										<Col>
+											<Select
+												label="Sample ID's"
+												placeholder="Select Sample ID"
+												isSearchable={true}
+												value=""
+												// onChange={this.handleChange}
+												options={this.state.sampleIdOptions}
+											/>
 										</Col>
 										<Col md="4">
 											<Select

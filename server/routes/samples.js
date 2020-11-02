@@ -2,6 +2,21 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
 
+router.get("/getSampleIDs", async (req, res) => {
+  var query = await db.query(
+    "SELECT `sample_id`,`eval` FROM `samples`",(error, results, fields) => {
+      if (error) throw error;
+      let options = []
+      for (let element of results) {
+        options.push({ value: element.sample_id, label: element.sample_id });
+      }
+      console.log(options);
+      return res.status(200).json({ options:options });
+    }
+  );
+  console.log(query.sql);
+});
+
 router.post("/add", (req, res) => {
     var sample = {
       sample_id: 456,

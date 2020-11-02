@@ -5,6 +5,9 @@ import DatePicker from 'react-datepicker';
 import Header from './Header';
 import { formatISO } from "date-fns";
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
+
+const config = require('../config/config.json')
 
 export default class AddChild extends Component {
     constructor(props) {
@@ -22,6 +25,7 @@ export default class AddChild extends Component {
     static propTypes = {
         prop: PropTypes
     }
+    
     createJson = () => {
         let child = {}
         for (const [key, value] of Object.entries(this.state)) {
@@ -35,13 +39,22 @@ export default class AddChild extends Component {
         return child
     }
     saveAndExit = async () => {
-        const result = this.createJson();
-        const res = await axios.post('http://localhost:5000/child/add', result);
-        console.log(res.data.json)
+        // const result = this.createJson();
+        // const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
+        // console.log(res.data)
+        this.props.history.push('/home')
 
     }
-    saveAndAddAnother = () => {
-        console.log(this.state);
+    saveAndAddAnother = async () => {
+        // const result = this.createJson();
+        // const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
+        // console.log(res.data)
+        this.setState({
+            eval: '',
+            hb: '',
+            pb: '',
+            density: ''
+        });
     }
     render() {
         return (
