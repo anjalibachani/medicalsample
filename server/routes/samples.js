@@ -4,14 +4,34 @@ const db = require("../db/dbconnect");
 
 router.get("/getSampleIDs", async (req, res) => {
   var query = await db.query(
-    "SELECT `sample_id`,`eval` FROM `samples`",(error, results, fields) => {
+    "SELECT distinct `sample_id` FROM `samples`",
+    (error, results, fields) => {
       if (error) throw error;
-      let options = []
+      let options = [];
       for (let element of results) {
         options.push({ value: element.sample_id, label: element.sample_id });
       }
       console.log(options);
-      return res.status(200).json({ options:options });
+      return res.status(200).json({ options: options });
+    }
+  );
+  console.log(query.sql);
+});
+
+router.get("/getSampleEvals/:sample_id", async (req, res) => {
+  console.log(req.params.sample_id);
+  var query = await db.query(
+    "SELECT `eval` FROM `samples` WHERE `sample_id`=?",
+    [req.params.sample_id],
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log(results);
+      let options = [];
+      for (let element of results) {
+        options.push({ value: element.eval, label: element.eval });
+      }
+      console.log(options);
+      return res.status(200).json({ options: options });
     }
   );
   console.log(query.sql);

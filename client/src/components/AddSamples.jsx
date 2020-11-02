@@ -20,13 +20,21 @@ class AddSamples extends Component {
 		this.state = {
 			types: [],
 			selectedOption: null,
+			selectedIdOption: null,
+			selectedEvalOption: null,
 			formFields: [],
-			sampleIdOptions:[]
+			sampleIdOptions: [],
+			evalOptions:[]
 		}
 	}
 	async getsampleIdOptions() {
-		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
-		this.setState({ sampleIdOptions: res.data.options })
+		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
+		this.setState({ sampleIdOptions: ids.data.options })
+	}
+	async getEvalOptions(sample_id) {
+		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
+		console.log('evals.data.options',evals.data.options);
+		this.setState({ evalOptions: evals.data.options })
 	}
 	componentDidMount() {
 		let array = []
@@ -34,6 +42,7 @@ class AddSamples extends Component {
 			array.push({ value: element.name, label: element.name });
 		});
 		this.setState({ types: array });
+		this.getsampleIdOptions();
 	}
 	clearFormFields = () => {
 		this.setState({ selectedOption: null, formFields: [] });
@@ -41,6 +50,14 @@ class AddSamples extends Component {
 	handleChange = selectedOption => {
 		this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
 	};
+	handleIDChange = selectedOption => {
+		this.setState({ selectedIdOption: selectedOption });
+		this.getEvalOptions(selectedOption.value);
+		console.log("selectedIdOption", selectedOption);
+	}
+	handleEvalChange = selectedOption => {
+		this.setState({ selectedEvalOption: selectedOption });
+	}
 	getMappingFiledsByType = name => {
 		sampleTypes.types.forEach(element => {
 			if (element.name === name) {
@@ -50,7 +67,7 @@ class AddSamples extends Component {
 		});
 	}
 	render() {
-		const { types, selectedOption, formFields } = this.state;
+		const { types, selectedOption, formFields, selectedIdOption, selectedEvalOption } = this.state;
 		console.log("sampleIdOptions:",this.state.sampleIdOptions)
 		console.log('firmfields: ', formFields);
 		return (
@@ -62,20 +79,30 @@ class AddSamples extends Component {
 								<Header />
 								<Container fluid>
 								<Row>
-									<Col md="auto">
+									{/* <Col md="auto">
 										<h3 className="text-dark">Add samples:</h3>
-										</Col>
-										<Col md="auto">
+										</Col> */}
+										{/* <Col md="auto">
 											<h5 className="ml-5 mt-1 text-dark">Please Select Sample Type:</h5>
-										</Col>
+										</Col> */}
 										<Col>
 											<Select
 												label="Sample ID's"
 												placeholder="Select Sample ID"
 												isSearchable={true}
-												value=""
-												// onChange={this.handleChange}
+												value={selectedIdOption}
+												onChange={this.handleIDChange}
 												options={this.state.sampleIdOptions}
+											/>
+										</Col>
+										<Col>
+											<Select
+												label="Sample Eval"
+												placeholder="Select Eval"
+												isSearchable={true}
+												value={selectedEvalOption}
+												onChange={this.handleEvalChange}
+												options={this.state.evalOptions}
 											/>
 										</Col>
 										<Col md="4">
