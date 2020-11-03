@@ -21,7 +21,7 @@ router.get("/getSampleIDs", async (req, res) => {
 router.get("/getSampleEvals/:sample_id", async (req, res) => {
   console.log(req.params.sample_id);
   var query = await db.query(
-    "SELECT `eval` FROM `samples` WHERE `sample_id`=?",
+    "SELECT distinct `eval` FROM `samples` WHERE `sample_id`=?",
     [req.params.sample_id],
     (error, results, fields) => {
       if (error) throw error;

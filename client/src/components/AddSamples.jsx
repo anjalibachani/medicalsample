@@ -3,11 +3,12 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
 import Select from 'react-select';
 import FormFields from './FormFields';
-import Header from './Header';	
+import Header from './Header';
 import axios from 'axios';
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import CustomTabs from './CustomTabs';
 
 
 const sampleTypes = require("../config/types.json");
@@ -16,7 +17,6 @@ const config = require('../config/config.json')
 class AddSamples extends Component {
 	constructor(props) {
 		super(props);
-		this.inputRef = React.createRef();
 		this.state = {
 			types: [],
 			selectedOption: null,
@@ -24,7 +24,9 @@ class AddSamples extends Component {
 			selectedEvalOption: null,
 			formFields: [],
 			sampleIdOptions: [],
-			evalOptions:[]
+			evalOptions: [],
+			multiValue: [],
+			tabsMapping: []
 		}
 	}
 	async getsampleIdOptions() {
@@ -33,7 +35,7 @@ class AddSamples extends Component {
 	}
 	async getEvalOptions(sample_id) {
 		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
-		console.log('evals.data.options',evals.data.options);
+		console.log('evals.data.options', evals.data.options);
 		this.setState({ evalOptions: evals.data.options })
 	}
 	componentDidMount() {
@@ -47,9 +49,9 @@ class AddSamples extends Component {
 	clearFormFields = () => {
 		this.setState({ selectedOption: null, formFields: [] });
 	}
-	handleChange = selectedOption => {
-		this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
-	};
+	// handleChange = selectedOption => {
+	// 	this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
+	// };
 	handleIDChange = selectedOption => {
 		this.setState({ selectedIdOption: selectedOption });
 		this.getEvalOptions(selectedOption.value);
@@ -58,18 +60,41 @@ class AddSamples extends Component {
 	handleEvalChange = selectedOption => {
 		this.setState({ selectedEvalOption: selectedOption });
 	}
-	getMappingFiledsByType = name => {
+	handleMultiChange = selectedOption => {
+		let array = []
+		{
+			(() => {
+				if (selectedOption) {
+					selectedOption.map((ele) => {
+						var res = this.createTabsMppping(ele.value)
+						array.push({ key: ele, val: res[0] });
+					})
+				}
+				this.setState({ multiValue: selectedOption });
+				this.setState({ tabsMapping: array });
+			})()
+		}
+	}
+	createTabsMppping = name => {
+		let array = []
 		sampleTypes.types.forEach(element => {
 			if (element.name === name) {
+				array.push(element.values)
 				this.setState({ formFields: element.values });
-
+				return element.values
 			}
 		});
+		return array
 	}
+	// getMappingFiledsByType = name => {
+	// 	sampleTypes.types.forEach(element => {
+	// 		if (element.name === name) {
+	// 			this.setState({ formFields: element.values });
+	// 		}
+	// 	});
+	// }
 	render() {
-		const { types, selectedOption, formFields, selectedIdOption, selectedEvalOption } = this.state;
-		console.log("sampleIdOptions:",this.state.sampleIdOptions)
-		console.log('firmfields: ', formFields);
+		const { types, selectedOption, formFields, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
 		return (
 			<div>
 				{(() => {
@@ -78,8 +103,8 @@ class AddSamples extends Component {
 							<>
 								<Header />
 								<Container fluid>
-								<Row>
-									{/* <Col md="auto">
+									<Row>
+										{/* <Col md="auto">
 										<h3 className="text-dark">Add samples:</h3>
 										</Col> */}
 										{/* <Col md="auto">
@@ -110,15 +135,20 @@ class AddSamples extends Component {
 												label="Sample Type"
 												placeholder="Select Sample Type"
 												isSearchable={true}
-												value={selectedOption}
-												onChange={this.handleChange}
+												// value={selectedOption}
+												value={multiValue}
+												// onChange={this.handleChange}
+												onChange={this.handleMultiChange}
 												options={types}
+												isMulti
 											/>
 										</Col>
-								</Row>
+									</Row>
 								</Container>
-								<hr/>
-								<FormFields fields={formFields} clearFormFields={this.clearFormFields} sampleType={selectedOption}/>
+								<hr />
+								{/* <CustomTabs tabs={multiValue} fields={formFields}/> */}
+								<CustomTabs tabs={tabsMapping} />
+								{/* <FormFields fields={formFields} clearFormFields={this.clearFormFields} sampleType={selectedOption}/> */}
 							</>
 						);
 					} else {

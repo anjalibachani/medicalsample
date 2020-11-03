@@ -35,9 +35,6 @@ export default class FormFields extends Component {
     }
     render() {
         const { fields } = this.props;
-        const { sampleType } = this.props;
-        console.log("sampleType",sampleType);
-        console.log("state in formfields: ", this.state);
         return (
             <div>
                 <Container fluid>
