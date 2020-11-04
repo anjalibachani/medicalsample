@@ -12,6 +12,7 @@ const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
 const addshipment = require('./routes/addshipment');
 const child = require('./routes/child');
+const filter = require('./routes/filter')
 const app = express();
 // app.use(express.static(path.join(__dirname, "../client/build")));
 // app.get("/*", (req, res) => {
@@ -38,4 +39,5 @@ app.post("/api/login",login);
 app.post("/api/googlelogin", googlelogin);
 app.post("/api/forgot-password",forgotpassword)
 app.post("/api/reset-password/:id",resetpassword)
+app.get("/api/filter",filter)
 app.get('/test', (req, res) => { res.send({ result: "test success" }) });

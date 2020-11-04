@@ -4,11 +4,9 @@ import './Login.css';
 import Axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import CustomAlertBanner from "./CustomAlertBanner";
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
-import { parseWithOptions } from 'date-fns/fp';
+import { Button,Form} from 'react-bootstrap';
 
 const config = require('../config/config.json')
-const AddSamples = require('./AddSamples');
 
 class Login extends React.Component{
     
@@ -31,7 +29,10 @@ class Login extends React.Component{
     }
     
     success_responseGoogle(response){
-        this.state.email_id=response.profileObj.email;
+        this.setState({
+          email_id: response.profileObj.email
+        })
+        //this.state.email_id=response.profileObj.email;
         Axios.post(`http://${config.server.host}:${config.server.port}/api/googlelogin`,{tokenId:response.tokenId}).then((response)=>{
                 if(response.status === 200){
                     localStorage.setItem('user_id',response.data.user_id);
