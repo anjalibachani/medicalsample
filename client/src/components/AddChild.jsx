@@ -219,9 +219,9 @@ export default class AddChild extends Component {
                         </Col>
                     </Row>
                     <hr />
-                    <Button className="ml-4" size="lg" onClick={this.saveAndExit}> Save and Exit</Button>
-                    <Button className="ml-4" size="lg" onClick={this.saveAndAddAnother}> Save and add another</Button>
-                    <Button className="ml-4" size="lg" href="/AddSamples"> Go to Add Samples</Button>
+                    <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndExit}> Save and Exit</Button>
+                    <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddAnother}> Save and add another</Button>
+                    <Button variant="dark" className="ml-4" size="lg" href="/AddSamples"> Go to Add Samples</Button>
                 </Container>
             </div>
         )

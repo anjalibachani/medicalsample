@@ -35,6 +35,7 @@ export default class FormFields extends Component {
     }
     render() {
         const { fields } = this.props;
+
         return (
             <div>
                 <Container fluid>
@@ -130,14 +131,15 @@ export default class FormFields extends Component {
                     </Row>
                 </Container>
                 <hr />
-                {fields.length != 0 ?
+                {/* {fields.length != 0 ?
                 <>
                     <Button className="ml-2" variant="outline-dark" size="lg"  onClick={this.clearFields}> Clear</Button>
                     <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save} > Save </Button>
                  </>
                 :
-                null}
-                 <SaveModal handleClose={this.handleClose} data={this.state.data} show={this.state.show} />
+                null} 
+                <SaveModal handleClose={this.handleClose} data={this.state.data} show={this.state.show} />
+                */}
             </div>
         )
     }

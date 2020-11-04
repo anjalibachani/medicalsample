@@ -1,373 +1,266 @@
 {
-    "types": [
+  "types": [
+    {
+      "name": "Blood",
+      "values": [
         {
-            "name": "Blood",
-            "values": [
-                {
-                    "fieldName": "ID",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Date",
-                    "fieldType": "date"
-                },
-                {
-                    "fieldName": "Eval",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Fasted",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Unrestricted consent for samples",
-                    "fieldType": "checkbox"
-                },    
-                {
-                    "fieldName": "Aliquots",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Initial storage conditions",
-                    "fieldType": "select",
-                    "values": [
-                        "-20C",
-                        "-80C",
-                        "4C"
-                    ]
-                },
-                {
-                    "fieldName": "Sub study",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Sub study Name",
-                    "fieldType": "select",
-                    "values": [
-                        "Scola-Exposome",
-                        "MOX-IN"
-                    ]
-                },
-                 {
-                    "fieldName": "Additives",
-                    "fieldType": "multicheckbox",
-                    "values": [
-                        "Heparin",
-                        "EDTA"
-                    ]
-                }
-            ]
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Fasted",
+          "fieldType": "checkbox"
         },
         {
-            "name": "Urine",
-            "values": [
-                {
-                    "fieldName": "ID",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Date",
-                    "fieldType": "date"
-                },
-                {
-                    "fieldName": "Eval",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Aliquots",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Unrestricted consent for samples",
-                    "fieldType": "checkbox"
-                }, 
-                {
-                    "fieldName": "Additives",
-                    "fieldType": "multicheckbox",
-                    "values": [
-                        "BHT"
-                    ]
-                },
-                {
-                    "fieldName": "Initial storage conditions",
-                    "fieldType": "select",
-                    "values": [
-                        "-20C",
-                        "-80C",
-                        "4C"
-                    ]
-                },
-                {
-                    "fieldName": "Sub study",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Sub study Name",
-                    "fieldType": "select",
-                    "values": [
-                        "Scola-Exposome",
-                        "MOX-IN"
-                    ]
-                }
-            ]
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
         },
         {
-            "name": "Hair",
-            "values": [
-                {
-                    "fieldName": "ID",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Date",
-                    "fieldType": "date"
-                },
-                {
-                    "fieldName": "Eval",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Unrestricted consent for samples",
-                    "fieldType": "checkbox"
-                }
-            ]
+          "fieldName": "Aliquots",
+          "fieldType": "text"
         },
         {
-            "name": "Serum",
-            "values": [
-                {
-                    "fieldName": "ID",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Date",
-                    "fieldType": "date"
-                },
-                {
-                    "fieldName": "Eval",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Fasted",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Aliquots",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Foil wrapping",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Unrestricted consent for samples",
-                    "fieldType": "checkbox"
-                },
-                 
-                {
-                    "fieldName": "Other treatments",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Initial storage conditions",
-                    "fieldType": "select",
-                    "values": [
-                        "-20C",
-                        "-80C"
-                    ]
-                },
-                {
-                    "fieldName": "Sub study",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Sub study Name",
-                    "fieldType": "select",
-                    "values": [
-                        "Scola-Exposome",
-                        "MOX-IN"
-                    ]
-                }
-            ]
+          "fieldName": "Initial storage conditions",
+          "fieldType": "select",
+          "values": ["-20C", "-80C", "4C"]
         },
         {
-            "name": "Plasma",
-            "values": [
-                {
-                    "fieldName": "ID",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Date",
-                    "fieldType": "date"
-                },
-                {
-                    "fieldName": "Eval",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Fasted",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Unrestricted consent for samples",
-                    "fieldType": "checkbox"
-                },
-                 
-                {
-                    "fieldName": "Aliquots",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Foil wrapping",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Other treatments",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Initial storage conditions",
-                    "fieldType": "select",
-                    "values": [
-                        "-20C",
-                        "-80C"
-                    ]
-                },
-                {
-                    "fieldName": "Sub study",
-                    "fieldType": "checkbox"
-                },
-                {
-                    "fieldName": "Sub study Name",
-                    "fieldType": "select",
-                    "values": [
-                        "Scola-Exposome",
-                        "MOX-IN"
-                    ]
-                }, {
-                    "fieldName": "Additives",
-                    "fieldType": "multicheckbox",
-                    "values": [
-                        "Heparin",
-                        "MPA"
-                    ]
-                }
-            ]
+          "fieldName": "Sub study",
+          "fieldType": "checkbox"
         },
         {
-            "name": "Tooth",
-            "values": [
-                {
-                    "fieldName": "ID",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Date",
-                    "fieldType": "date"
-                },
-                {
-                    "fieldName": "Eval",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Unrestricted consent for samples",
-                    "fieldType": "checkbox"
-                }  
-            ]
+          "fieldName": "Sub study Name",
+          "fieldType": "select",
+          "values": ["Scola-Exposome", "MOX-IN"]
         },
         {
-            "name": "Silicone wristband",
-            "values": [
-                {
-                    "fieldName": "ID",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Date",
-                    "fieldType": "date"
-                },
-                {
-                    "fieldName": "Eval",
-                    "fieldType": "text"
-                },
-                {
-                    "fieldName": "Initial storage conditions",
-                    "fieldType": "select",
-                    "values": [
-                        "-20C",
-                        "4C",
-                        "Room temperature"
-                    ]
-                },
-                {
-                    "fieldName": "Unrestricted consent for samples",
-                    "fieldType": "checkbox"
-                }  
-            ]
-        },
-        {
-          "name": "Water",
-          "values": [
-            {
-              "fieldName": "ID",
-              "fieldType": "text"
-            },
-            {
-              "fieldName": "Date",
-              "fieldType": "date"
-            },
-            {
-              "fieldName": "Eval",
-              "fieldType": "text"
-            },
-            {
-              "fieldName": "Unrestricted consent for samples",
-              "fieldType": "checkbox"
-            }
-          ]
-        },
-        {
-          "name": "Soil",
-          "values": [
-            {
-              "fieldName": "ID",
-              "fieldType": "text"
-            },
-            {
-              "fieldName": "Date",
-              "fieldType": "date"
-            },
-            {
-              "fieldName": "Eval",
-              "fieldType": "text"
-            },
-            {
-              "fieldName": "Unrestricted consent for samples",
-              "fieldType": "checkbox"
-            }
-          ]
-        },
-        {
-          "name": "Dust",
-          "values": [
-            {
-              "fieldName": "ID",
-              "fieldType": "text"
-            },
-            {
-              "fieldName": "Date",
-              "fieldType": "date"
-            },
-            {
-              "fieldName": "Eval",
-              "fieldType": "text"
-            },
-            {
-              "fieldName": "Unrestricted consent for samples",
-              "fieldType": "checkbox"
-            }
-          ]
+          "fieldName": "Additives",
+          "fieldType": "multicheckbox",
+          "values": ["Heparin", "EDTA"]
         }
-    ]
+      ]
+    },
+    {
+      "name": "Urine",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Aliquots",
+          "fieldType": "text"
+        },
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Additives",
+          "fieldType": "multicheckbox",
+          "values": ["BHT"]
+        },
+        {
+          "fieldName": "Initial storage conditions",
+          "fieldType": "select",
+          "values": ["-20C", "-80C", "4C"]
+        },
+        {
+          "fieldName": "Sub study",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Sub study Name",
+          "fieldType": "select",
+          "values": ["Scola-Exposome", "MOX-IN"]
+        }
+      ]
+    },
+    {
+      "name": "Hair",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        }
+      ]
+    },
+    {
+      "name": "Serum",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Fasted",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Aliquots",
+          "fieldType": "text"
+        },
+        {
+          "fieldName": "Foil wrapping",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        },
+
+        {
+          "fieldName": "Other treatments",
+          "fieldType": "text"
+        },
+        {
+          "fieldName": "Initial storage conditions",
+          "fieldType": "select",
+          "values": ["-20C", "-80C"]
+        },
+        {
+          "fieldName": "Sub study",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Sub study Name",
+          "fieldType": "select",
+          "values": ["Scola-Exposome", "MOX-IN"]
+        }
+      ]
+    },
+    {
+      "name": "Plasma",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Fasted",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        },
+
+        {
+          "fieldName": "Aliquots",
+          "fieldType": "text"
+        },
+        {
+          "fieldName": "Foil wrapping",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Other treatments",
+          "fieldType": "text"
+        },
+        {
+          "fieldName": "Initial storage conditions",
+          "fieldType": "select",
+          "values": ["-20C", "-80C"]
+        },
+        {
+          "fieldName": "Sub study",
+          "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Sub study Name",
+          "fieldType": "select",
+          "values": ["Scola-Exposome", "MOX-IN"]
+        },
+        {
+          "fieldName": "Additives",
+          "fieldType": "multicheckbox",
+          "values": ["Heparin", "MPA"]
+        }
+      ]
+    },
+    {
+      "name": "Tooth",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        }
+      ]
+    },
+    {
+      "name": "Silicone wristband",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Initial storage conditions",
+          "fieldType": "select",
+          "values": ["-20C", "4C", "Room temperature"]
+        },
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        }
+      ]
+    },
+    {
+      "name": "Water",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        }
+      ]
+    },
+    {
+      "name": "Soil",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        }
+      ]
+    },
+    {
+      "name": "Dust",
+      "values": [
+        {
+          "fieldName": "Date",
+          "fieldType": "date"
+        },
+
+        {
+          "fieldName": "Unrestricted consent for samples",
+          "fieldType": "checkbox"
+        }
+      ]
+    }
+  ]
 }

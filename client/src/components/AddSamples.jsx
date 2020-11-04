@@ -102,15 +102,9 @@ class AddSamples extends Component {
 						return (
 							<>
 								<Header />
-								<Container fluid>
+								<Container>
 									<Row>
-										{/* <Col md="auto">
-										<h3 className="text-dark">Add samples:</h3>
-										</Col> */}
-										{/* <Col md="auto">
-											<h5 className="ml-5 mt-1 text-dark">Please Select Sample Type:</h5>
-										</Col> */}
-										<Col>
+										<Col md="4">
 											<Select
 												label="Sample ID's"
 												placeholder="Select Sample ID"
@@ -120,7 +114,7 @@ class AddSamples extends Component {
 												options={this.state.sampleIdOptions}
 											/>
 										</Col>
-										<Col>
+										<Col md="4">
 											<Select
 												label="Sample Eval"
 												placeholder="Select Eval"
@@ -135,9 +129,7 @@ class AddSamples extends Component {
 												label="Sample Type"
 												placeholder="Select Sample Type"
 												isSearchable={true}
-												// value={selectedOption}
 												value={multiValue}
-												// onChange={this.handleChange}
 												onChange={this.handleMultiChange}
 												options={types}
 												isMulti
