@@ -147,87 +147,93 @@ export default class AddChild extends Component {
     render() {
         return (
             <div>
-                <Header />{
-                    console.log("eroor",this.state.alertText)
-                }
-                {this.state.alertVisibility &&
-                    <CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
-                }
-                <Container fluid>
-                    <Row> <Col className="custom-col" md="auto">
-                        <InputGroup className="mb-3">
-                            <InputGroup.Prepend>
-                                <InputGroup.Text>ID:</InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl
-                                id="sample_id"
-                                type="number"
-                                value={this.state.sample_id}
-                                onChange={e => this.setState({ sample_id: e.target.value })} />
-                        </InputGroup>
-                        <InputGroup className="mb-3">
-                            <InputGroup.Prepend>
-                                <InputGroup.Text>Eval:</InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl
-                                id="eval"
-                                type="number"
-                                value={this.state.eval}
-                                onChange={e => this.setState({ eval: e.target.value })} />
-                        </InputGroup>
-                        <InputGroup className="mb-3">
-                            <InputGroup.Prepend>
-                                <InputGroup.Text>Date:</InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <DatePicker
-                                className="form-control"
-                                fixedHeight={false}
-                                selected={this.state.date}
-                                onChange={e => this.setState({ date: e })}
-                            />
-                        </InputGroup>
-                    </Col>
-                        <Col>
-                            <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text>Pb:</InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl
-                                    id="pb"
-                                    type="number"
-                                    step="0.1"
-                                    value={this.state.pb}
-                                    onChange={e => this.setState({ pb: e.target.value })} />
-                            </InputGroup>
-                            <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text>Hb:</InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl
-                                    id="hb"
-                                    type="number"
-                                    step="0.1"
-                                    value={this.state.hb}
-                                    onChange={e => this.setState({ hb: e.target.value })} />
-                            </InputGroup>
-                            <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text>Density:</InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl
-                                    id="density"
-                                    type="number"
-                                    step="0.001"
-                                    value={this.state.density}
-                                    onChange={e => this.setState({ density: e.target.value })} />
-                            </InputGroup>
-                        </Col>
-                    </Row>
-                    <hr />
-                    <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndExit}> Save and Exit</Button>
-                    <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddAnother}> Save and add another</Button>
-                    <Button variant="dark" className="ml-4" size="lg" href="/AddSamples"> Go to Add Samples</Button>
-                </Container>
+                {(() => {
+                    if (localStorage.getItem("user_id") !== null) {
+                        return (<>
+                            <Header />
+                            {this.state.alertVisibility &&
+                                <CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
+                            }
+                            <Container fluid>
+                                <Row> <Col className="custom-col" md="auto">
+                                    <InputGroup className="mb-3">
+                                        <InputGroup.Prepend>
+                                            <InputGroup.Text>ID:</InputGroup.Text>
+                                        </InputGroup.Prepend>
+                                        <FormControl
+                                            id="sample_id"
+                                            type="number"
+                                            value={this.state.sample_id}
+                                            onChange={e => this.setState({ sample_id: e.target.value })} />
+                                    </InputGroup>
+                                    <InputGroup className="mb-3">
+                                        <InputGroup.Prepend>
+                                            <InputGroup.Text>Eval:</InputGroup.Text>
+                                        </InputGroup.Prepend>
+                                        <FormControl
+                                            id="eval"
+                                            type="number"
+                                            value={this.state.eval}
+                                            onChange={e => this.setState({ eval: e.target.value })} />
+                                    </InputGroup>
+                                    <InputGroup className="mb-3">
+                                        <InputGroup.Prepend>
+                                            <InputGroup.Text>Date:</InputGroup.Text>
+                                        </InputGroup.Prepend>
+                                        <DatePicker
+                                            className="form-control"
+                                            fixedHeight={false}
+                                            selected={this.state.date}
+                                            onChange={e => this.setState({ date: e })}
+                                        />
+                                    </InputGroup>
+                                </Col>
+                                    <Col>
+                                        <InputGroup className="mb-3">
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text>Pb:</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl
+                                                id="pb"
+                                                type="number"
+                                                step="0.1"
+                                                value={this.state.pb}
+                                                onChange={e => this.setState({ pb: e.target.value })} />
+                                        </InputGroup>
+                                        <InputGroup className="mb-3">
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text>Hb:</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl
+                                                id="hb"
+                                                type="number"
+                                                step="0.1"
+                                                value={this.state.hb}
+                                                onChange={e => this.setState({ hb: e.target.value })} />
+                                        </InputGroup>
+                                        <InputGroup className="mb-3">
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text>Density:</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl
+                                                id="density"
+                                                type="number"
+                                                step="0.001"
+                                                value={this.state.density}
+                                                onChange={e => this.setState({ density: e.target.value })} />
+                                        </InputGroup>
+                                    </Col>
+                                </Row>
+                                <hr />
+                                <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndExit}> Save and Exit</Button>
+                                <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddAnother}> Save and add another</Button>
+                                <Button variant="dark" className="ml-4" size="lg" href="/AddSamples"> Go to Add Samples</Button>
+                            </Container>
+                        </>)
+                    } else {
+                        return (<Redirect to="/login" />)
+                    }
+                })()}
             </div>
         )
     }
