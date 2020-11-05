@@ -3,6 +3,7 @@ import { Row, Col, ButtonGroup, Button } from 'react-bootstrap';
 import CustomTable from './CustomTable'; 
 import CustomAlertBanner from './CustomAlertBanner';
 import Header from './Header';
+import Basic2Table from './Basic2Table';
 //import { Text } from 'react-native-elements';
 
 /* This is the 'See Shipments' page. */
@@ -89,7 +90,7 @@ class ViewShipments extends Component {
 
 				<hr />
                 
-				<CustomTable getRows={this.getRowsDefault} numCols={5} numRows={this.state.shipments.length} cols={['Date','From','To','Samples','Received']} toPopulateWith={this.state.shipments} reset={this.state.resetChecksSamples} getRows={this.getCheckedStateFromShipmentTable}/>
+				<Basic2Table/>
             
 			</div>
         )                
