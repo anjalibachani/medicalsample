@@ -29,14 +29,14 @@ class Row extends Component {
 
 	/* EVENT HANDLERS: */
 
-	// handleChange = (e) => {
-	// 	this.props.checkCallback(this.props.number, e.target.checked);
-	// }
+	handleChange = (e) => {
+		this.props.checkCallback(this.props.number, e.target.checked);
+	}
 
-	// handleClick = (e) => {
-	// 	console.log("Clicked row #" + this.props.number);
-	// 	this.props.click (this.props.number);
-	// }
+	handleClick = (e) => {
+		console.log("Clicked row #" + this.props.number);
+		this.props.click (this.props.number);
+	}
 }
 
 export default Row;           

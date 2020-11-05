@@ -2,26 +2,60 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal } from 'react-bootstrap';
 import CustomAlertBanner from './CustomAlertBanner'
-import CustomTable from './CustomTable';
+//import CustomTable from './CustomTable';
 import Filter from './Filter';
 import Select from 'react-select';
 import Header from './Header';
-
 /* Note: DatePicker is an additional dependency, NOT included in
  * react-bootstrap! Documentation can be found at https://reactdatepicker.com/
  */
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+//import DataTable from 'react-data-table-component';
+import DataTable from './DataTable'
 const config = require('../config/config.json')
 const phpServerURL=null
 const nodeserverURL = `http://${config.server.host}:${config.server.port}`
 /* CreateShipments: this is the interface for entering a new shipment into the
  * database. This works very similarly to AddSamples.
  */
+const columns = [
+	{
+	  name: 'ID',
+	  selector: 'sample_id',
+	  sortable: true,
+	},
+	{
+	  name: 'Eval',
+	  selector: 'eval',
+	  sortable: true,
+	  right: true,
+	},
+	{
+	  name: 'Date',
+	  selector: 'date',
+	  sortable: true,
+	  right: true,
+	},
+	{
+	  name: 'Type',
+	  selector: 'type',
+	  sortable: true,
+	  right: true,
+	},
+	{
+	  name: 'Aliquots',
+	  selector: 'aliquots',
+	  sortable: true,
+	  right: true,
+	},
+  ];
+
 class CreateShipments extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			data:[],
 			/* Shipment data is tracked here, to be validated and sent to the
 			 * database. They begin empty.
 			 */
@@ -138,7 +172,6 @@ class CreateShipments extends Component {
 		filterReq.send();
 
 
-
 	}
 
 	// /*Callback method for filter components that sends the contents of the
@@ -161,6 +194,12 @@ class CreateShipments extends Component {
 	 * are in other shipments. This happens in a few steps...
 	 */
 	componentDidMount() {
+		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
+		console.log(response.data)
+		this.setState({
+		data : response.data
+	});
+})
 		//alert('helo') 
 		
 		/* To begin, retrieve all samples... */
@@ -257,8 +296,8 @@ class CreateShipments extends Component {
 	}
 
 	render() {
-		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
-			console.log(response.data);});
+		//Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
+		//	console.log(response.data)});
 			
 		//This variable, and the following chunk of code, are necessary so that the
 		//shipment table doesn't disappear when there are no samples added!
@@ -385,7 +424,16 @@ class CreateShipments extends Component {
 				</div>
 				<Row>
 					<Col>
-						<CustomTable numCols={5} numRows={shippingTableRowData.length} cols={['ID', 'Eval', 'Date', 'Type', 'Aliquots']} getRows={this.getCheckedStateFromShipmentTable} toPopulateWith={shippingTableRowData} reset={this.state.resetChecksShipment} />
+					{/* <DataTable/> */}
+					<DataTable
+					columns={columns}
+					data={this.state.data}
+					keyField="sample_key"
+					selectableRows
+					striped={true}
+					highlightOnHover
+					pagination
+ />
 					</Col>
 					<Col md="auto">
 						<div style={{ padding: 25 }}>
@@ -394,7 +442,8 @@ class CreateShipments extends Component {
 						</div>
 					</Col>
 					<Col>
-						<CustomTable numCols={5} numRows={shippingTableRowData.length} cols={['ID', 'Eval', 'Date', 'Type', 'Aliquots']} getRows={this.getCheckedStateFromShipmentTable} toPopulateWith={shippingTableRowData} reset={this.state.resetChecksShipment} />
+					{/* <DataTable/> */}
+					<DataTable columns={columns} data ={this.state.data} numRows={shippingTableRowData.length} cols={['ID','Eval','Date','Type','Aliquots']} getRows={this.getCheckedStateFromShipmentTable} toPopulateWith={shippingTableRowData} reset={this.state.resetChecksShipment}/>
 					</Col>
 				</Row>
 				<Modal size="lg" show={this.state.showModal}>
@@ -521,6 +570,7 @@ class CreateShipments extends Component {
 	 * below) for inclusion in the aliquot selector modal.
 	 */
 	selectAliquotsForShipment() {
+		// alert("C")
 		var areChecks = false;
 		for (var checked in this.state.checkedRowsSamples) {
 			if (checked) {
@@ -638,10 +688,10 @@ class CreateShipments extends Component {
 			errorString = "Please enter the shipment's recipient in the 'To:' field."
 		}
 
-		if (this.state.samplesadded.length === 0) {
-			errors = true;
-			errorString = "This shipment has no samples!"
-		}
+		// if (this.state.samplesadded.length === 0) {
+		// 	errors = true;
+		// 	errorString = "This shipment has no samples!"
+		// }
 
 		if (errors) {
 			this.setState({
