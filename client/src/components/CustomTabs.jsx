@@ -39,20 +39,20 @@ export default class CustomTabs extends Component {
         console.log("size", size);
         return (
             <Container fluid>
-                {
+                {/* {
                     tabs.map((item, index) => {
                         return (<><h4 className="text-dark">{item.key.value} Sample:</h4><br />
                              <FormFields fields={item.val} size={size} /></>
                             )
                     })
-                }
-                {size != 0 ?
+                } */}
+                {/* {size != 0 ?
                     <>
                         <Button className="ml-2" variant="outline-dark" size="lg" onClick={this.clearFields}> Clear</Button>
                         <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save}> Save </Button>
                     </>
                     :
-                    null}
+                    null} */}
             </Container>
         )
     }

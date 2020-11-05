@@ -14,6 +14,7 @@ const addshipment = require('./routes/addshipment');
 const child = require('./routes/child');
 const filter = require('./routes/filter')
 const app = express();
+const viewshipments = require('./routes/viewshipments');
 // app.use(express.static(path.join(__dirname, "../client/build")));
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
@@ -30,6 +31,7 @@ app.use(function(req, res, next) {
 app.use('/samples', samples);
 app.use("/child", child);
 app.use('/addshipment',addshipment);
+app.use('/shipment', viewshipments);
 port = config.port;
 
 app.listen(port,()=>{

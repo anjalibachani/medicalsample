@@ -2,6 +2,19 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
 
+
+router.get("/checkIDandEval", async (req, res) => {
+  var query = await db.query(
+    "SELECT `sample_id` FROM `samples` WHERE `sample_id`=? AND `eval`=?",[req.query.sample_id, req.query.eval],
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log(results.length);
+      return res.status(200).json({ rows:results.length });
+    }
+  );
+  console.log(query.sql);
+});
+
 router.get("/getSampleIDs", async (req, res) => {
   var query = await db.query(
     "SELECT distinct `sample_id` FROM `samples`",
@@ -36,6 +49,7 @@ router.get("/getSampleEvals/:sample_id", async (req, res) => {
   );
   console.log(query.sql);
 });
+
 
 router.post("/add", (req, res) => {
     var sample = {

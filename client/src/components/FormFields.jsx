@@ -31,11 +31,12 @@ export default class FormFields extends Component {
         this.setState({ show: false });
     }
     save = () => {
-        this.setState({show:true});
+        console.log();
     }
     render() {
-        const { fields } = this.props;
-
+        const { fields,flag,data, index} = this.props;
+        // console.log("data",data);
+        console.log("data state: ", this.state);
         return (
             <div>
                 <Container fluid>
@@ -48,16 +49,15 @@ export default class FormFields extends Component {
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
-                                id={item.fieldName}
-                                value={this.state.data[item.fieldName]}
-                                onChange={e => {
-                                    let data = this.state.data;
-                                    data[item.fieldName] = e.target.value
-                                    this.setState({ data: data })}
+                                    id={item.fieldName}
+                                    value={data[item.fieldName]}
+                                    onChange={e =>
+                                        this.props.handleTextChange(e.target.value, item.fieldName, index)
                                     } />
                             </InputGroup></Col>)
                     } else if (item.fieldType === "date") {
-                        this.state.data[item.fieldName] = new Date()
+                        data[item.fieldName] = new Date()
+                        // console.log(data[item.fieldName].toISOString().split('T')[0]);
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -65,16 +65,12 @@ export default class FormFields extends Component {
                             <DatePicker
                                 className="form-control"
                                 fixedHeight={false}
-                                selected={this.state.data[item.fieldName]}
-                                onChange={e => {
-                                    let data = this.state.data;
-                                    data[item.fieldName] = e
-                                    this.setState({ data: data })}
-                                    }
+                                selected={data[item.fieldName]}
+                                onChange={e => this.props.handleTextChange(e, item.fieldName, index) }
                             />
                         </InputGroup></Col>)
                     } else if (item.fieldType === "select") {
-                        this.state.data[item.fieldName] = item.values[0]
+                        // this.state.data[item.fieldName] = item.values[0]
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -82,12 +78,8 @@ export default class FormFields extends Component {
                             <Form.Control
                                 id={item.fieldName}
                                 as="select"
-                                value={this.state.data[item.fieldName]}
-                                onChange={e => {
-                                    let data = this.state.data;
-                                    data[item.fieldName] = e.target.value
-                                    this.setState({ data: data })}
-                                    }>
+                                value={data[item.fieldName]}
+                                onChange={e => this.props.handleTextChange(e.target.value, item.fieldName, index)}>
                                 {item.values.map(e => <option>{e}</option>)}
                             </Form.Control>
                         </InputGroup></Col>)
@@ -96,12 +88,8 @@ export default class FormFields extends Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Checkbox
                                     id={item.fieldName}
-                                    checked={this.state.data[item.fieldName]}
-                                    onChange={e => {
-                                        let data = this.state.data;
-                                        data[item.fieldName] = e.target.checked
-                                        this.setState({ data: data })}
-                                        } />
+                                    checked={data[item.fieldName]}
+                                    onChange={e => this.props.handleTextChange(e.target.checked, item.fieldName, index)} />
                             </InputGroup.Prepend>
                             <Form.Control value={item.fieldName} />
                     </InputGroup></Col>)
@@ -110,20 +98,21 @@ export default class FormFields extends Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
-                            {item.values.map(item =>
-                                <InputGroup>
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Checkbox
-                                            id={item}
-                                            checked={this.state.data[item]}
-                                            onChange={e => {
-                                                let data = this.state.data;
-                                                data[item.fieldName] = e.target.checked
-                                                this.setState({ data: data })}
-                                                } />
-                                    </InputGroup.Prepend>
-                                    <Form.Control value={item} />
-                                </InputGroup>
+                            {item.values.map(val => {
+                                // console.log("item", val);
+                                return (
+                                    <InputGroup>
+                                        <InputGroup.Prepend>
+                                            <InputGroup.Checkbox
+                                                id={val}
+                                                checked={data[val]}
+                                                onChange={e => this.props.handleTextChange(e.target.checked,val,index) } />
+                                        </InputGroup.Prepend>
+                                        <Form.Control value={val} />
+                                    </InputGroup>
+                                )
+                            }
+                                
                             )}
                 </InputGroup></Col>)
                     }
@@ -131,15 +120,14 @@ export default class FormFields extends Component {
                     </Row>
                 </Container>
                 <hr />
-                {/* {fields.length != 0 ?
+                {/* {flag ?
                 <>
                     <Button className="ml-2" variant="outline-dark" size="lg"  onClick={this.clearFields}> Clear</Button>
                     <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save} > Save </Button>
                  </>
                 :
-                null} 
-                <SaveModal handleClose={this.handleClose} data={this.state.data} show={this.state.show} />
-                */}
+                null} */}
+                 <SaveModal handleClose={this.handleClose} data={this.state.data} show={this.state.show} />
             </div>
         )
     }

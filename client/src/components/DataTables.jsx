@@ -2,9 +2,14 @@ import React, { Component } from "react";
 import DataTable, { createTheme } from 'react-data-table-component';
 import ReactDOM from "react-dom";
 const $ = require("jquery");
+<<<<<<< HEAD
 //$.DataTable = require("datatables.net");
 //$.DataTable= require("datatables.net-dt")
 
+=======
+$.DataTable = require("datatables.net");
+// $.DataTable= require("datatables.net-dt")
+>>>>>>> main
 
 
 class DataTableComp extends Component {
