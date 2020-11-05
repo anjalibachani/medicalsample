@@ -55,6 +55,7 @@ export default class AddChild extends Component {
             }
 
         }
+        child['user_id'] = localStorage.getItem("user_id")
         console.log(child);
         return child
     }
