@@ -67,13 +67,31 @@ class AddSamples extends Component {
 				if (selectedOption) {
 					selectedOption.map((ele) => {
 						var res = this.createTabsMppping(ele.value)
-						array.push({ key: ele, val: res[0] });
+						array.push({ key: ele, fields: res[0], data:[]});
 					})
 				}
 				this.setState({ multiValue: selectedOption });
 				this.setState({ tabsMapping: array });
+				// this.setState({ formFieldsState:null});
 			})()
 		}
+	}
+	onChange = (value, { action, removedValue }) => {
+		let tabsMapping = this.state.tabsMapping;
+		const { selectedIdOption, selectedEvalOption } = this.state;
+		switch (action) {
+			case 'select-option':
+				const ele = value[value.length - 1];
+				var res = this.createTabsMppping(ele.value)
+				tabsMapping.push({ key: ele, fields: res[0], data: [{selectedIdOption, selectedEvalOption}] });
+				break;
+			default:
+				tabsMapping = tabsMapping.filter(function (obj) {
+					return obj.key !== removedValue;
+				});
+				break;
+		}
+		this.setState({ multiValue: value, tabsMapping: tabsMapping });
 	}
 	createTabsMppping = name => {
 		let array = []
@@ -86,15 +104,25 @@ class AddSamples extends Component {
 		});
 		return array
 	}
-	// getMappingFiledsByType = name => {
-	// 	sampleTypes.types.forEach(element => {
-	// 		if (element.name === name) {
-	// 			this.setState({ formFields: element.values });
-	// 		}
-	// 	});
+
+	handleTextChange = (value, fieldName, index) => {
+		// console.log("Inside parent handleTextChange: ", value, fieldName, index);
+		let tabsMapping = this.state.tabsMapping
+		tabsMapping[index].data[fieldName] = value
+		this.setState({ tabsMapping: tabsMapping })
+	}
+	// handleMultiCheckBoxChange = (checked, val, index) => {
+	// 	let tabsMapping = this.state.tabsMapping
+	// 	tabsMapping[index].data[val] = checked
+	// 	this.setState({ tabsMapping: tabsMapping })
 	// }
+	save = () => {
+		console.log(this.state.tabsMapping);
+	}
 	render() {
 		const { types, selectedOption, formFields, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
+		console.log("tabsmapping ",tabsMapping);
+		const size = Object.keys(tabsMapping).length;
 		return (
 			<div>
 				{(() => {
@@ -130,7 +158,7 @@ class AddSamples extends Component {
 												placeholder="Select Sample Type"
 												isSearchable={true}
 												value={multiValue}
-												onChange={this.handleMultiChange}
+												onChange={this.onChange}
 												options={types}
 												isMulti
 											/>
@@ -139,7 +167,30 @@ class AddSamples extends Component {
 								</Container>
 								<hr />
 								{/* <CustomTabs tabs={multiValue} fields={formFields}/> */}
-								<CustomTabs tabs={tabsMapping} />
+								{/* <CustomTabs tabs={tabsMapping} /> */}
+								{
+									tabsMapping.map((item, index) => {
+										let flag = false;
+										if (index === size - 1)
+											flag = true;
+										return (<><h4 className="text-dark">{item.key.value} Sample</h4><br />
+											<FormFields
+												fields={item.fields} flag={flag}
+												data={item.data}
+												index={index}
+												handleTextChange={this.handleTextChange}
+											/>
+										</>
+										)
+									})
+								}
+								{size != 0 ?
+									<>
+										<Button className="ml-2" variant="outline-dark" size="lg" onClick={this.clearFields}> Clear</Button>
+										<Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save}> Save </Button>
+									</>
+									:
+									null}
 								{/* <FormFields fields={formFields} clearFormFields={this.clearFormFields} sampleType={selectedOption}/> */}
 							</>
 						);

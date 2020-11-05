@@ -64,7 +64,7 @@ export default class AddChild extends Component {
         const pbBelowDetectable = '<';
         var errorString = [];
         var errors = false;
-        if (this.state.sample_id === '' || this.state.eval === '' || this.state.date === '' || this.state.hb === '' || this.state.pb === '' || this.state.density === '') {
+        if (this.state.sample_id === '' || this.state.eval === '' || this.state.date === null || this.state.hb === '' || this.state.pb === '' || this.state.density === '') {
             errors = true;
             errorString.push("Please enter all required fields.\n");
         }
