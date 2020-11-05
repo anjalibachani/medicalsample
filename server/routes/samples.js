@@ -2,7 +2,56 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
 
-router.get("/add", (req, res) => {
+
+router.get("/checkIDandEval", async (req, res) => {
+  var query = await db.query(
+    "SELECT `sample_id` FROM `samples` WHERE `sample_id`=? AND `eval`=?",[req.query.sample_id, req.query.eval],
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log(results.length);
+      return res.status(200).json({ rows:results.length });
+    }
+  );
+  console.log(query.sql);
+});
+
+router.get("/getSampleIDs", async (req, res) => {
+  var query = await db.query(
+    "SELECT distinct `sample_id` FROM `samples`",
+    (error, results, fields) => {
+      if (error) throw error;
+      let options = [];
+      for (let element of results) {
+        options.push({ value: element.sample_id, label: element.sample_id });
+      }
+      console.log(options);
+      return res.status(200).json({ options: options });
+    }
+  );
+  console.log(query.sql);
+});
+
+router.get("/getSampleEvals/:sample_id", async (req, res) => {
+  console.log(req.params.sample_id);
+  var query = await db.query(
+    "SELECT distinct `eval` FROM `samples` WHERE `sample_id`=?",
+    [req.params.sample_id],
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log(results);
+      let options = [];
+      for (let element of results) {
+        options.push({ value: element.eval, label: element.eval });
+      }
+      console.log(options);
+      return res.status(200).json({ options: options });
+    }
+  );
+  console.log(query.sql);
+});
+
+
+router.post("/add", (req, res) => {
     var sample = {
       sample_id: 456,
       eval: 1,

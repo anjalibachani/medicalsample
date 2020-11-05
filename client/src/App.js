@@ -15,23 +15,26 @@ import resetpass from './components/resetpass';
 
 //import Logout from './components/Logout';
 import AddShipments from './components/AddShipments';
+import AddChild from './components/AddChild';
 import ViewShipment from './components/ViewShipment';
 import Logout from './components/Logout'
 import filterandExports from './components/filterandExports';
+import Header from "./components/Header";
 
 function App() {
   return (
-    
     <div className="App">
       <Router basename=".">
         <Switch>
           <Route path="/" exact={true} component={Login} />
           <Route path="/login" exact={true} component={Login} />
-          <Route path="/AddSamples" component={AddSamples } />
+          <Route path="/Home" exact={true} component={Header} />
+          <Route path="/AddChild" component={AddChild} />
+          <Route path="/AddSamples" component={AddSamples} />
           <Route path="/forgot-pass" component={forgotpass} />
           <Route path="/reset-pass/:id" component={resetpass} />
-          <Route path="/logout" component={Logout}/>
-          <Route path="/filterandExports" component={filterandExports}/>
+          <Route path="/logout" component={Logout} />
+          <Route path="/filterandExports" component={filterandExports} />
 
           {/* <Route path="/ViewSamples" component={ViewSamples} />
           <Route path="/Reports" component={Reports} />*/}

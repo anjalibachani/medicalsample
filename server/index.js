@@ -11,8 +11,10 @@ const samples = require('./routes/samples');
 const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
 const addshipment = require('./routes/addshipment');
-
+const child = require('./routes/child');
+const filter = require('./routes/filter')
 const app = express();
+const viewshipments = require('./routes/viewshipments');
 // app.use(express.static(path.join(__dirname, "../client/build")));
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
@@ -27,7 +29,9 @@ app.use(function(req, res, next) {
     next();
 });
 app.use('/samples', samples);
+app.use("/child", child);
 app.use('/addshipment',addshipment);
+app.use('/shipment', viewshipments);
 port = config.port;
 
 app.listen(port,()=>{
@@ -37,4 +41,5 @@ app.post("/api/login",login);
 app.post("/api/googlelogin", googlelogin);
 app.post("/api/forgot-password",forgotpassword)
 app.post("/api/reset-password/:id",resetpassword)
+app.get("/api/filter",filter)
 app.get('/test', (req, res) => { res.send({ result: "test success" }) });
