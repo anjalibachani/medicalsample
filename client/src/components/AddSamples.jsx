@@ -106,8 +106,13 @@ class AddSamples extends Component {
 	}
 
 	handleTextChange = (value, fieldName, index) => {
-		// console.log("Inside parent handleTextChange: ", value, fieldName, index);
+		console.log("Inside parent handleTextChange: ", fieldName);
 		let tabsMapping = this.state.tabsMapping
+		// if (fieldName === 'Date') {
+		// 	console.log(typeof value);
+		// 	console.log(value.toISOString().split('T')[0]);
+		// 	tabsMapping[index].data[fieldName] = value.toISOString().split('T')[0]
+		// }
 		tabsMapping[index].data[fieldName] = value
 		this.setState({ tabsMapping: tabsMapping })
 	}

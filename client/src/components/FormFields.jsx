@@ -57,6 +57,7 @@ export default class FormFields extends Component {
                             </InputGroup></Col>)
                     } else if (item.fieldType === "date") {
                         data[item.fieldName] = new Date()
+                        // console.log(data[item.fieldName].toISOString().split('T')[0]);
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
