@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import differenceBy from 'lodash/differenceBy';
 import DataTable, { createTheme } from 'react-data-table-component';
 import { Button, Form, FormControl, InputGroup, Row, Col, Modal, Container} from 'react-bootstrap';
-import CustomTable from './CustomTable';
+//import CustomTable from './CustomTable';
 import CustomAlertBanner from './CustomAlertBanner';
 import Axios from 'axios';
 import Filter from './Filter';
 import DatePicker from 'react-datepicker'
 import Header from './Header';
-import Table from './Table';
+//import Table from './Table';
 import memoize from 'memoize-one';
 const config = require('../config/config.json')
 
