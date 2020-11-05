@@ -33,22 +33,25 @@ export default class AddChild extends Component {
     createJson = () => {
         let child = {}
         for (const [key, value] of Object.entries(this.state)) {
+            console.log(typeof value);
             if (key != 'alertVisibility' && key != 'alertText' && key != 'alertVariant') {
-                if (key === 'date') {
-                    child[key] = formatISO(value, { representation: 'date' })
-                }
-                else if (key === 'pb') {
-                    child[key] = (parseFloat(value)).toFixed(1)
-                }
-                else if (key === 'hb') {
-                    child[key] = (parseFloat(value)).toFixed(1)
-                }
-                else if (key === 'density') {
-                    child[key] = (parseFloat(value)).toFixed(3)
-                }
-                else {
-                    child[key] = value
-                }
+                child[key] = value
+                // if (key === 'date') {
+                //     // child[key] = formatISO(value, { representation: 'date' })
+                //     child[key] = value
+                // }
+                // else if (key === 'pb') {
+                //     child[key] = (parseFloat(value)).toFixed(1)
+                // }
+                // else if (key === 'hb') {
+                //     child[key] = (parseFloat(value)).toFixed(1)
+                // }
+                // else if (key === 'density') {
+                //     child[key] = (parseFloat(value)).toFixed(3)
+                // }
+                // else {
+                //     child[key] = value
+                // }
             }
 
         }
@@ -56,32 +59,34 @@ export default class AddChild extends Component {
         return child
     }
     validateForms = async () => {
-        const regex_pb_hb = /^[0-9]{1,3}(\.[0-9]{0,1})?$/;
-        const regex_density = /^[0-9]{1,4}(\.[0-9]{0,3})?$/;
-        const numberFormatOneDigit = /^\(?([0-9]{1})\)?[.]?([0-9]{1})$/;
-        const numberFormatTwoDigits = /^\(?([0-9]{2})\)?[.]?([0-9]{1})$/;
-        const numberFormatThreeDigits = /^\(?([0-9]{3})\)?[.]?([0-9]{1})$/;
-        const pbBelowDetectable = '<';
+        const regex_pb_hb = /^[0-9]{1,2}(\.[0-9]{1})?$/;
+        const regex_density = /^[0-9]{1}(\.[0-9]{3})?$/;
         var errorString = [];
         var errors = false;
-        if (this.state.sample_id === '' || this.state.eval === '' || this.state.date === '' || this.state.hb === '' || this.state.pb === '' || this.state.density === '') {
+        if (this.state.sample_id === '' || this.state.eval === '' || this.state.date === null || this.state.hb === '' || this.state.pb === '' || this.state.density === '') {
             errors = true;
             errorString.push("Please enter all required fields.\n");
         }
-        // if (await this.checkSampleID(parseInt(this.state.sample_id))) {
-        //     errors = true;
-        //     errorString.push("ID already exists , please enter different ID.\n");
-        // }
-        if (this.state.pb !== '' && (!this.state.pb.match(regex_pb_hb))) {
-            if (!this.state.pb[0] === pbBelowDetectable && (!this.state.pb.match(regex_pb_hb))) {
-                errors = true;
-                errorString.push("Please enter correct format for Pb (typically ranges from  <3.3 to 15).\n");
-            }
-        }
-        if (this.state.hb !== '' && (!this.state.hb.match(regex_pb_hb))) {
+        if (await this.checkSampleIDAndEval(this.state.eval,this.state.sample_id)) {
             errors = true;
-            errorString.push("Please enter correct format for Hb (typcal range between 7.0 - 19.0).\n");
+            errorString.push("ID and Eval combination already exists , please enter different ID and Eval values.\n");
         }
+        
+        // if (this.state.pb !== '' && (!this.state.pb.match(regex_pb_hb))) {
+        //     // if (!this.state.pb[0] === pbBelowDetectable && (!this.state.pb.match(regex_pb_hb))) {
+        //         errors = true;
+        //         errorString.push("Please enter correct format for Pb .\n");
+        //         // errorString.push("Please enter correct format for Pb (typically ranges from  <3.3 to 15).\n");
+        //     // }
+        // }
+        if ((this.state.pb !== '' && !this.state.pb.match(regex_pb_hb)) || (this.state.pb !== '' && !(parseFloat(this.state.pb) >= 3.3 && parseFloat(this.state.pb) <= 15.0))) {
+            errors = true;
+            errorString.push('Please enter correct format for Pb (typically ranges from 3.3 - 15.0).');
+        }    
+        if ((this.state.hb !== '' && !this.state.hb.match(regex_pb_hb)) || (this.state.hb !== '' && !(parseFloat(this.state.hb) >= 7.0 && parseFloat(this.state.hb) <= 19.0))) {
+                    errors = true;
+                    errorString.push("Please enter a valid value for Hb (typcal range between 7.0 - 19.0).\n");
+            }     
         if (this.state.density !== '' && (!this.state.density.match(regex_density))) {
             errors = true;
             errorString.push("Please enter correct format for Density (typcal range between 0.000 - 9.999).\n");
@@ -125,13 +130,13 @@ export default class AddChild extends Component {
             });
         }
     }
-    checkSampleID = async (sample_id) => {
-        const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
-        console.log(res.data.options);
-        if (res.data.options.some(e => e.value === sample_id)) {
-            return true;
+    checkSampleIDAndEval = async (evl,sample_id) => {
+        const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/checkIDandEval`, { params: { sample_id: sample_id,eval:evl } })
+        console.log(res.data.rows);
+        if (res.data.rows===0) {
+            return false;
         }
-        return false;
+        return true;
     }
     send = async () => {
         const result = this.createJson();

@@ -7,12 +7,14 @@ router.post("/add", async (req, res) => {
       sample_id: 11331,
       eval: 1,
       date: "2001-08-18",
-      pb: 1.1,
-      hb: 2.2,
+      pb: 11,
+      hb: 22,
       density: 0.2942,
       user_id: 1110
   };
-  console.log(req.body);
+  console.log(req.body.date);
+  console.log(new Date(req.body.date));
+  req.body.date = new Date(req.body.date);
     var query = await db.query("INSERT INTO `samples` SET ?", req.body, (error,results,fields)=>{
       if (error) throw error;
       console.log(results.insertId);
