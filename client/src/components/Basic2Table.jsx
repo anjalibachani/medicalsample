@@ -19,27 +19,27 @@ const columns = [
   {
     name: "Date",
     selector: "shipment_date",
-    sortable: true,
+    //sortable: true,
   },
   {
     name: "From",
-    selector: "from_location_id",
-    sortable: true
+    selector: "location_name",
+    //sortable: true
   },
   {
     name: "To",
-    selector: "to_location_id",
-    sortable: true,
+    selector: "location_name",
+    //sortable: true,
   },
   {
     name: "Samples",
     selector: "no_of_samples",
-    sortable: true,
+    //sortable: true,
   },
   {
     name: "Received Status",
     selector: "reached",
-    sortable: true,
+    //sortable: true,
   },
 ];
 class Basic2Table extends Component {
