@@ -14,7 +14,7 @@ export default class Header extends Component {
             <div>
                 <Navbar className="bg-light">
                     <Navbar.Brand className="mr-auto">
-                        <h2>SAM Research Database</h2>
+                        <h2>SAM Sample Database</h2>
                     </Navbar.Brand>
                     <Nav className="justify-content-end">
                         <Nav.Link href="/logout" >Log Out</Nav.Link>
@@ -37,9 +37,9 @@ export default class Header extends Component {
                         }
                         {
                             location === "/filterandExports" ?
-                                <CustomHeaderButton href="/filterandExports" text="Filter and Export" variant="dark" />
+                                <CustomHeaderButton href="/filterandExports" text="Samples Inventory" variant="dark" />
                                 :
-                                <CustomHeaderButton href="/filterandExports" text="Filter and Export" variant="outline-dark" />
+                                <CustomHeaderButton href="/filterandExports" text="Samples Inventory" variant="outline-dark" />
                         }
                         {/*<CustomHeaderButton href="/Reports" text="Reports" />*/}
                         {
