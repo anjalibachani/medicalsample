@@ -200,6 +200,17 @@ class CreateShipments extends Component {
 		data : response.data
 	});
 })
+// 	async getLocations() {
+// 		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`).then((response)=>{
+// 		console.log(response.data)
+// 		this.setState({
+// 		data : response.data
+
+// 	})
+		
+// 	});
+// }
+
 		//alert('helo') 
 		
 		/* To begin, retrieve all samples... */
@@ -351,6 +362,14 @@ class CreateShipments extends Component {
 								value={this.state.from}
 								onChange={e => this.setState({ from: e.target.value })} />
 						</InputGroup>
+						{/* <InputGroup className="form-control">
+          				<option>---select---</option>
+            			{
+            			this.state.CityNames &&
+            			this.state.CityNames.CityName.map((h, i) => 
+            			(<option key={i} value={h.CityName}>{h.CityDescription}</option>))
+            			}
+						</InputGroup> */}
 						<InputGroup className="mb-3">
 							<InputGroup.Prepend>
 								<InputGroup.Text>Storage conditions:</InputGroup.Text>

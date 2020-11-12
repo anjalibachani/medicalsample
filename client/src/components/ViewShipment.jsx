@@ -4,7 +4,9 @@ import CustomTable from './CustomTable';
 import CustomAlertBanner from './CustomAlertBanner';
 import Header from './Header';
 import Basic2Table from './Basic2Table';
+import { Redirect } from 'react-router-dom';
 //import { Text } from 'react-native-elements';
+//import AddShipments from './AddShipments'
 
 /* This is the 'See Shipments' page. */
 class ViewShipments extends Component {
@@ -80,6 +82,8 @@ class ViewShipments extends Component {
                 <Row>
                     <Col align="left">
                         <ButtonGroup>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+                            <Button variant="dark" size="lg" href="/AddShipments" text="Create a Shipment">Create a Shipment</Button>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <Button variant="dark" size="lg" onClick={this.markShipmentsReceived}>Mark received</Button>
 							&nbsp;&nbsp;&nbsp;&nbsp;
