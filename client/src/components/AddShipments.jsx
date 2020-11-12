@@ -88,8 +88,11 @@ class CreateShipments extends Component {
 
 	/* Render a new filter component (basically this.state.filters++) */
 	addFilter() {
+		console.log("add filter called")
 		var newFilterArray = this.state.filters.concat(<Filter key={this.state.filters.length + 1} number={this.state.filters.length + 1} retVals={this.getFilterValues} />);
 		this.setState({ filters: newFilterArray });
+		console.log(`filters lenght is ${this.state.filters.length}`)
+		console.log(this.state.filters)
 	};
 
 	// /* Create a GET array the request filtered sample list from database. */

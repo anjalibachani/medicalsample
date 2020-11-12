@@ -17,7 +17,7 @@ class Filter extends Component {
 		 * parent for processing. */
 		this.state = {
 			type: 'ID',
-			equality: true,
+			equality: '',
 			value: '',
 			date: new Date(),
 		}
@@ -199,22 +199,24 @@ class Filter extends Component {
 	handleEquality(e) {
 		var equalityVal;
 		var greaterthanVal;
+		console.log("logging condition", e.target.value)
+
 		if (e.target.value === 'equals' ||
 			e.target.value === 'include' ) {
-			equalityVal = true;
+			equalityVal = '==';
 		} else if (e.target.value === 'does not equal' ||
 			e.target.value === 'do not include') {
-			equalityVal = false;
+			equalityVal = '!=';
 		}
 		  else if (e.target.value === 'greater than') {
-			greaterthanVal = true;
-	}
+			equalityVal = '>';
+		}
 		  else if (e.target.value === 'less than' ) {
-			greaterthanVal = false;
-	}
+			equalityVal = '<';
+		}
 		this.setState ({ equality: equalityVal });
-		this.setState({equality: greaterthanVal});
-		this.props.retVals(this.state.type, equalityVal,greaterthanVal, this.state.value, this.props.number);
+		// this.setState({equality: greaterthanVal});
+		this.props.retVals(this.state.type, this.state.equalityVal, this.state.value, this.props.number);
 	}
 
 	/* When a user changes the value to filter... */
