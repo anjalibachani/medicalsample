@@ -17,7 +17,7 @@ class Filter extends Component {
 		 * parent for processing. */
 		this.state = {
 			type: 'ID',
-			equality: '',
+			equality: '===',
 			value: '',
 			date: new Date(),
 		}
@@ -198,7 +198,6 @@ class Filter extends Component {
 	 * (either 'equals' or 'does not equal') */
 	handleEquality(e) {
 		var equalityVal;
-		var greaterthanVal;
 		console.log("logging condition", e.target.value)
 
 		if (e.target.value === 'equals' ||
@@ -215,7 +214,6 @@ class Filter extends Component {
 			equalityVal = '<';
 		}
 		this.setState ({ equality: equalityVal });
-		// this.setState({equality: greaterthanVal});
 		this.props.retVals(this.state.type, this.state.equalityVal, this.state.value, this.props.number);
 	}
 
