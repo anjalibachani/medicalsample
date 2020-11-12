@@ -217,21 +217,21 @@ processFilter(){
       if(condition === '<')
       var filteredFriends = this.state.data.filter( p => p.sample_id < value );
       else if(condition === '===')
-      var filteredFriends = this.state.data.filter( p => p.sample_id === value );
+      var filteredFriends = this.state.data.filter( p => p.sample_id == value );
       else if(condition === '>')
       var filteredFriends = this.state.data.filter( p => p.sample_id > value );
     }else if(field === "Eval"){
       if(condition === '<')
       var filteredFriends = this.state.data.filter( p => p.eval < value );
       else if(condition === '===')
-      var filteredFriends = this.state.data.filter( p => p.eval === value );
+      var filteredFriends = this.state.data.filter( p => p.eval == value );
       else if(condition === '>')
       var filteredFriends = this.state.data.filter( p => p.eval > value );
     }else if(field === "aliquots"){
       if(condition === '<')
       var filteredFriends = this.state.data.filter( p => p.eval < value );
       else if(condition === '===')
-      var filteredFriends = this.state.data.filter( p => p.eval === value );
+      var filteredFriends = this.state.data.filter( p => p.eval == value );
       else if(condition === '>')
       var filteredFriends = this.state.data.filter( p => p.eval > value );
     }
