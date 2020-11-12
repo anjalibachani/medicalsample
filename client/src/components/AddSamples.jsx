@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
+import { BrowserRouter as Redirect } from 'react-router-dom';
+import { Button, Row, Col, Container, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import FormFields from './FormFields';
 import Header from './Header';
 import axios from 'axios';
-import AsyncSelect from 'react-select/async';
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import CustomTabs from './CustomTabs';
+
 
 
 const sampleTypes = require("../config/types.json");
@@ -49,9 +47,6 @@ class AddSamples extends Component {
 	clearFormFields = () => {
 		this.setState({ selectedOption: null, formFields: [] });
 	}
-	// handleChange = selectedOption => {
-	// 	this.setState({ selectedOption: null, formFields: [] }, () => this.setState({ selectedOption }, () => this.getMappingFiledsByType(selectedOption.value)));
-	// };
 	handleIDChange = selectedOption => {
 		this.setState({ selectedIdOption: selectedOption });
 		this.getEvalOptions(selectedOption.value);
@@ -62,7 +57,6 @@ class AddSamples extends Component {
 	}
 	handleMultiChange = selectedOption => {
 		let array = []
-		{
 			(() => {
 				if (selectedOption) {
 					selectedOption.map((ele) => {
@@ -72,9 +66,7 @@ class AddSamples extends Component {
 				}
 				this.setState({ multiValue: selectedOption });
 				this.setState({ tabsMapping: array });
-				// this.setState({ formFieldsState:null});
 			})()
-		}
 	}
 	onChange = (value, { action, removedValue }) => {
 		let tabsMapping = this.state.tabsMapping;
@@ -125,7 +117,7 @@ class AddSamples extends Component {
 		console.log(this.state.tabsMapping);
 	}
 	render() {
-		const { types, selectedOption, formFields, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
+		const { types, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
 		console.log("tabsmapping ",tabsMapping);
 		const size = Object.keys(tabsMapping).length;
 		return (
@@ -138,9 +130,10 @@ class AddSamples extends Component {
 								<Container>
 									<Row>
 										<Col md="4">
+											<h5 className="text-dark">Please Select ID:</h5>
 											<Select
 												label="Sample ID's"
-												placeholder="Select Sample ID"
+												placeholder="Select ID"
 												isSearchable={true}
 												value={selectedIdOption}
 												onChange={this.handleIDChange}
@@ -148,6 +141,7 @@ class AddSamples extends Component {
 											/>
 										</Col>
 										<Col md="4">
+											<h5 className="text-dark">Please Select Eval:</h5>
 											<Select
 												label="Sample Eval"
 												placeholder="Select Eval"
@@ -158,6 +152,7 @@ class AddSamples extends Component {
 											/>
 										</Col>
 										<Col md="4">
+											<h5 className="text-dark">Please Sample Type:</h5>
 											<Select
 												label="Sample Type"
 												placeholder="Select Sample Type"
@@ -171,8 +166,6 @@ class AddSamples extends Component {
 									</Row>
 								</Container>
 								<hr />
-								{/* <CustomTabs tabs={multiValue} fields={formFields}/> */}
-								{/* <CustomTabs tabs={tabsMapping} /> */}
 								{
 									tabsMapping.map((item, index) => {
 										let flag = false;
@@ -189,14 +182,13 @@ class AddSamples extends Component {
 										)
 									})
 								}
-								{size != 0 ?
+								{size !== 0 ?
 									<>
 										<Button className="ml-2" variant="outline-dark" size="lg" onClick={this.clearFields}> Clear</Button>
 										<Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save}> Save </Button>
 									</>
 									:
 									null}
-								{/* <FormFields fields={formFields} clearFormFields={this.clearFormFields} sampleType={selectedOption}/> */}
 							</>
 						);
 					} else {

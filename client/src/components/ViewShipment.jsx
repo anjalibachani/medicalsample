@@ -4,9 +4,17 @@ import CustomTable from './CustomTable';
 import CustomAlertBanner from './CustomAlertBanner';
 import Header from './Header';
 import Basic2Table from './Basic2Table';
+
 import { Redirect } from 'react-router-dom';
 //import { Text } from 'react-native-elements';
 //import AddShipments from './AddShipments'
+
+import { Link } from 'react-router-dom';
+import CustomHeaderButton from "./CustomHeaderButton";
+import Modal from 'react-modal';
+//import { Text } from 'react-native-elements';
+import Axios from 'axios';
+const config = require('../config/config.json')
 
 /* This is the 'See Shipments' page. */
 class ViewShipments extends Component {
@@ -25,51 +33,75 @@ class ViewShipments extends Component {
 			alertVisibility: false,
 			alertText: 'This text should not be visible. If it is, contact your system administrator.',
 			alertVariant: 'danger',
+
+			showModal: false,
+
+			data: [],
+
 		}
 		this.markShipmentsReceived = this.markShipmentsReceived.bind(this);
+		this.handleOpenModal = this.handleOpenModal.bind(this);
+    	this.handleCloseModal = this.handleCloseModal.bind(this);
 	}
 
 	/* When the component mounts, retrieve all shipments from the database and 
 	 * filter out any of those that have been marked received. */
-	componentDidMount() {
-		var request;
-
-		request = new XMLHttpRequest();
-		// request.open(
-		// 	"GET",
-		// 	"https://cse.buffalo.edu/eehuruguayresearch/app/scripts/retrieve_all_shipments.php",
-		// 	true
-		// );
-		request.onload = function (e) {
-			if (request.readyState === 4 && request.status === 200) {
-				this.setState({ 
-					shipments: JSON.parse(request.responseText),
-				});
-
-				//Remove any of the shipments that have already been received
-				var pending_shipments = this.state.shipments;
-				var indices_of_shipments_to_splice = [];
-				
-				for (var i = 0; i < pending_shipments.length; i++) {
-					if (pending_shipments[i]["received"] === 1) {
-						indices_of_shipments_to_splice.push(i);
-					}
-				}
-
-				for (var j = (indices_of_shipments_to_splice.length - 1); j > -1; j--) {
-					pending_shipments.splice(indices_of_shipments_to_splice[j], 1);
-				}	
-
-				this.setState({ shipments: pending_shipments});
-
-			} else {
-				console.error(request.statusText);
-			}
-		}.bind(this);
-
-		//request.send();	
-		
+	handleOpenModal () {
+		this.setState({ showModal: true });
 	}
+	  
+	handleCloseModal () {
+		this.setState({ showModal: false });
+	}
+	
+	// componentDidMount() {
+	// 	var request;
+
+	// 	request = new XMLHttpRequest();
+	// 	request.open(
+	// 		"GET",
+	// 		"http://localhost:5000/shipment/viewshipments",
+	// 		true
+	// 	);
+	// 	request.onload = function (e) {
+	// 		if (request.readyState === 4 && request.status === 200) {
+	// 			this.setState({ 
+	// 				shipments: JSON.parse(request.responseText),
+	// 			});
+
+	// 			//Remove any of the shipments that have already been received
+	// 			var pending_shipments = this.state.shipments;
+	// 			var indices_of_shipments_to_splice = [];
+				
+	// 			for (var i = 0; i < pending_shipments.length; i++) {
+	// 				if (pending_shipments[i]["received"] === 1) {
+	// 					indices_of_shipments_to_splice.push(i);
+	// 				}
+	// 			}
+
+	// 			for (var j = (indices_of_shipments_to_splice.length - 1); j > -1; j--) {
+	// 				pending_shipments.splice(indices_of_shipments_to_splice[j], 1);
+	// 			}	
+
+	// 			this.setState({ shipments: pending_shipments});
+
+	// 		} else {
+	// 			console.error(request.statusText);
+	// 		}
+	// 	}.bind(this);
+
+	// 	//request.send();	
+		
+	// }
+
+	componentDidMount(){
+		Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response)=>{
+			console.log(response.data)
+			this.setState({
+				data : response.data
+			});
+		})
+  }
     
 	render() {
         return (
@@ -83,11 +115,31 @@ class ViewShipments extends Component {
                     <Col align="left">
                         <ButtonGroup>
 							&nbsp;&nbsp;&nbsp;&nbsp;
+
                             <Button variant="dark" size="lg" href="/AddShipments" text="Create a Shipment">Create a Shipment</Button>
+
+							<Button variant="dark" size="lg" href="/AddShipments">Create a Shipment</Button>
+
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <Button variant="dark" size="lg" onClick={this.markShipmentsReceived}>Mark received</Button>
 							&nbsp;&nbsp;&nbsp;&nbsp;
-							<Button variant="dark" size="lg" onClick={this.markViewShipment}>View Shipment Details</Button>
+							<Button variant="dark" size="lg" onClick={this.handleOpenModal}>View Shipment Details</Button>
+							<Modal isOpen={this.state.showModal} contentLabel="Minimal Modal Example" className="Modal" overlayClassName="Overlay">
+							<p>Shipping Details:</p>
+							<Col>
+								<div>ID: <span>{this.state.data.shipment_id}</span></div>
+								<div>Received Status: <span>{this.state.data.reached}</span></div>
+								<div>Shipping Company: <span>{this.state.data.shipping_company}</span></div>
+								<div>From: <span>{this.state.data.from_location_id}</span></div>
+								<div>To: <span>{this.state.data.to_location_id}</span></div>
+								<div>Shipping Date: <span>{this.state.data.shipping_date}</span></div>
+								<div>Shipping Condition: <span>{this.state.data.shipment_condition}</span></div>
+								<div>Number of Samples: <span>{this.state.data.no_of_samples}</span></div>
+								<div>Notes: <span>{this.state.data.notes}</span></div>
+								<div>User ID: <span>{this.state.data.user_id}</span></div>
+    						</Col>
+							<button onClick={this.handleCloseModal}>Close</button>
+							</Modal>
                         </ButtonGroup>
                     </Col>
                 </Row>
@@ -112,7 +164,8 @@ class ViewShipments extends Component {
 	 * button. It gets every shipment in the table that has been checked 
 	 * and runs the script that marks it received in the database, which 
 	 * it turn filters it out of view when the component refreshes. */
-	markShipmentsReceived() {
+	markShipmentsReceived() 
+	{
 		var areChecks = false;
 		for (var checked in this.state.checkedRowsShipment) {
 			if (checked) {
@@ -145,9 +198,9 @@ class ViewShipments extends Component {
 
 			mark_received_request = new XMLHttpRequest();
 			mark_received_request.open(
-			//	"GET",
-			//	"https://cse.buffalo.edu/eehuruguayresearch/app/scripts/markreceived.php?" + getQuery,
-			//	true
+				"GET",
+				"http://localhost:5000/shipment/viewshipments" + getQuery,
+				true
 			);
 			
 			mark_received_request.onload = function (e) {
@@ -191,7 +244,6 @@ class ViewShipments extends Component {
 			resetChecksShipment: false,
 		});
 	}
-	
 }
 
 export default ViewShipments;

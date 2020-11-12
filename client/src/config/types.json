@@ -23,7 +23,7 @@
         {
           "fieldName": "Initial storage conditions",
           "fieldType": "select",
-          "values": ["-20C", "-80C", "4C"]
+          "values": ["Select","-20C", "-80C", "4C"]
         },
         {
           "fieldName": "Sub study",
@@ -32,7 +32,7 @@
         {
           "fieldName": "Sub study Name",
           "fieldType": "select",
-          "values": ["Scola-Exposome", "MOX-IN"]
+          "values": ["Select","Scola-Exposome", "MOX-IN"]
         },
         {
           "fieldName": "Additives",
@@ -65,7 +65,7 @@
         {
           "fieldName": "Initial storage conditions",
           "fieldType": "select",
-          "values": ["-20C", "-80C", "4C"]
+          "values": ["Select","-20C", "-80C", "4C"]
         },
         {
           "fieldName": "Sub study",
@@ -74,7 +74,7 @@
         {
           "fieldName": "Sub study Name",
           "fieldType": "select",
-          "values": ["Scola-Exposome", "MOX-IN"]
+          "values": ["Select","Scola-Exposome", "MOX-IN"]
         }
       ]
     },
@@ -124,7 +124,7 @@
         {
           "fieldName": "Initial storage conditions",
           "fieldType": "select",
-          "values": ["-20C", "-80C"]
+          "values": ["Select","-20C", "-80C"]
         },
         {
           "fieldName": "Sub study",
@@ -133,7 +133,7 @@
         {
           "fieldName": "Sub study Name",
           "fieldType": "select",
-          "values": ["Scola-Exposome", "MOX-IN"]
+          "values": ["Select","Scola-Exposome", "MOX-IN"]
         }
       ]
     },
@@ -169,7 +169,7 @@
         {
           "fieldName": "Initial storage conditions",
           "fieldType": "select",
-          "values": ["-20C", "-80C"]
+          "values": ["Select","-20C", "-80C"]
         },
         {
           "fieldName": "Sub study",
@@ -178,7 +178,7 @@
         {
           "fieldName": "Sub study Name",
           "fieldType": "select",
-          "values": ["Scola-Exposome", "MOX-IN"]
+          "values": ["Select","Scola-Exposome", "MOX-IN"]
         },
         {
           "fieldName": "Additives",
@@ -212,7 +212,7 @@
         {
           "fieldName": "Initial storage conditions",
           "fieldType": "select",
-          "values": ["-20C", "4C", "Room temperature"]
+          "values": ["Select","-20C", "4C", "Room temperature"]
         },
         {
           "fieldName": "Unrestricted consent for samples",
