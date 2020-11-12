@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
+import { Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import SaveModal from './SaveModal';
 import _ from 'lodash';
@@ -34,7 +34,7 @@ export default class FormFields extends Component {
         console.log();
     }
     render() {
-        const { fields,flag,data, index} = this.props;
+        const { fields,data, index} = this.props;
         // console.log("data",data);
         console.log("data state: ", this.state);
         return (

@@ -43,9 +43,6 @@ router.get('/select', async function (request, response) {
         let query3Result = await dbQueryFunc3()
 
         response.send(query3Result)
-        let query2Result = await dbQueryFunc2()
-
-        response.send(query2Result)
     } catch (err) {
         console.error(err)
     }
@@ -67,13 +64,13 @@ function dbQueryFunc1(sample_id) {
 
 function dbQueryFunc2(aliquots) {
     return new Promise(function (resolve, reject) {
-        let query2 = db.query('SELECT * FROM shipments where aliquots=?', aliquots, (error, result) => {
+        let query1 = db.query('SELECT sample_id,eval,Type,aliquots FROM samples where aliquots=?', aliquots, (error, result) => {
             if (error) {
                 reject(error)
             }
             resolve(result)
         });
-        console.log(query2.sql);
+        console.log(query1.sql);
     })
 }
 

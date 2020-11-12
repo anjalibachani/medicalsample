@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
+import { Button, Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import Header from './Header';
-import CustomAlertBanner from "./CustomAlertBanner";
-import { formatISO } from "date-fns";
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 
@@ -20,9 +18,7 @@ export default class AddChild extends Component {
             hb: '',
             pb: '',
             density: '',
-            alertVisibility: false,
-            alertText: 'Please enter all required fields.',
-            alertVariant: 'danger',
+            formErrors: {}
         }
 
     }
@@ -34,7 +30,7 @@ export default class AddChild extends Component {
         let child = {}
         for (const [key, value] of Object.entries(this.state)) {
             console.log(typeof value);
-            if (key != 'alertVisibility' && key != 'alertText' && key != 'alertVariant') {
+            if (key !=='formErrors') {
                 child[key] = value
                 // if (key === 'date') {
                 //     // child[key] = formatISO(value, { representation: 'date' })
@@ -55,70 +51,58 @@ export default class AddChild extends Component {
             }
 
         }
+        child['user_id'] = localStorage.getItem("user_id")
         console.log(child);
         return child
     }
     validateForms = async () => {
         const regex_pb_hb = /^[0-9]{1,2}(\.[0-9]{1})?$/;
         const regex_density = /^[0-9]{1}(\.[0-9]{3})?$/;
-        var errorString = [];
-        var errors = false;
-        if (this.state.sample_id === '' || this.state.eval === '' || this.state.date === null || this.state.hb === '' || this.state.pb === '' || this.state.density === '') {
-            errors = true;
-            errorString.push("Please enter all required fields.\n");
+        let errorsObj = {};
+        if (this.state.sample_id === '') {
+            errorsObj.sample_id = "Please Enter ID"
+        }
+        if (this.state.eval === '') {
+            errorsObj.eval = "Please Enter Eval"
+        }
+        if (this.state.date === null) {
+            errorsObj.date = "Please Enter Date"
+        }
+        if (this.state.hb === '') {
+            errorsObj.hb = "Please Enter Hb"
+        }
+        if (this.state.pb === '') {
+            errorsObj.pb = "Please Enter Pb"
+        }
+        if (this.state.density === '') {
+            errorsObj.density = "Please Enter Density"
         }
         if (await this.checkSampleIDAndEval(this.state.eval,this.state.sample_id)) {
-            errors = true;
-            errorString.push("ID and Eval combination already exists , please enter different ID and Eval values.\n");
+            errorsObj.id_eval = "ID and Eval combination already exists , please Enter different ID and Eval values"
         }
-        
-        // if (this.state.pb !== '' && (!this.state.pb.match(regex_pb_hb))) {
-        //     // if (!this.state.pb[0] === pbBelowDetectable && (!this.state.pb.match(regex_pb_hb))) {
-        //         errors = true;
-        //         errorString.push("Please enter correct format for Pb .\n");
-        //         // errorString.push("Please enter correct format for Pb (typically ranges from  <3.3 to 15).\n");
-        //     // }
-        // }
         if ((this.state.pb !== '' && !this.state.pb.match(regex_pb_hb)) || (this.state.pb !== '' && !(parseFloat(this.state.pb) >= 3.3 && parseFloat(this.state.pb) <= 15.0))) {
-            errors = true;
-            errorString.push('Please enter correct format for Pb (typically ranges from 3.3 - 15.0).');
+            errorsObj.pb = "Please Enter correct format for Pb (typically ranges from 3.3 - 15.0)";
         }    
         if ((this.state.hb !== '' && !this.state.hb.match(regex_pb_hb)) || (this.state.hb !== '' && !(parseFloat(this.state.hb) >= 7.0 && parseFloat(this.state.hb) <= 19.0))) {
-                    errors = true;
-                    errorString.push("Please enter a valid value for Hb (typcal range between 7.0 - 19.0).\n");
+            errorsObj.hb = "Please Enter a valid value for Hb (typcal range between 7.0 - 19.0)";
             }     
         if (this.state.density !== '' && (!this.state.density.match(regex_density))) {
-            errors = true;
-            errorString.push("Please enter correct format for Density (typcal range between 0.000 - 9.999).\n");
+            errorsObj.density = "Please Enter correct format for Density (typcal range between 0.000 - 9.999)";
         }
-        if (errors) {
-            this.setState({
-                alertVariant: 'danger',
-                alertText: errorString,
-                alertVisibility: true,
-            });
-
-            return true;
-        } else {
-            this.setState({
-                alertVariant: 'success',
-                alertText: 'Success!',
-                alertVisibility: true,
-            });
-
-            return false;
-        }
+        return errorsObj;
     }
     saveAndExit = async () => {
-        var errors = await this.validateForms();
-        if (!errors) {
+        this.setState({ formErrors: await this.validateForms() })
+        console.log(this.state.formErrors);
+        if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
             this.props.history.push('/Home')
         }
     }
     saveAndAddAnother = async () => {
-        var errors = await this.validateForms();
-        if (!errors) {
+        this.setState({ formErrors: await this.validateForms() })
+        console.log(this.state.formErrors);
+        if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
             this.setState({
                 sample_id: '',
@@ -126,7 +110,7 @@ export default class AddChild extends Component {
                 hb: '',
                 pb: '',
                 density: '',
-                alertVisibility: true,
+                formErrors: {}
             });
         }
     }
@@ -151,11 +135,10 @@ export default class AddChild extends Component {
                     if (localStorage.getItem("user_id") !== null) {
                         return (<>
                             <Header />
-                            {this.state.alertVisibility &&
-                                <CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
-                            }
                             <Container fluid>
+                                <Form.Text as={Col} className="text-danger">{this.state.formErrors.id_eval}</Form.Text>
                                 <Row> <Col className="custom-col" md="auto">
+                                    <Form.Text as={Col}className="text-danger">{this.state.formErrors.sample_id}</Form.Text>
                                     <InputGroup className="mb-3">
                                         <InputGroup.Prepend>
                                             <InputGroup.Text>ID:</InputGroup.Text>
@@ -164,8 +147,9 @@ export default class AddChild extends Component {
                                             id="sample_id"
                                             type="number"
                                             value={this.state.sample_id}
-                                            onChange={e => this.setState({ sample_id: e.target.value })} />
+                                            onChange={e => this.setState({ sample_id: e.target.value })} />                     
                                     </InputGroup>
+                                    <Form.Text as={Col} className="text-danger">{this.state.formErrors.eval}</Form.Text>
                                     <InputGroup className="mb-3">
                                         <InputGroup.Prepend>
                                             <InputGroup.Text>Eval:</InputGroup.Text>
@@ -174,8 +158,9 @@ export default class AddChild extends Component {
                                             id="eval"
                                             type="number"
                                             value={this.state.eval}
-                                            onChange={e => this.setState({ eval: e.target.value })} />
+                                            onChange={e => this.setState({ eval: e.target.value })} />           
                                     </InputGroup>
+                                    <Form.Text as={Col} className="text-danger">{this.state.formErrors.date}</Form.Text>
                                     <InputGroup className="mb-3">
                                         <InputGroup.Prepend>
                                             <InputGroup.Text>Date:</InputGroup.Text>
@@ -189,6 +174,7 @@ export default class AddChild extends Component {
                                     </InputGroup>
                                 </Col>
                                     <Col>
+                                        <Form.Text as={Col} className="text-danger">{this.state.formErrors.pb}</Form.Text>
                                         <InputGroup className="mb-3">
                                             <InputGroup.Prepend>
                                                 <InputGroup.Text>Pb:</InputGroup.Text>
@@ -198,8 +184,9 @@ export default class AddChild extends Component {
                                                 type="number"
                                                 step="0.1"
                                                 value={this.state.pb}
-                                                onChange={e => this.setState({ pb: e.target.value })} />
+                                                onChange={e => this.setState({ pb: e.target.value })} />   
                                         </InputGroup>
+                                        <Form.Text as={Col} className="text-danger">{this.state.formErrors.hb}</Form.Text>
                                         <InputGroup className="mb-3">
                                             <InputGroup.Prepend>
                                                 <InputGroup.Text>Hb:</InputGroup.Text>
@@ -211,6 +198,7 @@ export default class AddChild extends Component {
                                                 value={this.state.hb}
                                                 onChange={e => this.setState({ hb: e.target.value })} />
                                         </InputGroup>
+                                        <Form.Text as={Col} className="text-danger">{this.state.formErrors.density}</Form.Text>
                                         <InputGroup className="mb-3">
                                             <InputGroup.Prepend>
                                                 <InputGroup.Text>Density:</InputGroup.Text>

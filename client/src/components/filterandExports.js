@@ -1,12 +1,18 @@
 import React, { Component,useState } from 'react';
 import differenceBy from 'lodash/differenceBy';
 import DataTable, { createTheme } from 'react-data-table-component';
+
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
+
+//import CustomTable from './CustomTable';
+import CustomAlertBanner from './CustomAlertBanner';
+
 import Axios from 'axios';
 import Filter from './Filter';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker'
 import Header from './Header';
+
 import memoize from 'memoize-one';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
