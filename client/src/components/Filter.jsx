@@ -17,7 +17,7 @@ class Filter extends Component {
 		 * parent for processing. */
 		this.state = {
 			type: 'ID',
-			equality: '',
+			equality: '===',
 			value: '',
 			date: new Date(),
 		}
