@@ -17,6 +17,7 @@ import memoize from 'memoize-one';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import { isThisHour } from 'date-fns';
+import { fil } from 'date-fns/locale';
 const config = require('../config/config.json')
 
 const columns = [
@@ -204,10 +205,41 @@ processFilter(){
     //check to see if the filter's Type and Value aren't empty
     console.log(this.state.returnedFilterValues[i])
     let field = this.state.returnedFilterValues[i][0]
+    
     let condition = this.state.returnedFilterValues[i][1]
     let value = this.state.returnedFilterValues[i][2]
     console.log(field,condition,value)
     console.log("sdhs")
+    console.log("logging filed values ",this.state.data[0].field)
+    console.log("logging filed values ",this.state.data[0].sample_id)
+    //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
+    if(field === "ID"){
+      if(condition === '<')
+      var filteredFriends = this.state.data.filter( p => p.sample_id < value );
+      else if(condition === '===')
+      var filteredFriends = this.state.data.filter( p => p.sample_id === value );
+      else if(condition === '>')
+      var filteredFriends = this.state.data.filter( p => p.sample_id > value );
+    }else if(field === "Eval"){
+      if(condition === '<')
+      var filteredFriends = this.state.data.filter( p => p.eval < value );
+      else if(condition === '===')
+      var filteredFriends = this.state.data.filter( p => p.eval === value );
+      else if(condition === '>')
+      var filteredFriends = this.state.data.filter( p => p.eval > value );
+    }else if(field === "aliquots"){
+      if(condition === '<')
+      var filteredFriends = this.state.data.filter( p => p.eval < value );
+      else if(condition === '===')
+      var filteredFriends = this.state.data.filter( p => p.eval === value );
+      else if(condition === '>')
+      var filteredFriends = this.state.data.filter( p => p.eval > value );
+    }
+    this.setState({data:filteredFriends})
+    console.log(filteredFriends)
+    this.state.data.filter(item => item.field && (item.field < value))
+    console.log(this.state.data)
+    
     // if (this.state.returnedFilterValues[i][0] !== '' && this.state.returnedFilterValues[i][1] !== ''){
     //   console.log(this.state.returnedFilterValues[i][0], this.state.returnedFilterValues[i][1])
     // }
