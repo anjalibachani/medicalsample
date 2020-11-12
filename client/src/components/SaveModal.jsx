@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Modal, Button, Container, Row, Col } from 'react-bootstrap';
+import React from 'react';
+import { Modal, Button, Row, Col } from 'react-bootstrap';
 import { formatISO } from "date-fns";
 
 function SaveModal(props) {
@@ -22,7 +21,7 @@ function SaveModal(props) {
                             if (res === 'false') {
                                 res = "No"
                             }
-                            if (key == "Date")
+                            if (key === "Date")
                                 // res = res.toISOString().split('T')[0];
                                 res = formatISO(data[key], { representation: 'date' })
                             return (

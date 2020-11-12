@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Navbar, Nav, Container, ButtonGroup, Button } from "react-bootstrap";
+import { Navbar, Nav, Container, ButtonGroup } from "react-bootstrap";
 import CustomHeaderButton from "./CustomHeaderButton";
-// import { Redirect } from 'react-router-dom';
-import { useLocation } from 'react-router-dom'
 
 export default class Header extends Component {
     static propTypes = {
@@ -26,32 +24,32 @@ export default class Header extends Component {
                 <Container fluid>
                     <ButtonGroup>
                         {
-                            location == "/AddChild" ?
+                            location === "/AddChild" ?
                                 <CustomHeaderButton href="/AddChild" text="Add Child" variant="dark" />
                                 :
                                 <CustomHeaderButton href="/AddChild" text="Add Child" variant="outline-dark" />
                         }
                         {
-                            location == "/AddSamples" ?
+                            location === "/AddSamples" ?
                                 <CustomHeaderButton href="/AddSamples" text="Add Samples" variant="dark" />
                                 :
                                 <CustomHeaderButton href="/AddSamples" text="Add Samples" variant="outline-dark" />
                         }
                         {
-                            location == "/filterandExports" ?
+                            location === "/filterandExports" ?
                                 <CustomHeaderButton href="/filterandExports" text="Filter and Export" variant="dark" />
                                 :
                                 <CustomHeaderButton href="/filterandExports" text="Filter and Export" variant="outline-dark" />
                         }
                         {/*<CustomHeaderButton href="/Reports" text="Reports" />*/}
                         {
-                            location == "/AddShipments" ?
+                            location === "/AddShipments" ?
                                 <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="dark" />
                                 :
                                 <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="outline-dark" />
                         }
                         {
-                            location == "/ViewShipment" ?
+                            location === "/ViewShipment" ?
                                 <CustomHeaderButton href="/ViewShipment" text="See Shipments" variant="dark" />
                                 :
                                 <CustomHeaderButton href="/ViewShipment" text="See Shipments" variant="outline-dark" />
