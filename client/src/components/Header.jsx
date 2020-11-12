@@ -47,17 +47,17 @@ export default class Header extends Component {
                             href="/AddShipments"
                             text="Create a Shipment"
                         /> */}
-                        <CustomHeaderButton
+                        {/* <CustomHeaderButton
                             href="/ViewShipment"
                             text="See Shipments"
-                        />
+                        /> */}
 
-                        {
+                        {/* {
                             location === "/AddShipments" ?
                                 <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="dark" />
                                 :
                                 <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="outline-dark" />
-                        }
+                        } */}
                         {
                             location === "/ViewShipment" ?
                                 <CustomHeaderButton href="/ViewShipment" text="See Shipments" variant="dark" />

@@ -118,7 +118,7 @@ class ViewShipments extends Component {
 
                             <Button variant="dark" size="lg" href="/AddShipments" text="Create a Shipment">Create a Shipment</Button>
 
-							<Button variant="dark" size="lg" href="/AddShipments">Create a Shipment</Button>
+							{/* <Button variant="dark" size="lg" href="/AddShipments">Create a Shipment</Button> */}
 
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <Button variant="dark" size="lg" onClick={this.markShipmentsReceived}>Mark received</Button>
