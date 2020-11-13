@@ -18,7 +18,8 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import { isThisHour } from 'date-fns';
 import { fil } from 'date-fns/locale';
-const config = require('../config/config.json')
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 const columns = [
 	{

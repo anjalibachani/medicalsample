@@ -13,7 +13,8 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 //import DataTable from 'react-data-table-component';
 import DataTable from './DataTable'
-const config = require('../config/config.json')
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const phpServerURL=null
 const nodeserverURL = `http://${config.server.host}:${config.server.port}`
 /* CreateShipments: this is the interface for entering a new shipment into the

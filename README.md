@@ -18,14 +18,19 @@ In client directory, run below script
 # Install dependencies && Start
 npm install & npm start
 ```
-- Production Deployment process
+- Deployment process
 ```
-Change database credentials in server/config/config.json.
+Add Environment Variables
 ```
+```
+setenv MED_DEPLOY_ENV deployment
+setenv REACT_APP_MED_DEPLOY_ENV deployment
+pm2 stop medsample_server
+pm2 stop medsample_client
+```
+```
+In medicalsample directory, run below commands
+cd server && pm2 start index.js --name "medsample_server" && cd ..
+cd client && pm2 start --name "medsample_client" npm -- start && cd ..
 
-```
-In server directory, run below script
-# Install dependencies && Start
-npm install && npm run production-deploy
-pm2 start index.js -i 0 --watch
 ```
