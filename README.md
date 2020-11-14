@@ -23,10 +23,10 @@ npm install & npm start
 Add Environment Variables
 ```
 ```
-setenv MED_DEPLOY_ENV deployment
-setenv REACT_APP_MED_DEPLOY_ENV deployment
 pm2 stop medsample_server
 pm2 stop medsample_client
+setenv MED_DEPLOY_ENV deployment
+setenv REACT_APP_MED_DEPLOY_ENV deployment
 ```
 ```
 In medicalsample directory, run below commands
