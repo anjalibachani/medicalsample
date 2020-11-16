@@ -30,20 +30,8 @@ class Filter extends Component {
 
 	render() {
 
-		const equalityInput = () => {
-			if (this.state.type === 'Additives') {
-				return (
-					<Form.Group controlId="isOrIsnt">
-						<Form.Control 
-							as="select"
-							onChange={this.handleEquality}>
-								<option>include</option>
-								<option>do not include</option>
-						</Form.Control>
-					</Form.Group>
-				)
-			} 
-			else if (this.state.type === 'Location') {
+		const equalityInput = () => { 
+			if (this.state.type === 'Location') {
 				return (
 					<Form.Group controlId="isOrIsnt">
 						<Form.Control 
@@ -71,15 +59,6 @@ class Filter extends Component {
 		}
 					
 		const input = () => {
-			// if (this.state.type === 'Date') {
-			// 	return (
-			// 		<DatePicker
-			// 			className="form-control"
-			// 			fixedHeight={false}
-			// 			selected={this.state.date}
-			// 			onChange={this.handleDateChange}
-			// 		/>
-			// 	)
 			 if (this.state.type === 'Type') {
 				return (
 					<Form.Group controlId="value">
@@ -95,30 +74,6 @@ class Filter extends Component {
                    			<option>Soil</option>
                    			<option>Urine</option>
                    			<option>Water</option>
-						</Form.Control>
-					</Form.Group>
-				)
-			} else if (this.state.type === 'Initial storage conditions') {
-				return (
-					<Form.Group controlId="value">
-						<Form.Control as="select"
-						onChange={this.handleValueChange}>
-                       		<option>Room temperature</option>
-                       		<option>4° C</option>
-                       		<option>-20° C</option>
-                  			<option>-80° C</option>
-						</Form.Control>
-					</Form.Group>
-				)
-			} else if (this.state.type === 'Additives') {
-				return (
-					<Form.Group controlId="value">
-						<Form.Control as="select"
-						onChange={this.handleValueChange}>
-                       		<option>BHT</option>
-                       		<option>EDTA</option>
-                       		<option>Heparin</option>
-                  			<option>MPA</option>
 						</Form.Control>
 					</Form.Group>
 				)
@@ -153,17 +108,8 @@ class Filter extends Component {
 								onChange={this.handleTypeChange}>
 								<option>ID</option>
 								<option>Eval</option>
-								{/* <option>Date</option> */}
-								<option>HB</option>
-								<option>PB</option>
-								<option>Density</option>
 								<option>Type</option>
 								<option>Aliquots</option>
-								<option>Initial storage conditions</option>
-								<option>Additives</option>
-								<option>Other treatments</option>
-								<option>Foil wrapped</option>
-								<option>Unrestricted consent</option>
 								<option>Location</option>
 							</Form.Control>
 						</Form.Group>
@@ -203,14 +149,15 @@ class Filter extends Component {
 		if (e.target.value === 'equals' ||
 			e.target.value === 'include' ) {
 			equalityVal = '==';
-		} else if (e.target.value === 'does not equal' ||
+		} 
+		else if (e.target.value === 'does not equal' ||
 			e.target.value === 'do not include') {
 			equalityVal = '!=';
 		}
-		  else if (e.target.value === 'greater than') {
+		else if (e.target.value === 'greater than') {
 			equalityVal = '>';
 		}
-		  else if (e.target.value === 'less than' ) {
+		else if (e.target.value === 'less than' ) {
 			equalityVal = '<';
 		}
 		this.setState ({ equality: equalityVal });

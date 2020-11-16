@@ -41,7 +41,7 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem("isLoggedIn", true);
                     localStorage.setItem("isAdmin", response.data.admin);
-                    this.  redirectToHome();
+                    this.redirectToHome();
                 }
                 else{
                   this.setState({
@@ -87,7 +87,7 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('isLoggedIn', true);
                     localStorage.setItem("isAdmin", response.data.admin);
-                    this.  redirectToHome();
+                    this.redirectToHome();
                 }
                 else{
                     this.setState({
