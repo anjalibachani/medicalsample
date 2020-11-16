@@ -15,6 +15,7 @@ const child = require('./routes/child');
 const filter = require('./routes/filter')
 const app = express();
 const viewshipments = require('./routes/viewshipments');
+const deletesamples = require('./routes/deletesamples')
 // app.use(express.static(path.join(__dirname, "../client/build")));
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
@@ -42,4 +43,5 @@ app.post("/api/googlelogin", googlelogin);
 app.post("/api/forgot-password",forgotpassword)
 app.post("/api/reset-password/:id",resetpassword)
 app.get("/api/filter",filter)
+app.delete("/api/deletesamples",deletesamples)
 app.get('/test', (req, res) => { res.send({ result: "test success" }) });

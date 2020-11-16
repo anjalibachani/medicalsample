@@ -2,7 +2,7 @@ import React from 'react';
 import './Login.css';
 import Axios from 'axios';
 import CustomAlertBanner from "./CustomAlertBanner";
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
+import { Button,Form} from 'react-bootstrap';
 const config = require('../config/config.json')
 
 class forgotpass extends React.Component{
