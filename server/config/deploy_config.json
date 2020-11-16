@@ -1,0 +1,16 @@
+{
+  "database": {
+    "host": "stark.cse.buffalo.edu",
+    "user": "medsample_user",
+    "password": "ChangeMe!",
+    "database": "medsample_db"
+  },
+  "client":{
+    "host": "stark.cse.buffalo.edu",
+    "port": "3000"
+  },
+  "port":"5000",
+  "clientId":"759402856-mqu91hihug6s865np34bv3ssonr5ntgj.apps.googleusercontent.com",
+  "JWT_RESET_KEY": "jwtresetkey",
+  "JWT_SECRET": "jwtsecretkey" 
+}

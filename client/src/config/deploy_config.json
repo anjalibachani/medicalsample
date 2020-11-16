@@ -1,0 +1,6 @@
+{
+    "server": {
+        "host": "stark.cse.buffalo.edu",
+        "port": 5000
+    }
+}

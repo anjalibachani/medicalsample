@@ -49,6 +49,7 @@ class MyComponent extends Component {
         data={this.props.data}
         selectableRows // add for checkbox selection
         Clicked
+        //onSelectedRowsChange
         Selected={handleChange}
 
       />

@@ -1,6 +1,6 @@
 const db = require('../db/dbconnect');
-const config = require('../config/config.json')
-
+// const config = require('../config/config.json')
+const config = process.env.MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 async function filter(req,res){
     const email_id = req.body.email_id ;

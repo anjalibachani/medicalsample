@@ -24,7 +24,7 @@ class Filter extends Component {
 		this.handleTypeChange = this.handleTypeChange.bind(this);
 		this.handleEquality = this.handleEquality.bind(this);
 		this.handleValueChange = this.handleValueChange.bind(this);
-		this.handleDateChange = this.handleDateChange.bind(this);
+//		this.handleDateChange = this.handleDateChange.bind(this);
 	}
 
 
@@ -59,7 +59,7 @@ class Filter extends Component {
 		}
 					
 		const input = () => {
-			if (this.state.type === 'Type') {
+			 if (this.state.type === 'Type') {
 				return (
 					<Form.Group controlId="value">
 						<Form.Control as="select"
@@ -172,12 +172,12 @@ class Filter extends Component {
 
 	/* Handles the special case of the user filtering 
 	 * by date (see the react-datepicker documentation). */
-	handleDateChange(date) {
-		this.setState({
-			date: date,
-		});
-		this.props.retVals(this.state.type, this.state.equality, date, this.props.number);
-	}
+	// handleDateChange(date) {
+	// 	this.setState({
+	// 		date: date,
+	// 	});
+	// 	this.props.retVals(this.state.type, this.state.equality, date, this.props.number);
+	// }
 
 }
 

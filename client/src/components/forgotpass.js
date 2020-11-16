@@ -2,8 +2,11 @@ import React from 'react';
 import './Login.css';
 import Axios from 'axios';
 import CustomAlertBanner from "./CustomAlertBanner";
-import { Button,Form} from 'react-bootstrap';
-const config = require('../config/config.json')
+
+import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl,Modal } from 'react-bootstrap';
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
+
 
 class forgotpass extends React.Component{
     constructor(props){
