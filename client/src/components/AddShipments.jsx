@@ -84,6 +84,7 @@ class CreateShipments extends Component {
 
 			/* This is every tube added to the current shipment. */
 			tubesinshipments: [],
+			locationoptions: [],
 
 
 			/* Set the default rows in tables, so the tables don't disappear
@@ -203,16 +204,9 @@ class CreateShipments extends Component {
 		data : response.data
 	});
 })
-// 	async getLocations() {
-// 		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`).then((response)=>{
-// 		console.log(response.data)
-// 		this.setState({
-// 		data : response.data
 
-// 	})
-		
-// 	});
-// }
+
+
 
 		//alert('helo') 
 		
@@ -309,6 +303,12 @@ class CreateShipments extends Component {
 		requestAllSamples.send();
 	}
 
+	getLocations(){
+		const id = Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`).then((response)=>{
+		console.log(response.data)
+		this.setState({locationoptions: id.data.options})
+		});
+	};
 	render() {
 		//Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
 		//	console.log(response.data)});
@@ -362,17 +362,19 @@ class CreateShipments extends Component {
 							</InputGroup.Prepend>
 							<FormControl
 								id="from"
+								isSearchable={true}
 								value={this.state.from}
-								onChange={e => this.setState({ from: e.target.value })} />
+								onChange={e => this.setState({ from: e.target.value })}
+								options={this.state.locationoptions} />
 						</InputGroup>
-						{/* <InputGroup className="form-control">
-          				<option>---select---</option>
-            			{
-            			this.state.CityNames &&
-            			this.state.CityNames.CityName.map((h, i) => 
-            			(<option key={i} value={h.CityName}>{h.CityDescription}</option>))
-            			}
-						</InputGroup> */}
+						{/* <Select
+												label="Sample ID's"
+												placeholder="Select ID"
+												isSearchable={true}
+												//value={selectedIdOption}
+												onChange={this.handleIDChange}
+												options={this.state.locationoptions}
+											/> */}
 						<InputGroup className="mb-3">
 							<InputGroup.Prepend>
 								<InputGroup.Text>Storage conditions:</InputGroup.Text>
@@ -435,7 +437,7 @@ class CreateShipments extends Component {
 								<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
 								<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
 								<Button variant="dark" size="lg" onClick={this.save}>Save</Button>
-								<Button variant="dark" size="lg">Edit</Button>
+								{/* <Button variant="dark" size="lg">Edit</Button> */}
 							</ButtonGroup>
 						</Col>
 						<hr />
@@ -485,6 +487,7 @@ class CreateShipments extends Component {
 			</div>
 
 		);
+		
 	}
 
 	/* Close the modal where the user specifies tubes to be added to shipment. */
