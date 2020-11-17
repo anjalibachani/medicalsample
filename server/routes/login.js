@@ -9,6 +9,7 @@ const getsha1 = function(input){
 async function login(req,res){
     const email_id = req.body.email_id ;
     const password = req.body.password;
+    console.log(req.body);
 
     
     db.query('SELECT * from users WHERE email_id = ?',[email_id], async function(error, results, fields){

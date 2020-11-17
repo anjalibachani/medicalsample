@@ -13,6 +13,7 @@ const resetpassword = require('./routes/resetpassword');
 const addshipment = require('./routes/addshipment');
 const child = require('./routes/child');
 const filter = require('./routes/filter')
+const validatetoken = require('./routes/validatetoken')
 const app = express();
 const viewshipments = require('./routes/viewshipments');
 const deletesamples = require('./routes/deletesamples')
@@ -42,6 +43,7 @@ app.post("/api/login",login);
 app.post("/api/googlelogin", googlelogin);
 app.post("/api/forgot-password",forgotpassword)
 app.post("/api/reset-password/:id",resetpassword)
-app.get("/api/filter",filter)
-app.delete("/api/deletesamples",deletesamples)
+app.get("/api/filter",validatetoken,filter)
+app.delete("/api/deletesamples",validatetoken,deletesamples)
+app.post("/api/deletesamples",deletesamples)
 app.get('/test', (req, res) => { res.send({ result: "test success" }) });

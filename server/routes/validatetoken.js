@@ -1,6 +1,6 @@
 const { verify } = require('crypto');
 const jwt = require('jsonwebtoken')
-const db = require('./routes/dbconnect');
+const db = require('../db/dbconnect');
 const config = require('../config/config.json')
 
 module.exports = (req,res,next)=>{

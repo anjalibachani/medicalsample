@@ -31,63 +31,63 @@ class Filter extends Component {
 	render() {
 
 		const equalityInput = () => { 
-			if (this.state.type === 'Location') {
-				return (
-					<Form.Group controlId="isOrIsnt">
-						<Form.Control 
-							as="select"
-							onChange={this.handleEquality}>
-								<option>equals</option>
-								<option>does not equal</option>
-						</Form.Control>
-					</Form.Group>
-				)
-			} 
-			else {
+			// if (this.state.type === 'Location') {
+			// 	return (
+			// 		<Form.Group controlId="isOrIsnt">
+			// 			<Form.Control 
+			// 				as="select"
+			// 				onChange={this.handleEquality}>
+			// 					<option>equals</option>
+			// 					<option>does not equal</option>
+			// 			</Form.Control>
+			// 		</Form.Group>
+			// 	)
+			// } 
+			// else {
 				return (
 					<Form.Group controlId="isOrIsnt">
 						<Form.Control as="select"
 							onChange={this.handleEquality}>
 							<option>equals</option>
-							<option>does not equal</option>
+							{/* <option>does not equal</option> */}
 							<option>greater than</option>
 							<option>less than</option>
 						</Form.Control>
 					</Form.Group>
 				)
 			}
-		}
+		//}
 					
 		const input = () => {
-			if (this.state.type === 'Type') {
-				return (
-					<Form.Group controlId="value">
-						<Form.Control as="select"
-							value={this.state.value}
-						onChange={this.handleValueChange}>
-							<option>Blood</option>
-							<option>Blood Spot</option>
-                       		<option>Dust</option> 
-							<option>Hair</option>
-                    		<option>Plasma</option>
-                    		<option>Serum</option>
-                   			<option>Soil</option>
-                   			<option>Urine</option>
-                   			<option>Water</option>
-						</Form.Control>
-					</Form.Group>
-				)
-			} else if (this.state.type === 'Foil Wrapped' || this.state.type === 'Unrestricted consent') {
-				return (
-					<Form.Group controlId="value">
-						<Form.Control as="select"
-						onChange={this.handleValueChange}>
-                       		<option>True</option>
-                       		<option>False</option>
-						</Form.Control>
-					</Form.Group>
-				)
-			} else {
+			// if (this.state.type === 'Type') {
+			// 	return (
+			// 		<Form.Group controlId="value">
+			// 			<Form.Control as="select"
+			// 				value={this.state.value}
+			// 			onChange={this.handleValueChange}>
+			// 				<option>Blood</option>
+			// 				<option>Blood Spot</option>
+            //            		<option>Dust</option> 
+			// 				<option>Hair</option>
+            //         		<option>Plasma</option>
+            //         		<option>Serum</option>
+            //        			<option>Soil</option>
+            //        			<option>Urine</option>
+            //        			<option>Water</option>
+			// 			</Form.Control>
+			// 		</Form.Group>
+			// 	)
+			// } else if (this.state.type === 'Foil Wrapped' || this.state.type === 'Unrestricted consent') {
+			// 	return (
+			// 		<Form.Group controlId="value">
+			// 			<Form.Control as="select"
+			// 			onChange={this.handleValueChange}>
+            //            		<option>True</option>
+            //            		<option>False</option>
+			// 			</Form.Control>
+			// 		</Form.Group>
+			// 	)
+			// } else {
 				return (
 					<Form.Group controlId="value"
 						onChange={this.handleValueChange}>
@@ -95,7 +95,7 @@ class Filter extends Component {
 					</Form.Group>
 				)
 			}
-		}
+		//}
 						
 		return (
 
@@ -108,9 +108,9 @@ class Filter extends Component {
 								onChange={this.handleTypeChange}>
 								<option>ID</option>
 								<option>Eval</option>
-								<option>Type</option>
+								{/* <option>Type</option> */}
 								<option>Aliquots</option>
-								<option>Location</option>
+								{/* <option>Location</option> */}
 							</Form.Control>
 						</Form.Group>
 					</Col>

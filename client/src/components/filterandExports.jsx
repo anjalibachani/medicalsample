@@ -1,7 +1,7 @@
 import React, { Component,useState } from 'react';
 import differenceBy from 'lodash/differenceBy';
 import DataTable, { createTheme } from 'react-data-table-component';
-
+import { Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
 
 //import CustomTable from './CustomTable';
@@ -201,7 +201,6 @@ processFilter(){
 
     if (i !== 1) {
       console.log("filters exists")
-    }
 
     //check to see if the filter's Type and Value aren't empty
     console.log(this.state.returnedFilterValues[i])
@@ -245,10 +244,7 @@ processFilter(){
     console.log(filteredFriends)
     this.state.data.filter(item => item.field && (item.field < value))
     console.log(this.state.data)
-    
-    // if (this.state.returnedFilterValues[i][0] !== '' && this.state.returnedFilterValues[i][1] !== ''){
-    //   console.log(this.state.returnedFilterValues[i][0], this.state.returnedFilterValues[i][1])
-    // }
+  }
   }
 }
 
@@ -258,7 +254,9 @@ componentDidMount() {
 }
 getsampledata(){
     Axios.get(
-		`http://${config.server.host}:${config.server.port}/api/filter`
+		`http://${config.server.host}:${config.server.port}/api/filter`,{headers: {
+      'Authorization': `bearer ${localStorage.getItem("token")}` 
+    }}
     ).then((response) => {
     console.log(response.data);
     this.setState({
@@ -284,7 +282,8 @@ deleteAll = () => {
     if (window.confirm(`Are you sure you want to delete:\r ${rows}?`)) {
         this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'samples_key') }));
         console.log("selected rows in deleteall",rows)
-        Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows:[rows]}).then((response)=>{
+        Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows, headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
+        // Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{payload: payload, data:{user_id:localStorage.getItem("user_id"), rows:rows}}).then((response)=>{
           if(response.status === 200){
             console.log("delete successful")
           }else{
@@ -294,18 +293,6 @@ deleteAll = () => {
     }
 
 }
-
-// subHeaderComponentMemo = () => {
-//   console.log("subheadercomponent called")
-//   const handleClear = () => {
-//     if (this.state.filterText) {
-//       var togglevalue = this.state.resetPaginationToggle;
-//       this.setState({resetPaginationToggle: !togglevalue, filterText:''})
-//     }
-//   };
-
-//   return <FilterComponent onFilter={e => this.setState({filterText:e.target.value})} onClear={handleClear} filterText={this.state.filterText} />;
-// };
 
 handleClear = () => {
   const { resetPaginationToggle, filterText } = this.state;
@@ -344,8 +331,11 @@ render() {
       data,
     };
     return (
-    <div>
-        <Header />
+      <div>
+      {(() => {
+        if (localStorage.getItem("user_id") != null) {
+          return(<div>
+            <Header />
 		    {/* const actionsMemo = React.useMemo(() => <this.Export onExport={() => downloadCSV(this.state.data)} />, []); */}
         {/* <Table columns={this.columns} data={this.state.data}/> */}
         {this.state.filters}
@@ -389,6 +379,15 @@ render() {
         />
         {/* </DataTableExtensions> */}
         </Container>
+          </div>);
+          }
+          else {
+            return <Redirect to="/Home" />;
+          }
+        })()}
+
+    
+        
     </div>
     );
 }
