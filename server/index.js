@@ -6,7 +6,9 @@ const cors = require('cors');
 const login = require('./routes/login');
 const googlelogin = require('./routes/googlelogin');
 const db = require('./db/dbconnect')
-const config = require('./config/config.json');
+// const config = require('./config/config.json');
+const config = process.env.MED_DEPLOY_ENV === 'deployment' ? require('./config/deploy_config.json') : require('./config/local_config.json');
+
 const samples = require('./routes/samples');
 const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
@@ -38,6 +40,7 @@ port = config.port;
 
 app.listen(port,()=>{
     console.log(`server started on ${port}`);
+     console.log(`Environment: ${process.env.MED_DEPLOY_ENV}`);
 })
 app.post("/api/login",login);
 app.post("/api/googlelogin", googlelogin);

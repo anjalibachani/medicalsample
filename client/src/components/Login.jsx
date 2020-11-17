@@ -6,7 +6,8 @@ import { Redirect } from 'react-router-dom';
 import CustomAlertBanner from "./CustomAlertBanner";
 import { Button,Form} from 'react-bootstrap';
 
-const config = require('../config/config.json')
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 class Login extends React.Component{
     

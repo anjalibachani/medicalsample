@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import Filter from './Filter';
 import { Button, Form, FormControl, InputGroup, Row, Col, Modal} from 'react-bootstrap';
-const config = require('../config/config.json')
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
  
 //const data = [{ id: 1, Date: 'Conan the Barbarian', From: '1982' }, { id: 1, Date: 'Conan the Barbarian', From: '1982' }];

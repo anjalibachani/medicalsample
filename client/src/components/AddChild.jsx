@@ -6,8 +6,8 @@ import Header from './Header';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 
-const config = require('../config/config.json')
-
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 export default class AddChild extends Component {
     constructor(props) {
         super(props);

@@ -4,12 +4,18 @@ import CustomTable from './CustomTable';
 import CustomAlertBanner from './CustomAlertBanner';
 import Header from './Header';
 import Basic2Table from './Basic2Table';
+
+import { Redirect } from 'react-router-dom';
+//import { Text } from 'react-native-elements';
+//import AddShipments from './AddShipments'
+
 import { Link } from 'react-router-dom';
 import CustomHeaderButton from "./CustomHeaderButton";
 import Modal from 'react-modal';
 //import { Text } from 'react-native-elements';
 import Axios from 'axios';
-const config = require('../config/config.json')
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 /* This is the 'See Shipments' page. */
 class ViewShipments extends Component {
@@ -110,7 +116,11 @@ class ViewShipments extends Component {
                     <Col align="left">
                         <ButtonGroup>
 							&nbsp;&nbsp;&nbsp;&nbsp;
-							<Button variant="dark" size="lg" href="/AddShipments">Create a Shipment</Button>
+
+                            <Button variant="dark" size="lg" href="/AddShipments" text="Create a Shipment">Create a Shipment</Button>
+
+							{/* <Button variant="dark" size="lg" href="/AddShipments">Create a Shipment</Button> */}
+
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <Button variant="dark" size="lg" onClick={this.markShipmentsReceived}>Mark received</Button>
 							&nbsp;&nbsp;&nbsp;&nbsp;

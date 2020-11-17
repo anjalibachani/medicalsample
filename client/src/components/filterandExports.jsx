@@ -18,8 +18,10 @@ import memoize from 'memoize-one';
 import 'react-data-table-component-extensions/dist/index.css';
 import { isThisHour } from 'date-fns';
 import { fil } from 'date-fns/locale';
-//import { Export } from 'react-data-table-component-extensions/dist/ui';
-const config = require('../config/config.json')
+
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
+
 
 const columns = [
 	{
