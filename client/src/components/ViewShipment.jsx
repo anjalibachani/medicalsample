@@ -14,7 +14,8 @@ import CustomHeaderButton from "./CustomHeaderButton";
 import Modal from 'react-modal';
 //import { Text } from 'react-native-elements';
 import Axios from 'axios';
-const config = require('../config/config.json')
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 /* This is the 'See Shipments' page. */
 class ViewShipments extends Component {

@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken')
 const {DefaultTransporter} = require('google-auth-library');
 const transporter = require('./sendmail')
 const db = require('../db/dbconnect');
-const config = require('../config/config.json')
-
+// const config = require('../config/config.json')
+const config = process.env.MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 const getsha1 = function(input){
     return crypto.createHash('sha1').update((input)).digest('hex')

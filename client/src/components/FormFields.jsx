@@ -55,7 +55,23 @@ export default class FormFields extends Component {
                                         this.props.handleTextChange(e.target.value, item.fieldName, index)
                                     } />
                             </InputGroup></Col>)
-                    } else if (item.fieldType === "date") {
+                    } else if (item.fieldType === "number") {
+                        return (<Col className="custom-col" md="auto">
+                            <InputGroup className="mb-2">
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text>{item.fieldName}</InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl
+                                    id={item.fieldName}
+                                    value={data[item.fieldName]}
+                                    type="number"
+                                    onChange={e =>
+                                        this.props.handleTextChange(e.target.value, item.fieldName, index)
+                                    } />
+                            </InputGroup>
+                            <Form.Text as={Col} className="text-danger">{item.fieldError}</Form.Text>
+                            </Col>)
+                    }else if (item.fieldType === "date") {
                         data[item.fieldName] = new Date()
                         // console.log(data[item.fieldName].toISOString().split('T')[0]);
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
@@ -80,7 +96,7 @@ export default class FormFields extends Component {
                                 as="select"
                                 value={data[item.fieldName]}
                                 onChange={e => this.props.handleTextChange(e.target.value, item.fieldName, index)}>
-                                {item.values.map(e => <option>{e}</option>)}
+                                {item.values.map((e, k) => <option key={k}>{e}</option>)}
                             </Form.Control>
                         </InputGroup></Col>)
                     } else if (item.fieldType === "checkbox") {
@@ -98,10 +114,10 @@ export default class FormFields extends Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
-                            {item.values.map(val => {
+                            {item.values.map((val, key) => {
                                 // console.log("item", val);
                                 return (
-                                    <InputGroup>
+                                    <InputGroup key={key}>
                                         <InputGroup.Prepend>
                                             <InputGroup.Checkbox
                                                 id={val}

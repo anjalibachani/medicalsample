@@ -14,10 +14,14 @@ import DatePicker from 'react-datepicker'
 import Header from './Header';
 
 import memoize from 'memoize-one';
-import DataTableExtensions from 'react-data-table-component-extensions';
+//import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import { isThisHour } from 'date-fns';
-const config = require('../config/config.json')
+import { fil } from 'date-fns/locale';
+
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
+
 
 const columns = [
 	{
@@ -54,7 +58,7 @@ const columns = [
 
 function convertArrayOfObjectsToCSV(array){
 	let result;
-
+console.log("array", array)
 	const columnDelimiter = ',';
 	const lineDelimiter = '\n';
 	const keys = Object.keys(array[0]);
@@ -110,6 +114,9 @@ const TextField = styled.input`
 `;
 
 const ClearButton = styled(Button)`
+  color: white;
+  background: black;
+  size="lg";
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-top-right-radius: 5px;
@@ -134,7 +141,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
 
 const contextActions = memoize(deleteHandler => (
   <>
-    <Button onClick={deleteHandler}>Delete</Button>
+    <Button variant="dark" size="lg" onClick={deleteHandler}>Delete</Button>
     </>
     ));
 /* This is the 'Filter and Export' page--here the user can view available samples, add and 
@@ -161,14 +168,12 @@ class filterandExports extends Component {
     this.clearFilters = this.clearFilters.bind(this);
     this.processFilter = this.processFilter.bind(this);
   }
-  
-
 
 Export = ({ onExport }) => (
-	<Button onClick={e => onExport(e.target.value)}>Export</Button>
+	<Button className= 'ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>Export</Button>
 );
 ExportAll = ({ onExport }) => (
-	<Button onClick={e => onExport(e.target.value)}>ExportAll</Button>
+	<Button className= 'ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>ExportAll</Button>
 );
 getFilterValues = (type, equality, value, key) => {
   var filterVals = this.state.returnedFilterValues;
@@ -182,9 +187,8 @@ getFilterValues = (type, equality, value, key) => {
   this.setState({ returnedFilterValues: filterVals });
 };
 clearFilters(){
-  this.getsampledata();
   this.setState({filters:[<Filter key={1} number={1} retVals={this.getFilterValues} />]})
-
+  this.getsampledata();
 }
 addFilter() {
   console.log("add filter called")
@@ -204,10 +208,46 @@ processFilter(){
     //check to see if the filter's Type and Value aren't empty
     console.log(this.state.returnedFilterValues[i])
     let field = this.state.returnedFilterValues[i][0]
+    
     let condition = this.state.returnedFilterValues[i][1]
     let value = this.state.returnedFilterValues[i][2]
     console.log(field,condition,value)
     console.log("sdhs")
+    console.log("logging filed values ",this.state.data[0].field)
+    console.log("logging filed values ",this.state.data[0].sample_id)
+    //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
+    try{
+      if(field === "ID"){
+        if(condition === '<')
+        var filteredFriends = this.state.data.filter( p => p.sample_id < value );
+        else if(condition === '===')
+        var filteredFriends = this.state.data.filter( p => p.sample_id == value );
+        else if(condition === '>')
+        var filteredFriends = this.state.data.filter( p => p.sample_id > value );
+      }else if(field === "Eval"){
+        if(condition === '<')
+        var filteredFriends = this.state.data.filter( p => p.eval < value );
+        else if(condition === '===')
+        var filteredFriends = this.state.data.filter( p => p.eval == value );
+        else if(condition === '>')
+        var filteredFriends = this.state.data.filter( p => p.eval > value );
+      }else if(field === "aliquots"){
+        if(condition === '<')
+        var filteredFriends = this.state.data.filter( p => p.eval < value );
+        else if(condition === '===')
+        var filteredFriends = this.state.data.filter( p => p.eval == value );
+        else if(condition === '>')
+        var filteredFriends = this.state.data.filter( p => p.eval > value );
+      }
+    }catch(err){
+      console.log("filter failed")
+    }
+    
+    this.setState({data:filteredFriends})
+    console.log(filteredFriends)
+    this.state.data.filter(item => item.field && (item.field < value))
+    console.log(this.state.data)
+    
     // if (this.state.returnedFilterValues[i][0] !== '' && this.state.returnedFilterValues[i][1] !== ''){
     //   console.log(this.state.returnedFilterValues[i][0], this.state.returnedFilterValues[i][1])
     // }
@@ -231,6 +271,7 @@ getsampledata(){
 
 handleChange = state => {
     this.setState({ selectedRows: state.selectedRows });
+    console.log("selected rows",this.state.selectedRows)
 };
 
 handleRowClicked = row => {
@@ -240,11 +281,18 @@ handleRowClicked = row => {
 deleteAll = () => {
     const { selectedRows } = this.state;
     const rows = selectedRows.map(r => r.samples_key);
+    console.log("rows to be deleted",rows)
 
     if (window.confirm(`Are you sure you want to delete:\r ${rows}?`)) {
         this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'samples_key') }));
-        console.log(this.state.selectedRows)
-        Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{})
+        console.log("selected rows in deleteall",rows)
+        Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows:[rows]}).then((response)=>{
+          if(response.status === 200){
+            console.log("delete successful")
+          }else{
+            console.log("couldnt delete the rows")
+          }
+        })
     }
 
 }
@@ -292,7 +340,7 @@ getSubHeaderComponent = () => {
 render() {
     const { data, toggleCleared } = this.state;
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
-    const filteredItems = data.filter(item => item.type && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
+    const filteredItems =  data.filter(item => item.type && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
     const tableData = {
       columns,
       data,
@@ -304,24 +352,25 @@ render() {
         {/* <Table columns={this.columns} data={this.state.data}/> */}
         {this.state.filters}
         <Row>
-						<Col>
+						<Col align="left">
 							<ButtonGroup>
-								<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
-								<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
-								<Button variant="dark" size="lg" onClick={this.clearFilters}>ClearFilters</Button>
+								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
+								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
+								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.clearFilters}>ClearFilters</Button>
+                <this.Export onExport={() => downloadCSV(this.state.selectedRows)} />
+                <this.ExportAll onExport={() => downloadCSV(this.state.data)} />
 							</ButtonGroup>
 						</Col>
 						<hr />
 					</Row>
-        <this.Export onExport={() => downloadCSV(this.state.selectedRows)} />
-        <this.ExportAll onExport={() => downloadCSV(this.state.data)} />
+        
         {console.log(typeof this.state.data)}
         <Container>
         {/* <DataTableExtensions
       {...tableData}
       filterHidden={false}
     > */}
-        <DataTable
+        <DataTable 
             columns={columns}
             data={filteredItems}
             keyField="sample_key"
@@ -334,7 +383,8 @@ render() {
             onSelectedRowsChange={this.handleChange}
             clearSelectedRows={toggleCleared}
             onRowClicked={this.handleRowClicked}
-            defaultSortField = 'samples_key'
+            defaultSortAsc={true}
+            defaultSortField = "Date"
             subHeader
             persistTableHead
             subHeaderComponent={this.getSubHeaderComponent()}

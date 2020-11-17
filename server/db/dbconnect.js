@@ -1,6 +1,6 @@
 const mysql = require('mysql');
-const config = require('../config/config.json');
-
+// const config = require('../config/config.json');
+const config = process.env.MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const db = mysql.createConnection({
   host: config.database.host,
   user: config.database.user,

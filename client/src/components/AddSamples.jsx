@@ -10,7 +10,8 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 
 const sampleTypes = require("../config/types.json");
-const config = require('../config/config.json')
+// const config = require('../config/config.json')
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 class AddSamples extends Component {
 	constructor(props) {
@@ -33,7 +34,7 @@ class AddSamples extends Component {
 	}
 	async getEvalOptions(sample_id) {
 		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
-		console.log('evals.data.options', evals.data.options);
+		// console.log('evals.data.options', evals.data.options);
 		this.setState({ evalOptions: evals.data.options })
 	}
 	componentDidMount() {
@@ -50,7 +51,6 @@ class AddSamples extends Component {
 	handleIDChange = selectedOption => {
 		this.setState({ selectedIdOption: selectedOption });
 		this.getEvalOptions(selectedOption.value);
-		console.log("selectedIdOption", selectedOption);
 	}
 	handleEvalChange = selectedOption => {
 		this.setState({ selectedEvalOption: selectedOption });
@@ -61,7 +61,7 @@ class AddSamples extends Component {
 				if (selectedOption) {
 					selectedOption.map((ele) => {
 						var res = this.createTabsMppping(ele.value)
-						array.push({ key: ele, fields: res[0], data:[]});
+						array.push({ key: ele, fields: res[0], data:{}});
 					})
 				}
 				this.setState({ multiValue: selectedOption });
@@ -75,7 +75,7 @@ class AddSamples extends Component {
 			case 'select-option':
 				const ele = value[value.length - 1];
 				var res = this.createTabsMppping(ele.value)
-				tabsMapping.push({ key: ele, fields: res[0], data: [{selectedIdOption, selectedEvalOption}] });
+				tabsMapping.push({ key: ele, fields: res[0], data: {"sample_id":selectedIdOption.value, "eval":selectedEvalOption.value } });
 				break;
 			default:
 				tabsMapping = tabsMapping.filter(function (obj) {
@@ -98,7 +98,6 @@ class AddSamples extends Component {
 	}
 
 	handleTextChange = (value, fieldName, index) => {
-		console.log("Inside parent handleTextChange: ", fieldName);
 		let tabsMapping = this.state.tabsMapping
 		// if (fieldName === 'Date') {
 		// 	console.log(typeof value);
@@ -113,12 +112,38 @@ class AddSamples extends Component {
 	// 	tabsMapping[index].data[val] = checked
 	// 	this.setState({ tabsMapping: tabsMapping })
 	// }
+	validateForm = () => {
+		// let errorsObj = {};
+		let tabsMapping = this.state.tabsMapping;
+		let flag = false
+		tabsMapping.forEach(element => {
+		let index = element.fields.findIndex(key => key.fieldName === "Aliquots")
+			// console.log("index", index)
+			if (index !== -1) {
+				let aliquots = element.data.Aliquots;
+				console.log("aliquots", aliquots);
+				if (aliquots === undefined || aliquots.length === 0) {
+					console.log("element", element.fields[index]);
+					element.fields[index]["fieldError"] = "Please enter a valid value"
+					flag = true
+				}
+			}
+			
+		})
+		this.setState({ tabsMapping: tabsMapping });
+		return flag;
+
+	}
 	save = () => {
-		console.log(this.state.tabsMapping);
+		if (!this.validateForm()) {		
+			
+			// this.send();
+			// this.props.history.push('/Home')
+		}
 	}
 	render() {
 		const { types, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
-		console.log("tabsmapping ",tabsMapping);
+		// console.log("tabsmapping ", tabsMapping);
 		const size = Object.keys(tabsMapping).length;
 		return (
 			<div>
@@ -140,6 +165,7 @@ class AddSamples extends Component {
 												options={this.state.sampleIdOptions}
 											/>
 										</Col>
+										{selectedIdOption === null ? null :
 										<Col md="4">
 											<h5 className="text-dark">Please Select Eval:</h5>
 											<Select
@@ -151,18 +177,21 @@ class AddSamples extends Component {
 												options={this.state.evalOptions}
 											/>
 										</Col>
-										<Col md="4">
-											<h5 className="text-dark">Please Sample Type:</h5>
-											<Select
-												label="Sample Type"
-												placeholder="Select Sample Type"
-												isSearchable={true}
-												value={multiValue}
-												onChange={this.onChange}
-												options={types}
-												isMulti
-											/>
-										</Col>
+										}
+										{selectedEvalOption === null? null :
+											<Col md="4">
+												<h5 className="text-dark">Please Sample Type:</h5>
+												<Select
+													label="Sample Type"
+													placeholder="Select Sample Type"
+													isSearchable={true}
+													value={multiValue}
+													onChange={this.onChange}
+													options={types}
+													isMulti
+												/>
+											</Col>
+										}
 									</Row>
 								</Container>
 								<hr />

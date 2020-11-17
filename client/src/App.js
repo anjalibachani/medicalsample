@@ -20,8 +20,9 @@ import ViewShipment from './components/ViewShipment';
 import Logout from './components/Logout'
 import filterandExports from './components/filterandExports';
 import Header from "./components/Header";
-
+const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('./config/deploy_config.json') : require('./config/local_config.json');
 function App() {
+ console.log(`Environment: ${process.env.REACT_APP_MED_DEPLOY_ENV}`);
   return (
     <div className="App">
       <Router basename=".">
