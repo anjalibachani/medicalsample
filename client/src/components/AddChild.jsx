@@ -78,7 +78,7 @@ export default class AddChild extends Component {
             errorsObj.density = "Please Enter Density"
         }
         if (await this.checkSampleIDAndEval(this.state.eval,this.state.sample_id)) {
-            errorsObj.id_eval = "ID and Eval combination already exists , please Enter different ID and Eval values"
+            errorsObj.id_eval = `Please enter different ID and Eval values OR Goto Add Samples for this child with ID: ${this.state.sample_id}`
         }
         if ((this.state.pb !== '' && !this.state.pb.match(regex_pb_hb)) || (this.state.pb !== '' && !(parseFloat(this.state.pb) >= 3.3 && parseFloat(this.state.pb) <= 15.0))) {
             errorsObj.pb = "Please Enter correct format for Pb (typically ranges from 3.3 - 15.0)";

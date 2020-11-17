@@ -8,7 +8,7 @@ export default class Header extends Component {
         prop: PropTypes
     }
     render() {
-        console.log("home: ", window.location.pathname);
+        // console.log("home: ", window.location.pathname);
         let location = window.location.pathname;
         return (
             <div>

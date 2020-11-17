@@ -18,7 +18,7 @@
         },
         {
           "fieldName": "Aliquots",
-          "fieldType": "text"
+          "fieldType": "number"
         },
         {
           "fieldName": "Initial storage conditions",
@@ -51,7 +51,7 @@
 
         {
           "fieldName": "Aliquots",
-          "fieldType": "text"
+          "fieldType": "number"
         },
         {
           "fieldName": "Unrestricted consent for samples",
@@ -106,7 +106,7 @@
         },
         {
           "fieldName": "Aliquots",
-          "fieldType": "text"
+          "fieldType": "number"
         },
         {
           "fieldName": "Foil wrapping",
@@ -156,7 +156,7 @@
 
         {
           "fieldName": "Aliquots",
-          "fieldType": "text"
+          "fieldType": "number"
         },
         {
           "fieldName": "Foil wrapping",
