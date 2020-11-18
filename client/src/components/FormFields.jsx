@@ -36,7 +36,7 @@ export default class FormFields extends Component {
     render() {
         const { fields,data, index} = this.props;
         // console.log("data",data);
-        console.log("data state: ", this.state);
+        // console.log("data state: ", this.state);
         return (
             <div>
                 <Container fluid>
@@ -72,7 +72,7 @@ export default class FormFields extends Component {
                             <Form.Text as={Col} className="text-danger">{item.fieldError}</Form.Text>
                             </Col>)
                     }else if (item.fieldType === "date") {
-                        data[item.fieldName] = new Date()
+                        // data[item.fieldName] = new Date()
                         // console.log(data[item.fieldName].toISOString().split('T')[0]);
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
@@ -105,7 +105,7 @@ export default class FormFields extends Component {
                                 <InputGroup.Checkbox
                                     id={item.fieldName}
                                     checked={data[item.fieldName]}
-                                    onChange={e => this.props.handleTextChange(e.target.checked, item.fieldName, index)} />
+                                    onChange={e => this.props.handleCheckBoxChange(e.target.checked, item.fieldName, index)} />
                             </InputGroup.Prepend>
                             <Form.Control value={item.fieldName} />
                     </InputGroup></Col>)
@@ -122,7 +122,7 @@ export default class FormFields extends Component {
                                             <InputGroup.Checkbox
                                                 id={val}
                                                 checked={data[val]}
-                                                onChange={e => this.props.handleTextChange(e.target.checked,val,index) } />
+                                                onChange={e => this.props.handleCheckBoxChange(e.target.checked,val,index) } />
                                         </InputGroup.Prepend>
                                         <Form.Control value={val} />
                                     </InputGroup>

@@ -5,6 +5,7 @@ import Select from 'react-select';
 import FormFields from './FormFields';
 import Header from './Header';
 import axios from 'axios';
+import _ from 'lodash';
 import 'react-datepicker/dist/react-datepicker.css'
 
 
@@ -69,20 +70,31 @@ class AddSamples extends Component {
 			})()
 	}
 	onChange = (value, { action, removedValue }) => {
+		console.log("$ " + value + " " + action + " " + removedValue + " $");
 		let tabsMapping = this.state.tabsMapping;
 		const { selectedIdOption, selectedEvalOption } = this.state;
 		switch (action) {
 			case 'select-option':
 				const ele = value[value.length - 1];
 				var res = this.createTabsMppping(ele.value)
-				tabsMapping.push({ key: ele, fields: res[0], data: {"sample_id":selectedIdOption.value, "eval":selectedEvalOption.value } });
+				tabsMapping.push({
+					key:ele,
+					fields: res[0], data: {
+						type: ele.value, "sample_id": selectedIdOption.value,
+						"eval": selectedEvalOption.value, "Date": new Date()
+					}
+				});
 				break;
 			default:
 				tabsMapping = tabsMapping.filter(function (obj) {
+					console.log("obj.key", obj.key);
 					return obj.key !== removedValue;
 				});
+				console.log("tabsMapping filter: ", tabsMapping);
 				break;
 		}
+
+		console.log("onChange: ", tabsMapping);
 		this.setState({ multiValue: value, tabsMapping: tabsMapping });
 	}
 	createTabsMppping = name => {
@@ -99,26 +111,20 @@ class AddSamples extends Component {
 
 	handleTextChange = (value, fieldName, index) => {
 		let tabsMapping = this.state.tabsMapping
-		// if (fieldName === 'Date') {
-		// 	console.log(typeof value);
-		// 	console.log(value.toISOString().split('T')[0]);
-		// 	tabsMapping[index].data[fieldName] = value.toISOString().split('T')[0]
-		// }
 		tabsMapping[index].data[fieldName] = value
 		this.setState({ tabsMapping: tabsMapping })
 	}
-	// handleMultiCheckBoxChange = (checked, val, index) => {
-	// 	let tabsMapping = this.state.tabsMapping
-	// 	tabsMapping[index].data[val] = checked
-	// 	this.setState({ tabsMapping: tabsMapping })
-	// }
+	handleCheckBoxChange = (value, fieldName, index) => {
+		let tabsMapping = this.state.tabsMapping
+		value = value === true ? 1 : 0
+		tabsMapping[index].data[fieldName] = value
+		this.setState({ tabsMapping: tabsMapping })
+	}
 	validateForm = () => {
-		// let errorsObj = {};
 		let tabsMapping = this.state.tabsMapping;
 		let flag = false
 		tabsMapping.forEach(element => {
 		let index = element.fields.findIndex(key => key.fieldName === "Aliquots")
-			// console.log("index", index)
 			if (index !== -1) {
 				let aliquots = element.data.Aliquots;
 				console.log("aliquots", aliquots);
@@ -134,16 +140,39 @@ class AddSamples extends Component {
 		return flag;
 
 	}
+	createJson = () => {
+		let tabsMapping = this.state.tabsMapping;
+		let tableData = [];
+
+		console.log("inside createJson function");
+		tabsMapping.forEach((element) => {
+			// let temp = {};
+			element.data = _.mapKeys(element.data, (value, key) => _.snakeCase(key));
+			// temp["values"] = Object.values(element.data);
+
+			// temp["columns"] = Object.keys(_.mapKeys(element.data, (value, key) => _.snakeCase(key)));
+			// temp["values"] = Object.values(element.data);
+
+			// tableData.push(temp);
+		});
+		console.log("after loadash: ", tabsMapping);
+		return tabsMapping;
+	}
+	send = async () => {
+		const result = this.createJson();
+		console.log("converted json",result)
+		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
+		console.log(res.data)
+	}
 	save = () => {
 		if (!this.validateForm()) {		
-			
-			// this.send();
-			// this.props.history.push('/Home')
+			this.send();
+			this.props.history.push('/Home')
 		}
 	}
 	render() {
 		const { types, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
-		// console.log("tabsmapping ", tabsMapping);
+		console.log("tabsmapping ", tabsMapping);
 		const size = Object.keys(tabsMapping).length;
 		return (
 			<div>
@@ -155,7 +184,7 @@ class AddSamples extends Component {
 								<Container>
 									<Row>
 										<Col md="4">
-											<h5 className="text-dark">Please Select ID:</h5>
+											<h5 className="text-dark">Please Select ID</h5>
 											<Select
 												label="Sample ID's"
 												placeholder="Select ID"
@@ -167,7 +196,7 @@ class AddSamples extends Component {
 										</Col>
 										{selectedIdOption === null ? null :
 										<Col md="4">
-											<h5 className="text-dark">Please Select Eval:</h5>
+											<h5 className="text-dark">Please Select Eval</h5>
 											<Select
 												label="Sample Eval"
 												placeholder="Select Eval"
@@ -180,7 +209,7 @@ class AddSamples extends Component {
 										}
 										{selectedEvalOption === null? null :
 											<Col md="4">
-												<h5 className="text-dark">Please Sample Type:</h5>
+												<h5 className="text-dark">Please Select Sample Type</h5>
 												<Select
 													label="Sample Type"
 													placeholder="Select Sample Type"
@@ -200,12 +229,13 @@ class AddSamples extends Component {
 										let flag = false;
 										if (index === size - 1)
 											flag = true;
-										return (<><h4 className="text-dark">{item.key.value} Sample</h4><br />
+										return (<><h4 className="text-dark">{item.data.type} Sample</h4><br />
 											<FormFields
 												fields={item.fields} flag={flag}
 												data={item.data}
 												index={index}
 												handleTextChange={this.handleTextChange}
+												handleCheckBoxChange={this.handleCheckBoxChange}
 											/>
 										</>
 										)
