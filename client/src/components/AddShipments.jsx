@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal } from 'react-bootstrap';
+import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
 import CustomAlertBanner from './CustomAlertBanner'
 //import CustomTable from './CustomTable';
 import Filter from './Filter';
@@ -52,6 +52,8 @@ const columns = [
 	},
   ];
 
+const sampleTypes = require("../config/types.json");
+
 class CreateShipments extends Component {
 	constructor(props) {
 		super(props);
@@ -85,6 +87,9 @@ class CreateShipments extends Component {
 
 			/* This is every tube added to the current shipment. */
 			tubesinshipments: [],
+			locationoptions: [],
+			selectedOption: null,
+			selectedIdOption: null,
 
 
 			/* Set the default rows in tables, so the tables don't disappear
@@ -117,6 +122,7 @@ class CreateShipments extends Component {
 		this.addFilter = this.addFilter.bind(this);
 		this.processFilter = this.processFilter.bind(this);
 		this.send = this.send.bind(this);
+		this.handleIDChange=this.handleIDChange.bind(this);
 	}
 
 	/* Filter methods: */
@@ -131,52 +137,61 @@ class CreateShipments extends Component {
 	};
 
 	// /* Create a GET array the request filtered sample list from database. */
-	processFilter() {
-
-		var getQuery = '';
-		//for each filter in the array, find the corresponding key
+	processFilter(){
 		for (var i = 1; i <= this.state.filters.length; i++) {
-
-			if (i !== 1) {
-				getQuery = getQuery + '&';
+	  
+		  if (i !== 1) {
+			console.log("filters exists")
+		  }
+	  
+		  //check to see if the filter's Type and Value aren't empty
+		  console.log(this.state.returnedFilterValues[i])
+		  let field = this.state.returnedFilterValues[i][0]
+		  
+		  let condition = this.state.returnedFilterValues[i][1]
+		  let value = this.state.returnedFilterValues[i][2]
+		  console.log(field,condition,value)
+		  console.log("sdhs")
+		  console.log("logging filed values ",this.state.data[0].field)
+		  console.log("logging filed values ",this.state.data[0].sample_id)
+		  //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
+		  try{
+			if(field === "ID"){
+			  if(condition === '<')
+			  var filteredFriends = this.state.data.filter( p => p.sample_id < value );
+			  else if(condition === '===')
+			  var filteredFriends = this.state.data.filter( p => p.sample_id == value );
+			  else if(condition === '>')
+			  var filteredFriends = this.state.data.filter( p => p.sample_id > value );
+			}else if(field === "Eval"){
+			  if(condition === '<')
+			  var filteredFriends = this.state.data.filter( p => p.eval < value );
+			  else if(condition === '===')
+			  var filteredFriends = this.state.data.filter( p => p.eval == value );
+			  else if(condition === '>')
+			  var filteredFriends = this.state.data.filter( p => p.eval > value );
+			}else if(field === "aliquots"){
+			  if(condition === '<')
+			  var filteredFriends = this.state.data.filter( p => p.eval < value );
+			  else if(condition === '===')
+			  var filteredFriends = this.state.data.filter( p => p.eval == value );
+			  else if(condition === '>')
+			  var filteredFriends = this.state.data.filter( p => p.eval > value );
 			}
-
-			//check to see if the filter's Type and Value aren't empty
-			if (this.state.returnedFilterValues[i][0] !== '' &&
-				this.state.returnedFilterValues[i][2] !== '') {
-
-				getQuery = getQuery
-					+ 't' + i + '=' + this.state.returnedFilterValues[i][0] + '&'
-					+ 'e' + i + '=' + this.state.returnedFilterValues[i][1] + '&'
-					+ 'v' + i + '=' + this.state.returnedFilterValues[i][2];
-			}
+		  }catch(err){
+			console.log("filter failed")
+		  }
+		  
+		  this.setState({data:filteredFriends})
+		  console.log(filteredFriends)
+		  this.state.data.filter(item => item.field && (item.field < value))
+		  console.log(this.state.data)
+		  
+		  // if (this.state.returnedFilterValues[i][0] !== '' && this.state.returnedFilterValues[i][1] !== ''){
+		  //   console.log(this.state.returnedFilterValues[i][0], this.state.returnedFilterValues[i][1])
+		  // }
 		}
-
-		// var getReq = phpServerURL+"/app/scripts/retrieve.php?" + getQuery;
-		var getReq = nodeserverURL + "/addshipment/select"
-
-		var filterReq;
-		filterReq = new XMLHttpRequest();
-		filterReq.open(
-			"GET",
-			getReq,
-			true
-		);
-
-		filterReq.onload = function (e) {
-			if (filterReq.readyState === 4 && filterReq.status === 200) {
-				this.setState({
-					samples: JSON.parse(filterReq.responseText),
-				});
-			} else {
-				console.error(filterReq.statusText);
-			}
-		}.bind(this);
-
-		filterReq.send();
-
-
-	}
+	  }
 
 	// /*Callback method for filter components that sends the contents of the
 	// //filter to this.state.filterVals.
@@ -198,22 +213,15 @@ class CreateShipments extends Component {
 	 * are in other shipments. This happens in a few steps...
 	 */
 	componentDidMount() {
+		this.getLocations();
 		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
 		console.log(response.data)
 		this.setState({
 		data : response.data
 	});
 })
-// 	async getLocations() {
-// 		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`).then((response)=>{
-// 		console.log(response.data)
-// 		this.setState({
-// 		data : response.data
+	
 
-// 	})
-		
-// 	});
-// }
 
 		//alert('helo') 
 		
@@ -310,7 +318,32 @@ class CreateShipments extends Component {
 		requestAllSamples.send();
 	}
 
+	handleIDChange = selectedOption => {
+		this.setState({ selectedIdOption: selectedOption });
+		this.getLocations(selectedOption.value);
+	}
+	onSearchChange = (selectedOption) => {
+		if (selectedOption) {
+	
+		this.setState({
+			selectedOption
+		   });
+		}
+	  };
+
+	getLocations(){
+		const id = Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`).then((response)=>{
+		console.log("frtch lovstiond",response.data)
+		// var obj = JSON.parse(response.data);
+		// var values = Object.values(obj);
+		// console.log("valiues",values);
+		this.setState({locationoptions: response.data})
+		});
+		console.log("printing ids",id)
+		
+	};
 	render() {
+		const {  selectedIdOption } = this.state;
 		//Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
 		//	console.log(response.data)});
 			
@@ -361,19 +394,19 @@ class CreateShipments extends Component {
 							<InputGroup.Prepend>
 								<InputGroup.Text>from:</InputGroup.Text>
 							</InputGroup.Prepend>
-							<FormControl
-								id="from"
-								value={this.state.from}
-								onChange={e => this.setState({ from: e.target.value })} />
+							
+							{/* <h5 className="text-dark">from:</h5> */}
+							<Select 
+								label="from"
+								placeholder="Select from"
+								isSearchable={true}
+								value={this.state.selectedIdOption}
+								onChange={this.handleIDChange}
+								options={this.state.locationoptions} 
+								style={{width: "200%"}}
+								//autosize={false}
+								/>
 						</InputGroup>
-						{/* <InputGroup className="form-control">
-          				<option>---select---</option>
-            			{
-            			this.state.CityNames &&
-            			this.state.CityNames.CityName.map((h, i) => 
-            			(<option key={i} value={h.CityName}>{h.CityDescription}</option>))
-            			}
-						</InputGroup> */}
 						<InputGroup className="mb-3">
 							<InputGroup.Prepend>
 								<InputGroup.Text>Storage conditions:</InputGroup.Text>
@@ -384,7 +417,7 @@ class CreateShipments extends Component {
 								value={this.state.storageconditions}
 								onChange={e => this.setState({ storageconditions: e.target.value })}>
 								<option>Room temperature</option>
-								{/* <option>4° C</option> */}
+								<option>4° C</option> 
 								<option>-20° C</option>
 								<option>-80° C</option>
 							</Form.Control>
@@ -436,7 +469,7 @@ class CreateShipments extends Component {
 								<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
 								<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
 								<Button variant="dark" size="lg" onClick={this.save}>Save</Button>
-								<Button variant="dark" size="lg">Edit</Button>
+								{/* <Button variant="dark" size="lg">Edit</Button> */}
 							</ButtonGroup>
 						</Col>
 						<hr />
@@ -486,6 +519,7 @@ class CreateShipments extends Component {
 			</div>
 
 		);
+		
 	}
 
 	/* Close the modal where the user specifies tubes to be added to shipment. */

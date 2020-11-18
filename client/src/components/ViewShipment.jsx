@@ -125,6 +125,8 @@ class ViewShipments extends Component {
                             <Button variant="dark" size="lg" onClick={this.markShipmentsReceived}>Mark received</Button>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 							<Button variant="dark" size="lg" onClick={this.handleOpenModal}>View Shipment Details</Button>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							{/* <Button variant="dark" size="lg" href="/AddShipments" text="Create a Shipment">Edit</Button> */}
 							<Modal isOpen={this.state.showModal} contentLabel="Minimal Modal Example" className="Modal" overlayClassName="Overlay">
 							<p>Shipping Details:</p>
 							<Col>
