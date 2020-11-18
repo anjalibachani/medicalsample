@@ -41,7 +41,7 @@ router.get('/fetchlocation', async function (request, response) {
 
 function dbQueryFunc2() {
     return new Promise(function (resolve, reject) {
-        let query2 = db.query('select location_name from locations where user_id in (select user_id from samples)', (error, result) => {
+        let query2 = db.query('select distinct location_name from locations', (error, result) => {
             if (error) {
                 reject(error)
             }
