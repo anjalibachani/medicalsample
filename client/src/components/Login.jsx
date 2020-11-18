@@ -53,8 +53,8 @@ class Login extends React.Component{
     }
     error_responseGoogle(response){
         this.setState({
-          alertVisibility: true,
-          alertText: "THis email doesn't exist",
+          alertVisibility: false,
+          alertText: "This email doesn't exist",
         });
     }
 
@@ -79,7 +79,8 @@ class Login extends React.Component{
         
         if(this.state.email_id && this.state.password){
             e.preventDefault();
-            Axios.post(`http://${config.server.host}:${config.server.port}/api/login`,{email_id:this.state.email_id, password: this.state.password}).then((response)=>{
+            let array1 = [1,2,3];
+            Axios.post(`http://${config.server.host}:${config.server.port}/api/login`,{email_id:this.state.email_id, password: this.state.password, array1:array1}).then((response)=>{
               console.log(response);
                 if (response.status === 200) {
                     localStorage.setItem('user_id',response.data.user_id);

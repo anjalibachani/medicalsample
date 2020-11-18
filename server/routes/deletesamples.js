@@ -3,8 +3,8 @@ const config = require('../config/config.json')
 
 
 async function deletesamples(req,res){
-    const email_id = req.body.email_id ;
-    const password = req.body.password;
+    //const email_id = req.body.email_id ;
+    //const password = req.body.password;
     console.log("delete called" , req.body)
 
     db.query(`DELETE from location_history as L where L.aliquot_id in (select A.aliquot_id from aliquots as A where aliquots_samples_key in (?))`,[req.body.rows], async function(error1, resp1, fields){
