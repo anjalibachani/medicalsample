@@ -47,6 +47,6 @@ app.post("/api/googlelogin", googlelogin);
 app.post("/api/forgot-password",forgotpassword)
 app.post("/api/reset-password/:id",resetpassword)
 app.get("/api/filter",validatetoken,filter)
-app.delete("/api/deletesamples",validatetoken,deletesamples)
-app.post("/api/deletesamples",deletesamples)
+//app.delete("/api/deletesamples",validatetoken,deletesamples)
+app.post("/api/deletesamples",validatetoken,deletesamples)
 app.get('/test', (req, res) => { res.send({ result: "test success" }) });
