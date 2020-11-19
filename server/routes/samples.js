@@ -5,11 +5,11 @@ const db = require("../db/dbconnect");
 
 router.get("/checkIDandEval", async (req, res) => {
   var query = await db.query(
-    "SELECT distinct `sample_id` FROM `samples` WHERE `sample_id`=? AND `eval`=?",
+    "SELECT distinct `sample_id` FROM `samples` WHERE `sample_id`=? AND `eval`=? AND type is NULL",
     [req.query.sample_id, req.query.eval],
     (error, results, fields) => {
       if (error) throw error;
-      console.log(results.length);
+      // console.log(results.length);
       return res.status(200).json({ rows: results.length });
     }
   );
@@ -25,7 +25,7 @@ router.get("/getSampleIDs", async (req, res) => {
       for (let element of results) {
         options.push({ value: element.sample_id, label: element.sample_id });
       }
-      console.log(options);
+      // console.log(options);
       return res.status(200).json({ options: options });
     }
   );
@@ -39,12 +39,12 @@ router.get("/getSampleEvals/:sample_id", async (req, res) => {
     [req.params.sample_id],
     (error, results, fields) => {
       if (error) throw error;
-      console.log(results);
+      // console.log(results);
       let options = [];
       for (let element of results) {
         options.push({ value: element.eval, label: element.eval });
       }
-      console.log(options);
+      // console.log(options);
       return res.status(200).json({ options: options });
     }
   );
@@ -73,7 +73,7 @@ router.post("/add", (req, res) => {
 
   for (let index = 0; index < result.length; index++) {
     let element = result[index].data;
-    let select_stmt = "SELECT * FROM samples WHERE sample_id=? AND eval=?";
+    let select_stmt = "SELECT * FROM samples WHERE sample_id=? AND eval=? AND type is null";
     var select_query = db.query(select_stmt,[element.sample_id, element.eval],(error, select_results) => {
         if (error) throw error;
         // element.sample_id = select_results[0].sample_id;
