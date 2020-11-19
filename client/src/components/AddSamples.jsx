@@ -124,6 +124,7 @@ class AddSamples extends Component {
 			})()
 	}
 	onChange = (value, { action, removedValue }) => {
+		console.log("OnChange: ", value , action, removedValue, "@");
 		let tabsMapping = this.state.tabsMapping;
 		const { selectedIdOption, selectedEvalOption } = this.state;
 		switch (action) {
@@ -140,7 +141,8 @@ class AddSamples extends Component {
 				break;
 			default:
 				tabsMapping = tabsMapping.filter(function (obj) {
-					return obj.key !== removedValue;
+					console.log("obj ", obj);
+					return obj.key.value !== removedValue.value;
 				});
 				break;
 		}

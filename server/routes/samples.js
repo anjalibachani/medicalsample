@@ -70,6 +70,7 @@ router.post("/add",  (req, res) => {
   let result = req.body;
   for (let index = 0; index < result.length; index++) {
     let element = result[index].data;
+    console.log("element:",element);
     let select_stmt = "SELECT * FROM samples WHERE sample_id=? AND eval=? AND type is null";
     var select_query =  db.query(select_stmt,[element.sample_id, element.eval], (error, select_results) => {
         if (error) throw error;
