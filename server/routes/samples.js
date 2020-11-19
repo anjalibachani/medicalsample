@@ -33,13 +33,13 @@ router.get("/getSampleIDs", async (req, res) => {
 });
 
 router.get("/getSampleEvals/:sample_id", async (req, res) => {
-  console.log(req.params.sample_id);
+  // console.log(req.params.sample_id);
   var query = await db.query(
     "SELECT distinct `eval` FROM `samples` WHERE `sample_id`=?",
     [req.params.sample_id],
     (error, results, fields) => {
       if (error) throw error;
-      // console.log(results);
+      console.log(results);
       let options = [];
       for (let element of results) {
         options.push({ value: element.eval, label: element.eval });
@@ -51,34 +51,28 @@ router.get("/getSampleEvals/:sample_id", async (req, res) => {
   console.log(query.sql);
 });
 
+router.get("/getSampleTypes/", async (req, res) => {
+  console.log(req.query.sample_id);
+  console.log(req.query.eval);
+  var query = await db.query("SELECT * FROM `samples` WHERE `sample_id`=? and `eval`=? AND type IS NOT NULL",
+    [req.query.sample_id, req.query.eval],
+    (error, results, fields) => {
+      if (error) throw error;
+      // console.log(results);
+      // console.log(options);
+      return res.status(200).json({ results: results });
+    }
+  );
+  console.log(query.sql);
+});
 
-router.post("/add", (req, res) => {
+router.post("/add",  (req, res) => {
   let result = req.body;
-  // let updateQueryObj = result[0].data;
-  // console.log("updateQueryObj", updateQueryObj);
-  // let whereObj = {}
-  // whereObj.sample_id = updateQueryObj.sample_id;
-  // whereObj.eval = updateQueryObj.eval;
-  // updateQueryObj.date = new Date(updateQueryObj.date);
-  // delete updateQueryObj.sample_id;
-  // delete updateQueryObj.eval;
-  // console.log("updateQueryObj", updateQueryObj);
-  // var update_stmt = "UPDATE samples set ? WHERE `sample_id` = ? AND `eval` = ?";
-  // console.log(update_stmt);
-  // var query = db.query(update_stmt, [updateQueryObj, whereObj.sample_id,whereObj.eval], (error, results, fields) => {
-  //   if (error) throw error;
-  //   console.log(results.changedRows);
-  // });
-
-
   for (let index = 0; index < result.length; index++) {
     let element = result[index].data;
     let select_stmt = "SELECT * FROM samples WHERE sample_id=? AND eval=? AND type is null";
-    var select_query = db.query(select_stmt,[element.sample_id, element.eval],(error, select_results) => {
+    var select_query =  db.query(select_stmt,[element.sample_id, element.eval], (error, select_results) => {
         if (error) throw error;
-        // element.sample_id = select_results[0].sample_id;
-        // element.eval = select_results[0].sample_id;
-      // console.log(select_results.length);
         element.pb = select_results[0].pb;
         element.hb = select_results[0].hb;
         element.density = select_results[0].density;
@@ -103,7 +97,7 @@ router.post("/add", (req, res) => {
         status_id: 1,
       };
       for (let index = 0; index < element.aliquots; index++) {
-        var insert_query =  db.query("INSERT INTO `aliquots` SET ?", aliquot,(error, insert_results, fields) => {
+        var insert_query =   db.query("INSERT INTO `aliquots` SET ?", aliquot,(error, insert_results, fields) => {
             if (error) throw error;
             console.log(insert_results.insertId);
           }

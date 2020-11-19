@@ -31,8 +31,19 @@ class AddSamples extends Component {
 	}
 	async getsampleIdOptions() {
 		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
+		console.log("id.data.options", ids.data.options);
 		this.setState({ sampleIdOptions: ids.data.options })
 	}
+	async getSampleTypes(sample_id,eval_number) {
+		const params = {
+			sample_id: sample_id,
+			eval: eval_number
+		};
+		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleTypes`, { params })
+		// console.log("type: ", res.data);
+		return res.data.results;
+	}
+
 	async getEvalOptions(sample_id) {
 		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
 		// console.log('evals.data.options', evals.data.options);
@@ -53,9 +64,52 @@ class AddSamples extends Component {
 		this.setState({ selectedIdOption: selectedOption });
 		this.getEvalOptions(selectedOption.value);
 	}
-	handleEvalChange = selectedOption => {
+	handleEvalChange = async selectedOption => {
 		this.setState({ selectedEvalOption: selectedOption });
+		let temp = await this.getSampleTypes(this.state.selectedIdOption.value, selectedOption.value)
+		console.log("temp", temp);
+		let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type } });
+		console.log("multiVal: ", multiVal);
+		this.setState({ multiValue: multiVal }, () => this.generateTabsMapping(temp));
 	}
+
+	generateTabsMapping = (data) => {
+		const { types } = this.state;
+		let tabs = [];
+		console.log("inside generate Tabs mapping: ", data);
+		data.forEach((element) => {
+			element = _.mapKeys(element, (value, key) => _.startCase(_.toLower(key)));
+			console.log("element: ", element);
+			let obj = {};
+			obj["key"] = { "value": element.Type, "label": element.Type };
+			let type = element.Type;
+			let fields = sampleTypes.types.filter((val, key) => {
+				// console.log("val: ",val+" type: ",type);
+				if (val.name === type)
+					return val.values
+			});
+			obj["fields"] = fields[0].values;
+			console.log(obj["fields"]);
+			let tempData = {};
+			for (const [key, value] of Object.entries(obj["fields"])) {
+				console.log(`element:`, key, value);
+				if (value.fieldName === "Date")
+					tempData[value.fieldName] = new Date(element[value.fieldName]);
+				else
+					tempData[value.fieldName] = element[value.fieldName];
+			}
+			tempData["sample_id"] = element["Sample Id"]
+			tempData["eval"] = element["Eval"]
+			tempData["type"] = element["Type"]
+			obj["data"] = tempData;
+			tabs.push(obj);
+		});
+		console.log("tabs: ", tabs);
+		this.setState({ tabsMapping: tabs });
+		// console.log("data: ", data);
+		// console.log("types: ", types);
+	}
+
 	handleMultiChange = selectedOption => {
 		let array = []
 			(() => {
@@ -70,7 +124,6 @@ class AddSamples extends Component {
 			})()
 	}
 	onChange = (value, { action, removedValue }) => {
-		console.log("$ " + value + " " + action + " " + removedValue + " $");
 		let tabsMapping = this.state.tabsMapping;
 		const { selectedIdOption, selectedEvalOption } = this.state;
 		switch (action) {
@@ -87,14 +140,11 @@ class AddSamples extends Component {
 				break;
 			default:
 				tabsMapping = tabsMapping.filter(function (obj) {
-					console.log("obj.key", obj.key);
 					return obj.key !== removedValue;
 				});
-				console.log("tabsMapping filter: ", tabsMapping);
 				break;
 		}
 
-		console.log("onChange: ", tabsMapping);
 		this.setState({ multiValue: value, tabsMapping: tabsMapping });
 	}
 	createTabsMppping = name => {
@@ -142,38 +192,27 @@ class AddSamples extends Component {
 	}
 	createJson = () => {
 		let tabsMapping = this.state.tabsMapping;
-		let tableData = [];
-
-		console.log("inside createJson function");
 		tabsMapping.forEach((element) => {
-			// let temp = {};
 			element.data = _.mapKeys(element.data, (value, key) => _.snakeCase(key));
-			// temp["values"] = Object.values(element.data);
-
-			// temp["columns"] = Object.keys(_.mapKeys(element.data, (value, key) => _.snakeCase(key)));
-			// temp["values"] = Object.values(element.data);
-
-			// tableData.push(temp);
+			console.log(element.data);
 		});
-		console.log("after loadash: ", tabsMapping);
 		return tabsMapping;
 	}
 	send = async () => {
 		const result = this.createJson();
-		console.log("converted json",result)
 		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
 		console.log(res.data)
 	}
-	save = () => {
+	save =  () => {
 		if (!this.validateForm()) {		
-			this.send();
+			 this.send();
 			this.props.history.push('/Home')
 		}
 	}
 	render() {
 		const { types, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
-		console.log("tabsmapping ", tabsMapping);
 		const size = Object.keys(tabsMapping).length;
+		console.log("tabsMapping", tabsMapping);
 		return (
 			<div>
 				{(() => {
@@ -215,6 +254,7 @@ class AddSamples extends Component {
 													placeholder="Select Sample Type"
 													isSearchable={true}
 													value={multiValue}
+													defaultValue={types}
 													onChange={this.onChange}
 													options={types}
 													isMulti

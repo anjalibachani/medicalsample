@@ -13,7 +13,7 @@
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         },
         {
@@ -21,16 +21,16 @@
           "fieldType": "number"
         },
         {
-          "fieldName": "Initial storage conditions",
+          "fieldName": "Initial Storage Conditions",
           "fieldType": "select",
           "values": ["Select","-20C", "-80C", "4C"]
         },
         {
-          "fieldName": "Sub study",
+          "fieldName": "Sub Study",
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Sub study Name",
+          "fieldName": "Sub Study Name",
           "fieldType": "select",
           "values": ["Select","Scola-Exposome", "MOX-IN"]
         },
@@ -54,7 +54,7 @@
           "fieldType": "number"
         },
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         },
         {
@@ -63,16 +63,16 @@
           "values": ["BHT"]
         },
         {
-          "fieldName": "Initial storage conditions",
+          "fieldName": "Initial Storage Conditions",
           "fieldType": "select",
           "values": ["Select","-20C", "-80C", "4C"]
         },
         {
-          "fieldName": "Sub study",
+          "fieldName": "Sub Study",
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Sub study Name",
+          "fieldName": "Sub Study Name",
           "fieldType": "select",
           "values": ["Select","Scola-Exposome", "MOX-IN"]
         }
@@ -87,7 +87,7 @@
         },
 
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         }
       ]
@@ -109,29 +109,29 @@
           "fieldType": "number"
         },
         {
-          "fieldName": "Foil wrapped",
+          "fieldName": "Foil Wrapped",
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         },
 
         {
-          "fieldName": "Other treatments",
+          "fieldName": "Other Treatments",
           "fieldType": "text"
         },
         {
-          "fieldName": "Initial storage conditions",
+          "fieldName": "Initial Storage Conditions",
           "fieldType": "select",
           "values": ["Select","-20C", "-80C"]
         },
         {
-          "fieldName": "Sub study",
+          "fieldName": "Sub Study",
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Sub study Name",
+          "fieldName": "Sub Study Name",
           "fieldType": "select",
           "values": ["Select","Scola-Exposome", "MOX-IN"]
         }
@@ -150,7 +150,7 @@
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         },
 
@@ -159,24 +159,24 @@
           "fieldType": "number"
         },
         {
-          "fieldName": "Foil wrapped",
+          "fieldName": "Foil Wrapped",
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Other treatments",
+          "fieldName": "Other Treatments",
           "fieldType": "text"
         },
         {
-          "fieldName": "Initial storage conditions",
+          "fieldName": "Initial Storage Conditions",
           "fieldType": "select",
           "values": ["Select","-20C", "-80C"]
         },
         {
-          "fieldName": "Sub study",
+          "fieldName": "Sub Study",
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Sub study Name",
+          "fieldName": "Sub Study Name",
           "fieldType": "select",
           "values": ["Select","Scola-Exposome", "MOX-IN"]
         },
@@ -196,7 +196,7 @@
         },
 
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         }
       ]
@@ -210,12 +210,12 @@
         },
 
         {
-          "fieldName": "Initial storage conditions",
+          "fieldName": "Initial Storage Conditions",
           "fieldType": "select",
           "values": ["Select","-20C", "4C", "Room temperature"]
         },
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         }
       ]
@@ -229,7 +229,7 @@
         },
 
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         }
       ]
@@ -243,7 +243,7 @@
         },
 
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         }
       ]
@@ -257,7 +257,7 @@
         },
 
         {
-          "fieldName": "Unrestricted consent",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         }
       ]
