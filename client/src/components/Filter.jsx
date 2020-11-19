@@ -26,8 +26,6 @@ class Filter extends Component {
 		this.handleValueChange = this.handleValueChange.bind(this);
 //		this.handleDateChange = this.handleDateChange.bind(this);
 	}
-
-
 	render() {
 
 		const equalityInput = () => { 
