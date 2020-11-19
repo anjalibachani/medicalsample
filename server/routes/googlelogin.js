@@ -22,7 +22,7 @@ async function googlelogin(req,res){
                 }else if (results.length>0){
                     if(results[0].email_id === email){
                         results[0].password = undefined
-                        const token = jwt.sign({result:results[0]}, config.JWT_SECRET,{expiresIn:"1h"})
+                        const token = jwt.sign({result:results[0]}, config.JWT_SECRET,{expiresIn:"2h"})
                         return res.status(200).json({token:token, user_id:results[0].user_id, admin:results[0].admin, message:"login successful"})
                     }
                     else{
