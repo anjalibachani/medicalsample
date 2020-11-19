@@ -41,6 +41,8 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem("isLoggedIn", true);
                     localStorage.setItem("isAdmin", response.data.admin);
+                    localStorage.setItem("expiresin",Date.now()+6000000);
+                    console.log("logging date",Date.now());
                     this.redirectToHome();
                 }
                 else{
@@ -88,6 +90,8 @@ class Login extends React.Component{
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('isLoggedIn', true);
                     localStorage.setItem("isAdmin", response.data.admin);
+                    localStorage.setItem("expiresin",Date.now()+6000000);
+                    console.log("logging date",Date.now());
                     this.redirectToHome();
                 }
                 else{

@@ -6,6 +6,8 @@ async function deletesamples(req,res){
     //const email_id = req.body.email_id ;
     //const password = req.body.password;
     console.log("delete called" , req.body)
+    console.log("delete called" , req.body.user_id)
+    
 
     db.query(`DELETE from location_history as L where L.aliquot_id in (select A.aliquot_id from aliquots as A where aliquots_samples_key in (?))`,[req.body.rows], async function(error1, resp1, fields){
         console.log(error1)

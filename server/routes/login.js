@@ -26,7 +26,7 @@ async function login(req,res){
                 // console.log(getsha1(password),password,results[0].password)
                 if(comparison){
                     results[0].password = undefined
-                    const token = jwt.sign({result:results[0]}, config.JWT_SECRET,{expiresIn:"1h"})
+                    const token = jwt.sign({result:results[0]}, config.JWT_SECRET,{expiresIn:"2h"})
                     return res.status(200).json({token:token, user_id:results[0].user_id, admin:results[0].admin, message:"login successful"})
                 }
                 else{

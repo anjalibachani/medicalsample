@@ -1,23 +1,23 @@
-import React, { Component,useState } from 'react';
+import React, { Component} from 'react';
 import differenceBy from 'lodash/differenceBy';
-import DataTable, { createTheme } from 'react-data-table-component';
+import DataTable from 'react-data-table-component';
 import { Redirect } from 'react-router-dom';
-import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
+import { Button, ButtonGroup, Row, Col, Container } from 'react-bootstrap';
 
 //import CustomTable from './CustomTable';
-import CustomAlertBanner from './CustomAlertBanner';
+//import CustomAlertBanner from './CustomAlertBanner';
 
 import Axios from 'axios';
 import Filter from './Filter';
 import styled from 'styled-components';
-import DatePicker from 'react-datepicker'
+//import DatePicker from 'react-datepicker'
 import Header from './Header';
 
 import memoize from 'memoize-one';
 //import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import { isThisHour } from 'date-fns';
-import { fil } from 'date-fns/locale';
+//import { isThisHour } from 'date-fns';
+//import { fil } from 'date-fns/locale';
 
 // const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
@@ -201,9 +201,9 @@ addFilter() {
 processFilter(){
   for (var i = 1; i <= this.state.filters.length; i++) {
 
-    if (i !== 1) {
+    if (i >= 1) {
       console.log("filters exists")
-
+    //}
     //check to see if the filter's Type and Value aren't empty
     console.log(this.state.returnedFilterValues[i])
     let field = this.state.returnedFilterValues[i][0]
@@ -216,34 +216,35 @@ processFilter(){
     console.log("logging filed values ",this.state.data[0].sample_id)
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
     try{
+      //var filtereddata='';
       if(field === "ID"){
         if(condition === '<')
-        var filteredFriends = this.state.data.filter( p => p.sample_id < value );
+        var filtereddata = this.state.data.filter( p => p.sample_id < value );
         else if(condition === '===')
-        var filteredFriends = this.state.data.filter( p => p.sample_id == value );
+        var filtereddata = this.state.data.filter( p => p.sample_id == value );
         else if(condition === '>')
-        var filteredFriends = this.state.data.filter( p => p.sample_id > value );
+        var filtereddata = this.state.data.filter( p => p.sample_id > value );
       }else if(field === "Eval"){
         if(condition === '<')
-        var filteredFriends = this.state.data.filter( p => p.eval < value );
+        var filtereddata = this.state.data.filter( p => p.eval < value );
         else if(condition === '===')
-        var filteredFriends = this.state.data.filter( p => p.eval == value );
+        var filtereddata = this.state.data.filter( p => p.eval == value );
         else if(condition === '>')
-        var filteredFriends = this.state.data.filter( p => p.eval > value );
+        var filtereddata = this.state.data.filter( p => p.eval > value );
       }else if(field === "aliquots"){
         if(condition === '<')
-        var filteredFriends = this.state.data.filter( p => p.eval < value );
+        var filtereddata = this.state.data.filter( p => p.eval < value );
         else if(condition === '===')
-        var filteredFriends = this.state.data.filter( p => p.eval == value );
+        var filtereddata = this.state.data.filter( p => p.eval == value );
         else if(condition === '>')
-        var filteredFriends = this.state.data.filter( p => p.eval > value );
+        var filtereddata = this.state.data.filter( p => p.eval > value );
       }
     }catch(err){
       console.log("filter failed")
     }
     
-    this.setState({data:filteredFriends})
-    console.log(filteredFriends)
+    this.setState({data:filtereddata})
+    console.log(filtereddata)
     this.state.data.filter(item => item.field && (item.field < value))
     console.log(this.state.data)
   }
@@ -284,8 +285,8 @@ deleteAll = () => {
     if (window.confirm(`Are you sure you want to delete:\r ${rows}?`)) {
         this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'samples_key') }));
         console.log("selected rows in deleteall",rows)
-        Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows, headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
-        // Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{payload: payload, data:{user_id:localStorage.getItem("user_id"), rows:rows}}).then((response)=>{
+        // Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows, headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
+        Axios.post(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{user_id:localStorage.getItem("user_id"), rows:rows},{headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
           if(response.status === 200){
             console.log("delete successful")
           }else{
@@ -335,7 +336,7 @@ render() {
     return (
       <div>
       {(() => {
-        if (localStorage.getItem("user_id") != null) {
+        if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now())) {
           return(<div>
             <Header />
 		    {/* const actionsMemo = React.useMemo(() => <this.Export onExport={() => downloadCSV(this.state.data)} />, []); */}
@@ -384,12 +385,10 @@ render() {
           </div>);
           }
           else {
-            return <Redirect to="/Home" />;
+            localStorage.clear();
+            return <Redirect to="/login" />;
           }
         })()}
-
-    
-        
     </div>
     );
 }
