@@ -68,7 +68,8 @@ router.get("/getSampleTypes/", async (req, res) => {
 
 router.post("/add", (req, res) => {
   let result = req.body;
-  let j = 0;
+  let aliquot_sum = 0;
+  let aliquots_array = [];
   for (let index = 0; index < result.length; index++) {
     let element = result[index].data;
     // console.log("element:", element);
@@ -83,7 +84,12 @@ router.post("/add", (req, res) => {
       console.log("found: ", found);
       if (found) {
         // update query
-        // console.log("existing element", element);
+        // let temp_aliquot = element.aliquots===undefined ? 1 : element.aliquots;
+        // aliquot_sum += temp_aliquot;
+        // console.log("total sum is = ", temp_aliquot);
+        // aliquots_array.push(aliquot_sum);
+        // console.log("aliquots_array = ", aliquots_array);
+        // console.log("last index value", aliquots_array[aliquots_array.length-1]);
         let update_stmt = "UPDATE samples SET ? where sample_id=? AND eval=? AND type=?";
         var update_query = db.query(update_stmt, [element, element.sample_id, element.eval, element.type], (error, results, fields) => {
           if (error) {
@@ -92,11 +98,33 @@ router.post("/add", (req, res) => {
           console.log("Row updated :", results.changedRows);
         }
         );
-        // let ali_stmt ="select * from aliquots where aliquots_samples_key =?"
-        // db.query(ali_stmt, [element.samples_key], (error, res) => {
+      //   let test = "delete from aliquots where sample_id=?";
+      //   db.query(test, [element.sample_id], (error, test_res) => {
+      //     if (error) {
+      //       throw error;
+      //     }
+      //     console.log("Aliquots deleted: ",test_res.affectedRows);
+      //   });
+      //   var aliquot = {
+      //     sample_id: element.sample_id,
+      //     location_id: 4,
+      //     status_id: 1,
+      //   };
+      //   for (let i = 0; i < aliquots_array[aliquots_array.length-1]; i++) {
+      //     db.query("INSERT INTO `aliquots` SET ?", aliquot, (error, aliquot_insert_results, fields) => {
+      //       if (error) throw error;
+      //       console.log("Inserted: ",aliquot_insert_results.insertId);
+      //     }
+      //   );
+      // }
+        
+        /********aliquots update******/
+        // let ali_stmt ="select * from aliquots"
+        // db.query(ali_stmt, (error, res) => {
         //    if (error) {
         //      throw error;
         //   }
+        //   console.log("Aliquotes:",res);
         //   const aliquots_found = res.some((el) => el.aliquots_samples_key === element.samples_key);
         //   if (aliquots_found) {
         //     //update query
@@ -104,36 +132,35 @@ router.post("/add", (req, res) => {
         //     //insert query
         //   }
         // });
- 
+        /********aliquots update******/
       }
       else {
         // insert query
         // console.log("new element", element);
         let insert_stmt = "INSERT INTO samples SET ?";
-        var insert_query = db.query(
-          insert_stmt,
-          element,
-          (error, results, fields) => {
+        var insert_query = db.query( insert_stmt,element,(error, results, fields) => {
             if (error) {
               throw error;
             }
-            console.log("Row inserted :", results.insertId);
-          }
-        );
-        var maxItr = element.aliquots === undefined ? 1 : element.aliquots;
-        console.log("aliquot field exists : ", maxItr);
-        var aliquot = {
-          sample_id: element.sample_id,
-          location_id: 4,
-          status_id: 1,
-        };
-        for (let i = 0; i < maxItr; i++) {
+          console.log("Row inserted :", results.insertId);
+          var maxItr = element.aliquots === undefined ? 1 : element.aliquots;
+          console.log("aliquot field exists : ", maxItr);
+          var aliquot = {
+            sample_id: element.sample_id,
+            aliquots_samples_key:results.insertId,
+            location_id: 4,
+            status_id: 1,
+          };
+          for (let i = 0; i < maxItr; i++) {
           db.query("INSERT INTO `aliquots` SET ?", aliquot, (error, aliquot_insert_results, fields) => {
             if (error) throw error;
             console.log("Inserted: ",aliquot_insert_results.insertId);
           }
         );
       }
+          }
+        );
+        
         //       console.log(aliquot_insert_query.sql);
         // console.log(insert_query.sql);
       }
@@ -191,7 +218,6 @@ router.post("/add", (req, res) => {
     }
     );
     console.log(select_query.sql);
-    j++;
   }
 });
 
