@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
+import axios from 'axios';
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
 import CustomAlertBanner from './CustomAlertBanner'
 //import CustomTable from './CustomTable';
@@ -13,44 +13,45 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 //import DataTable from 'react-data-table-component';
 import DataTable from './DataTable'
+import { getWeekWithOptions } from 'date-fns/fp';
 // const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
-const phpServerURL=null
+const phpServerURL = null
 const nodeserverURL = `http://${config.server.host}:${config.server.port}`
 /* CreateShipments: this is the interface for entering a new shipment into the
  * database. This works very similarly to AddSamples.
  */
 const columns = [
 	{
-	  name: 'ID',
-	  selector: 'sample_id',
-	  sortable: true,
+		name: 'ID',
+		selector: 'sample_id',
+		sortable: true,
 	},
 	{
-	  name: 'Eval',
-	  selector: 'eval',
-	  sortable: true,
-	  right: true,
+		name: 'Eval',
+		selector: 'eval',
+		sortable: true,
+		right: true,
 	},
 	{
-	  name: 'Date',
-	  selector: 'date',
-	  sortable: true,
-	  right: true,
+		name: 'Date',
+		selector: 'date',
+		sortable: true,
+		right: true,
 	},
 	{
-	  name: 'Type',
-	  selector: 'type',
-	  sortable: true,
-	  right: true,
+		name: 'Type',
+		selector: 'type',
+		sortable: true,
+		right: true,
 	},
 	{
-	  name: 'Aliquots',
-	  selector: 'aliquots',
-	  sortable: true,
-	  right: true,
+		name: 'Aliquots',
+		selector: 'aliquots',
+		sortable: true,
+		right: true,
 	},
-  ];
+];
 
 const sampleTypes = require("../config/types.json");
 
@@ -58,7 +59,7 @@ class CreateShipments extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data:[],
+			data: [],
 			/* Shipment data is tracked here, to be validated and sent to the
 			 * database. They begin empty.
 			 */
@@ -88,14 +89,16 @@ class CreateShipments extends Component {
 			/* This is every tube added to the current shipment. */
 			tubesinshipments: [],
 			locationoptions: [],
+			locationoptions1: [],
 			selectedOption: null,
 			selectedIdOption: null,
+			selectedIdOption1: null,
 
 
 			/* Set the default rows in tables, so the tables don't disappear
 			 * when empty. */
 			minimumRowsInTable: 16,
-
+			selectedRows: [],
 			aliquotSelectorsForModal: [],
 			showModal: false,
 			checkedRowsSamples: [],
@@ -121,8 +124,10 @@ class CreateShipments extends Component {
 		this.selectAliquotsForShipment = this.selectAliquotsForShipment.bind(this);
 		this.addFilter = this.addFilter.bind(this);
 		this.processFilter = this.processFilter.bind(this);
+		this.clearFilters = this.clearFilters.bind(this);
+
 		this.send = this.send.bind(this);
-		this.handleIDChange=this.handleIDChange.bind(this);
+		this.handleIDChange = this.handleIDChange.bind(this);
 	}
 
 	/* Filter methods: */
@@ -137,62 +142,66 @@ class CreateShipments extends Component {
 	};
 
 	// /* Create a GET array the request filtered sample list from database. */
-	processFilter(){
+	processFilter() {
 		for (var i = 1; i <= this.state.filters.length; i++) {
-	  
-		  if (i !== 1) {
-			console.log("filters exists")
-		  }
-	  
-		  //check to see if the filter's Type and Value aren't empty
-		  console.log(this.state.returnedFilterValues[i])
-		  let field = this.state.returnedFilterValues[i][0]
-		  
-		  let condition = this.state.returnedFilterValues[i][1]
-		  let value = this.state.returnedFilterValues[i][2]
-		  console.log(field,condition,value)
-		  console.log("sdhs")
-		  console.log("logging filed values ",this.state.data[0].field)
-		  console.log("logging filed values ",this.state.data[0].sample_id)
-		  //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
-		  try{
-			if(field === "ID"){
-			  if(condition === '<')
-			  var filteredFriends = this.state.data.filter( p => p.sample_id < value );
-			  else if(condition === '===')
-			  var filteredFriends = this.state.data.filter( p => p.sample_id == value );
-			  else if(condition === '>')
-			  var filteredFriends = this.state.data.filter( p => p.sample_id > value );
-			}else if(field === "Eval"){
-			  if(condition === '<')
-			  var filteredFriends = this.state.data.filter( p => p.eval < value );
-			  else if(condition === '===')
-			  var filteredFriends = this.state.data.filter( p => p.eval == value );
-			  else if(condition === '>')
-			  var filteredFriends = this.state.data.filter( p => p.eval > value );
-			}else if(field === "aliquots"){
-			  if(condition === '<')
-			  var filteredFriends = this.state.data.filter( p => p.eval < value );
-			  else if(condition === '===')
-			  var filteredFriends = this.state.data.filter( p => p.eval == value );
-			  else if(condition === '>')
-			  var filteredFriends = this.state.data.filter( p => p.eval > value );
-			}
-		  }catch(err){
-			console.log("filter failed")
-		  }
-		  
-		  this.setState({data:filteredFriends})
-		  console.log(filteredFriends)
-		  this.state.data.filter(item => item.field && (item.field < value))
-		  console.log(this.state.data)
-		  
-		  // if (this.state.returnedFilterValues[i][0] !== '' && this.state.returnedFilterValues[i][1] !== ''){
-		  //   console.log(this.state.returnedFilterValues[i][0], this.state.returnedFilterValues[i][1])
-		  // }
-		}
-	  }
 
+			if (i !== 1) {
+				console.log("filters exists")
+			}
+
+			//check to see if the filter's Type and Value aren't empty
+			console.log(this.state.returnedFilterValues[i])
+			let field = this.state.returnedFilterValues[i][0]
+
+			let condition = this.state.returnedFilterValues[i][1]
+			let value = this.state.returnedFilterValues[i][2]
+			console.log(field, condition, value)
+			console.log("sdhs")
+			console.log("logging filed values ", this.state.data[0].field)
+			console.log("logging filed values ", this.state.data[0].sample_id)
+			//const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
+			try {
+				if (field === "ID") {
+					if (condition === '<')
+						var filteredFriends = this.state.data.filter(p => p.sample_id < value);
+					else if (condition === '===')
+						var filteredFriends = this.state.data.filter(p => p.sample_id == value);
+					else if (condition === '>')
+						var filteredFriends = this.state.data.filter(p => p.sample_id > value);
+				} else if (field === "Eval") {
+					if (condition === '<')
+						var filteredFriends = this.state.data.filter(p => p.eval < value);
+					else if (condition === '===')
+						var filteredFriends = this.state.data.filter(p => p.eval == value);
+					else if (condition === '>')
+						var filteredFriends = this.state.data.filter(p => p.eval > value);
+				} else if (field === "aliquots") {
+					if (condition === '<')
+						var filteredFriends = this.state.data.filter(p => p.eval < value);
+					else if (condition === '===')
+						var filteredFriends = this.state.data.filter(p => p.eval == value);
+					else if (condition === '>')
+						var filteredFriends = this.state.data.filter(p => p.eval > value);
+				}
+			} catch (err) {
+				console.log("filter failed")
+			}
+
+			this.setState({ data: filteredFriends })
+			console.log(filteredFriends)
+			this.state.data.filter(item => item.field && (item.field < value))
+			console.log(this.state.data)
+
+			// if (this.state.returnedFilterValues[i][0] !== '' && this.state.returnedFilterValues[i][1] !== ''){
+			//   console.log(this.state.returnedFilterValues[i][0], this.state.returnedFilterValues[i][1])
+			// }
+		}
+	}
+
+	clearFilters() {
+		this.setState({ filters: [<Filter key={1} number={1} retVals={this.getFilterValues} />] })
+		this.getsampledata();
+	}
 	// /*Callback method for filter components that sends the contents of the
 	// //filter to this.state.filterVals.
 	// */
@@ -213,140 +222,85 @@ class CreateShipments extends Component {
 	 * are in other shipments. This happens in a few steps...
 	 */
 	componentDidMount() {
+		// let array = []
+		// sampleTypes.types.forEach(element => {
+		// 	array.push({ value: element.name, label: element.name });
+		// });
+		// this.setState({ types: array });
+		//this.getsampleIdOptions();
 		this.getLocations();
-		Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
-		console.log(response.data)
-		this.setState({
-		data : response.data
-	});
-})
-	
-
+		//this.getLocations1();
+		this.getsampledata();
 
 		//alert('helo') 
-		
-		/* To begin, retrieve all samples... */
-		var requestAllSamples;
 
-		requestAllSamples = new XMLHttpRequest();
 
-		requestAllSamples.open(
-			"GET",
-			//phpServerURL + "/app/scripts/retrieve_all.php?table=Samples",
-			nodeserverURL + "/addshipment/select",
-			true
-		);
-
-		requestAllSamples.onload = function (e) {
-			if (requestAllSamples.readyState === 4 && requestAllSamples.status === 200) {
-				this.setState({
-					samples: JSON.parse(requestAllSamples.responseText),
-				});
-
-				/* Next, once the samples have loaded, get a SEPARATE list of
-				 * all the Tubes available. This is necessary because, while
-				 * the user sees a list of available samples, individual tubes
-				 * of each samples are tracked in shipments, and we need to
-				 * know where each tube is to know whether there are any
-				 * tubes remaining from a sample in order to add to a new
-				 * shipment.
-				 */
-				 var request_tubes = new XMLHttpRequest();
-				// var request_tubes;
-				request_tubes.open(
-
-					"GET",
-					// phpServerURL+"/app/scripts/retrieve_all.php?table=Tubes",
-					nodeserverURL+"/addshipment/select",
-					true
-				);
-
-				request_tubes.onload = function (e) {
-					if (request_tubes.readyState === 4 && request_tubes.status === 200) {
-						this.setState({
-							tubes: JSON.parse(request_tubes.responseText),
-						});
-
-						//Now that both samples and tubes are loeaded, we need to remove any aliquots already in a shipment from consideration for a
-						//new shiment.
-
-						var samples_excluding_shipped_tubes = this.state.samples;
-						var samples_depleted_to_splice = [];
-
-						for (var i = 0; i < this.state.tubes.length; i++) {
-							if (this.state.tubes[i]["in_shipment"] == 1) {
-								for (var j = 0; j < samples_excluding_shipped_tubes.length; j++) {
-									var sample_id = samples_excluding_shipped_tubes[j]["key_internal"];
-									var tube_sample_id = this.state.tubes[i]["sample_key_internal"];
-									if (sample_id === tube_sample_id) {
-										samples_excluding_shipped_tubes[j]["aliquots"]--;
-										if (samples_excluding_shipped_tubes[j]["aliquots"] == 0) {
-											samples_depleted_to_splice.push(samples_excluding_shipped_tubes[j]["key_internal"]);
-										}
-										break;
-									}
-								}
-							}
-						}
-
-						//Finally, remove any sample records for which there are no available aliquots/tubes
-						for (var i = (samples_excluding_shipped_tubes.length - 1); i > -1; i--) {
-							for (var j = 0; j < samples_depleted_to_splice.length; j++) {
-								if (samples_excluding_shipped_tubes[i]["key_internal"] === samples_depleted_to_splice[j]) {
-									samples_excluding_shipped_tubes.splice(i, 1);
-								}
-							}
-						}
-
-						this.setState({
-							samples: samples_excluding_shipped_tubes,
-							samplesvisible: samples_excluding_shipped_tubes,
-						});
-
-					} else {
-						console.error(request_tubes.statusText);
-					}
-				}.bind(this);
-
-				request_tubes.send();
-
-			} else {
-				console.error(requestAllSamples.statusText);
-			}
-		}.bind(this);
-
-		requestAllSamples.send();
 	}
 
 	handleIDChange = selectedOption => {
-		this.setState({ selectedIdOption: selectedOption });
-		this.getLocations(selectedOption.value);
+		console.log("selected option ", selectedOption)
+		this.setState({ selectedIdOption: selectedOption, from: selectedOption });
+		//this.getLocations(selectedOption.value);
 	}
-	onSearchChange = (selectedOption) => {
-		if (selectedOption) {
-	
-		this.setState({
-			selectedOption
-		   });
-		}
-	  };
 
-	getLocations(){
-		const id = Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`).then((response)=>{
-		console.log("frtch lovstiond",response.data)
-		// var obj = JSON.parse(response.data);
-		// var values = Object.values(obj);
-		// console.log("valiues",values);
-		this.setState({locationoptions: response.data})
+	handleIDChange1 = selectedOption => {
+		console.log("selected option ", selectedOption)
+		this.setState({ selectedIdOption1: selectedOption, to: selectedOption });
+		//this.getLocations1(selectedOption.value);
+	}
+
+
+	async getsampledata() {
+		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
+			console.log(response.data)
+			this.setState({
+				data: response.data
+			})
 		});
-		console.log("printing ids",id)
-		
+
+	}
+
+	// async getLocations() {
+	// 	const id = Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
+	// 		//console.log("frtch lovstiond", response.data)
+	// 		// var obj = JSON.parse(response.data);
+	// 		// var values = Object.values(obj);
+	// 		// console.log("valiues",values);
+	// 		this.setState({ locationoptions: id.data.options })
+
+	// 	console.log("printing ids", id)
+
+	// }
+
+	async getLocations() {
+		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
+		this.setState({ locationoptions: id.data.options })
+	}
+
+
+
+	styles = {
+		control: (base) => ({
+			...base,
+			minHeight: 32,
+			width: 420,
+		}),
+		dropdownIndicator: (base) => ({
+			...base,
+			paddingTop: 0,
+			paddingBottom: 0,
+		}),
+		clearIndicator: (base) => ({
+			...base,
+			paddingTop: 0,
+			paddingBottom: 0,
+		}),
 	};
 	render() {
-		const {  selectedIdOption } = this.state;
+		const { selectedIdOption } = this.state;
 		//Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
 		//	console.log(response.data)});
-			
+
 		//This variable, and the following chunk of code, are necessary so that the
 		//shipment table doesn't disappear when there are no samples added!
 		var shippingTableRowData = [];
@@ -368,9 +322,13 @@ class CreateShipments extends Component {
 
 			return keyB - keyA;
 		});
-
+		// const getoptions=()=>{
+		// 	var options = this.state.locationoptions.map(location => (<option>{location.location_name}</option>))
+		// 	return options
+		// }
 		return (
 			<div>
+				{/* {console.log("locations in render ", this.state.locationoptions)} */}
 				<Header />
 				{this.state.alertVisibility &&
 					<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
@@ -390,22 +348,34 @@ class CreateShipments extends Component {
 								onChange={e => this.setState({ date: e })}
 							/>
 						</InputGroup>
+						{/* <InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<InputGroup.Text>from:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Form.Control
+								id="from"
+								as="select"
+								value={this.state.selectedIdOption}
+								//option={this.state.locationoptions.map(location => (<option>{location.location_name}</option>))}
+								onChange={this.handleIDChange}
+								options={this.state.locationoptions}>
+								{/* <getoptions/> 
+							</Form.Control>
+						</InputGroup> */}
 						<InputGroup className="mb-3">
 							<InputGroup.Prepend>
 								<InputGroup.Text>from:</InputGroup.Text>
 							</InputGroup.Prepend>
-							
-							{/* <h5 className="text-dark">from:</h5> */}
-							<Select 
+							<Select
+
 								label="from"
 								placeholder="Select from"
 								isSearchable={true}
 								value={this.state.selectedIdOption}
 								onChange={this.handleIDChange}
-								options={this.state.locationoptions} 
-								style={{width: "200%"}}
-								//autosize={false}
-								/>
+								options={this.state.locationoptions}
+								styles={this.styles}
+							/>
 						</InputGroup>
 						<InputGroup className="mb-3">
 							<InputGroup.Prepend>
@@ -417,7 +387,7 @@ class CreateShipments extends Component {
 								value={this.state.storageconditions}
 								onChange={e => this.setState({ storageconditions: e.target.value })}>
 								<option>Room temperature</option>
-								<option>4° C</option> 
+								<option>4° C</option>
 								<option>-20° C</option>
 								<option>-80° C</option>
 							</Form.Control>
@@ -438,7 +408,7 @@ class CreateShipments extends Component {
 								<option>Ice packs</option>
 							</Form.Control>
 						</InputGroup>
-						<InputGroup className="mb-3">
+						{/* <InputGroup className="mb-3">
 							<InputGroup.Prepend>
 								<InputGroup.Text>To:</InputGroup.Text>
 							</InputGroup.Prepend>
@@ -446,6 +416,21 @@ class CreateShipments extends Component {
 								id="to"
 								value={this.state.to}
 								onChange={e => this.setState({ to: e.target.value })} />
+						</InputGroup> */}
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<InputGroup.Text>To:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Select
+
+								label="To"
+								placeholder="Select To"
+								isSearchable={true}
+								value={this.state.selectedIdOption1}
+								onChange={this.handleIDChange1}
+								options={this.state.locationoptions}
+								styles={this.styles}
+							/>
 						</InputGroup>
 						<InputGroup>
 							<InputGroup.Prepend>
@@ -468,8 +453,8 @@ class CreateShipments extends Component {
 							<ButtonGroup>
 								<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
 								<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
+								<Button variant="dark" size="lg" onClick={this.clearFilters}>Clear Filter</Button>
 								<Button variant="dark" size="lg" onClick={this.save}>Save</Button>
-								{/* <Button variant="dark" size="lg">Edit</Button> */}
 							</ButtonGroup>
 						</Col>
 						<hr />
@@ -480,16 +465,18 @@ class CreateShipments extends Component {
 				</div>
 				<Row>
 					<Col>
-					{/* <DataTable/> */}
-					<DataTable
-					columns={columns}
-					data={this.state.data}
-					keyField="sample_key"
-					selectableRows
-					striped={true}
-					highlightOnHover
-					pagination
- />
+						{/* <DataTable/> */}
+						<DataTable
+							columns={columns}
+							data={this.state.data}
+							keyField="sample_key"
+							selectableRows
+							onSelectedRowsChange={this.handleChange}
+							//clearSelectedRows={toggleCleared}
+							striped={true}
+							highlightOnHover
+							pagination
+						/>
 					</Col>
 					<Col md="auto">
 						<div style={{ padding: 25 }}>
@@ -498,8 +485,8 @@ class CreateShipments extends Component {
 						</div>
 					</Col>
 					<Col>
-					{/* <DataTable/> */}
-					<DataTable columns={columns} data ={this.state.data} numRows={shippingTableRowData.length} cols={['ID','Eval','Date','Type','Aliquots']} getRows={this.getCheckedStateFromShipmentTable} toPopulateWith={shippingTableRowData} reset={this.state.resetChecksShipment}/>
+						{/* <DataTable/> */}
+						<DataTable columns={columns} data={this.state.data} numRows={shippingTableRowData.length} cols={['ID', 'Eval', 'Date', 'Type', 'Aliquots']} getRows={this.getCheckedStateFromShipmentTable} toPopulateWith={shippingTableRowData} reset={this.state.resetChecksShipment} />
 					</Col>
 				</Row>
 				<Modal size="lg" show={this.state.showModal}>
@@ -516,10 +503,10 @@ class CreateShipments extends Component {
 						<Button variant="primary" onClick={this.moveAliquotsToShipment}>Save</Button>
 					</Modal.Footer>
 				</Modal>
-			</div>
+			</div >
 
 		);
-		
+
 	}
 
 	/* Close the modal where the user specifies tubes to be added to shipment. */
@@ -545,7 +532,10 @@ class CreateShipments extends Component {
 			resetChecksShipment: false,
 		});
 	}
-
+	handleChange = state => {
+		this.setState({ selectedRows: state.selectedRows });
+		console.log("selected rows", this.state.selectedRows)
+	};
 	/* Modal callback that indicates how many tubes are going into the shipment. */
 	numberOfAliquotsSelectedForShipment = (key, number) => {
 		var numberAliquots = this.state.numberAliquotsSelectedForShipment;
@@ -628,12 +618,16 @@ class CreateShipments extends Component {
 	 */
 	selectAliquotsForShipment() {
 		// alert("C")
+		console.log("move button clicked", this.state.selected)
 		var areChecks = false;
+		//alert("hi")
 		for (var checked in this.state.checkedRowsSamples) {
+			//alert("hi")
 			if (checked) {
 				areChecks = true;
 			}
 		}
+		console.log("checked", areChecks)
 
 		if (areChecks) {
 			var checkedRows = this.state.checkedRowsSamples;
@@ -644,13 +638,13 @@ class CreateShipments extends Component {
 					toAliquotForShipment.push(this.state.samplesvisible[i]);
 				}
 			}
-
+			console.log("aliquotsforshipmrnt", toAliquotForShipment)
 			var aliquotSelectors = [];
 
 			for (var j = 0; j < toAliquotForShipment.length; j++) {
 				aliquotSelectors.push(<AliquotSelector key={j} number={j} data={toAliquotForShipment[j]} aliquotsCallback={this.numberOfAliquotsSelectedForShipment} />);
 			}
-
+			console.log("aliquotSelectors", aliquotSelectors)
 			this.setState({
 				aliquotSelectorsForModal: aliquotSelectors,
 				samplesToSelectAliquotsFrom: toAliquotForShipment,
@@ -734,8 +728,11 @@ class CreateShipments extends Component {
 	validateForms = () => {
 		var errorString = '';
 		var errors = false;
-
+		console.log("from", this.state.from)
+		console.log("to", this.state.to)
+		console.log("from", this.state.from === '')
 		if (this.state.from === '') {
+			//console.log("from",this.state.from)
 			errors = true;
 			errorString = "Please enter the shipment's recipient in the 'From:' field."
 		}
@@ -787,18 +784,18 @@ class CreateShipments extends Component {
 			}
 		}
 
-		var getQuery =
-			"date=" + this.getDateFormat(this.state.date) + "&" +
-			//TODO: make from location specific to user
-			"from=University at Buffalo&" +
-			"from=" + this.state.from + "&" +
-			"to=" + this.state.to + "&" +
-			"samples=" + this.state.samplesadded.length + "&" +
-			"shipping_conditions=" + this.state.shippingconditions + "&" +
-			//"other_shipping_conditions=" + this.state.othershippingconditions + "&" + 
-			"notes=" + this.state.notes + "&" +
-			sampleIDQuery + "&" +
-			numberSamplesQuery;
+		// var getQuery =
+		// 	"date=" + this.getDateFormat(this.state.date) + "&" +
+		// 	//TODO: make from location specific to user
+		// 	"from=University at Buffalo&" +
+		// 	"from=" + this.state.from + "&" +
+		// 	"to=" + this.state.to + "&" +
+		// 	"samples=" + this.state.samplesadded.length + "&" +
+		// 	"shipping_conditions=" + this.state.shippingconditions + "&" +
+		// 	//"other_shipping_conditions=" + this.state.othershippingconditions + "&" + 
+		// 	"notes=" + this.state.notes + "&" +
+		// 	sampleIDQuery + "&" +
+		// 	numberSamplesQuery;
 		//TODO: Add other queries to either shipment_batch table, or
 		//shipment_tubes table (whichever makes sense)
 
@@ -810,18 +807,18 @@ class CreateShipments extends Component {
 		//     getReq,
 		// 	true
 		// );
-		sendReq.onload = function (e) {
-			if (sendReq.readyState === 4 && sendReq.status === 200) {
-			} else {
-				this.setState({
-					alertVariant: 'danger',
-					alertText: "There was an error connecting to the database: " + sendReq.statusText,
-					alertVisibility: true,
-				});
-			}
-		}.bind(this);
+		// sendReq.onload = function (e) {
+		// 	if (sendReq.readyState === 4 && sendReq.status === 200) {
+		// 	} else {
+		// 		this.setState({
+		// 			alertVariant: 'danger',
+		// 			alertText: "There was an error connecting to the database: " + sendReq.statusText,
+		// 			alertVisibility: true,
+		// 		});
+		// 	}
+		// }.bind(this);
 
-		sendReq.send();
+		//sendReq.send();
 	};
 
 	/* Converts Date object to a format that can be stored in the SQL database. */
