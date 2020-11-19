@@ -20,6 +20,7 @@ import ViewShipment from './components/ViewShipment';
 import Logout from './components/Logout'
 import filterandExports from './components/filterandExports';
 import Header from "./components/Header";
+import NewFile from "./components/NewFile";
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('./config/deploy_config.json') : require('./config/local_config.json');
 function App() {
  console.log(`Environment: ${process.env.REACT_APP_MED_DEPLOY_ENV}`);
@@ -36,6 +37,7 @@ function App() {
           <Route path="/reset-pass/:id" component={resetpass} />
           <Route path="/logout" component={Logout} />
           <Route path="/filterandExports" component={filterandExports} />
+          {/* <Route path="/newfile" component={newFile} /> */}
 
           {/* <Route path="/ViewSamples" component={ViewSamples} />
           <Route path="/Reports" component={Reports} />*/}

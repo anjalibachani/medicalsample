@@ -51,7 +51,7 @@ const columns = [
 	},
 	{
     name: "Aliquots",
-    selector: "aliquots",
+    selector: "aliquot_count",
     sortable: true,
 	}
 ];
