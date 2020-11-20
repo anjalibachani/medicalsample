@@ -60,9 +60,9 @@ export default class Header extends Component {
                         } */}
                         {
                             location === "/ViewShipment" ?
-                                <CustomHeaderButton href="/ViewShipment" text="See Shipments" variant="dark" />
+                                <CustomHeaderButton href="/ViewShipment" text="Shipments" variant="dark" />
                                 :
-                                <CustomHeaderButton href="/ViewShipment" text="See Shipments" variant="outline-dark" />
+                                <CustomHeaderButton href="/ViewShipment" text="Shipments" variant="outline-dark" />
                         }
                     </ButtonGroup>
                 </Container>

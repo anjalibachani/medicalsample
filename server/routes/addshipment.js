@@ -31,17 +31,24 @@ router.get("/fetchlocation", async (req, res) => {
     console.log(query.sql);
 });
 
-// function dbQueryFunc1(sample_id) {
-//     return new Promise(function (resolve, reject) {
-//         let query1 = db.query('SELECT aliquot_id FROM aliquots where sample_id=?', sample_id, (error, result) => {
-//             if (error) {
-//                 reject(error)
-//             }
-//             resolve(result)
-//         });
-//         console.log(query1.sql);
-//     })
-// }
+router.get("/aliquots/:sample_id", async (req, res) => {
+    // console.log(req.params.sample_id);
+    var query = await db.query(
+      "SELECT distinct `aliquot_id` FROM `aliquots` WHERE `sample_id`=?",
+      [req.params.sample_id],
+      (error, results, fields) => {
+        if (error) throw error;
+        // console.log(results);
+        let options = [];
+        for (let element of results) {
+          options.push({ value: element.aliquot_id, label: element.aliquot_id });
+        }
+        // console.log(options);
+        return res.status(200).json({ options: options });
+      }
+    );
+    console.log(query.sql);
+  });
 
 // function dbQueryFunc2() {
 //     return new Promise(function (resolve, reject) {
@@ -66,5 +73,6 @@ function dbQueryFunc3() {
         console.log(query1.sql);
     })
 }
+
 module.exports = router;
 

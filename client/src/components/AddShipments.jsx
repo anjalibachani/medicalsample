@@ -222,18 +222,105 @@ class CreateShipments extends Component {
 	 * are in other shipments. This happens in a few steps...
 	 */
 	componentDidMount() {
-		// let array = []
-		// sampleTypes.types.forEach(element => {
-		// 	array.push({ value: element.name, label: element.name });
-		// });
-		// this.setState({ types: array });
-		//this.getsampleIdOptions();
 		this.getLocations();
 		//this.getLocations1();
 		this.getsampledata();
 
 		//alert('helo') 
+		var requestAllSamples;
 
+		//requestAllSamples = new XMLHttpRequest();
+
+		// requestAllSamples.open(
+		// 	"GET",
+		// 	phpServerURL+"/app/scripts/retrieve_all.php?table=Samples",
+		// 	true
+		// );
+
+		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/aliquots`).then((response) => {
+			console.log(response.requestAllSamples)
+			this.setState({
+				data: response.requestAllSamples
+			});
+		})
+
+		// requestAllSamples.onload = function (e) {
+		// 	if (requestAllSamples.readyState === 4 && requestAllSamples.status === 200) {
+		// 		this.setState({
+		// 			samples: JSON.parse(requestAllSamples.responseText),
+		// 		});
+
+		/* Next, once the samples have loaded, get a SEPARATE list of
+		 * all the Tubes available. This is necessary because, while
+		 * the user sees a list of available samples, individual tubes
+		 * of each samples are tracked in shipments, and we need to
+		 * know where each tube is to know whether there are any
+		 * tubes remaining from a sample in order to add to a new
+		 * shipment.
+		 */
+		var request_tubes = new XMLHttpRequest();
+
+		request_tubes.open(
+			"GET",
+			phpServerURL + "/app/scripts/retrieve_all.php?table=Tubes",
+			true
+		);
+
+		// request_tubes.onload = function (e) {
+		// 	if (request_tubes.readyState === 4 && request_tubes.status === 200) {
+		// 		this.setState({
+		// 			tubes: JSON.parse(request_tubes.responseText),
+		// 		});
+
+		//Now that both samples and tubes are loeaded, we need to remove any aliquots already in a shipment from consideration for a
+		//new shiment.
+
+		// 	var samples_excluding_shipped_tubes = this.state.samples;
+		// 	var samples_depleted_to_splice = [];
+
+		// 	for (var i = 0; i < this.state.tubes.length; i++) {
+		// 		if (this.state.tubes[i]["in_shipment"] == 1) {
+		// 			for (var j = 0; j < samples_excluding_shipped_tubes.length; j++) {
+		// 				var sample_id = samples_excluding_shipped_tubes[j]["key_internal"];
+		// 				var tube_sample_id = this.state.tubes[i]["sample_key_internal"];
+		// 				if (sample_id === tube_sample_id) {
+		// 					samples_excluding_shipped_tubes[j]["aliquots"]--;
+		// 					if (samples_excluding_shipped_tubes[j]["aliquots"] == 0) {
+		// 						samples_depleted_to_splice.push(samples_excluding_shipped_tubes[j]["key_internal"]);
+		// 					}
+		// 					break;
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+
+		// 	//Finally, remove any sample records for which there are no available aliquots/tubes
+		// 	for (var i = (samples_excluding_shipped_tubes.length - 1); i > -1; i--) {
+		// 		for (var j = 0; j < samples_depleted_to_splice.length; j++) {
+		// 			if (samples_excluding_shipped_tubes[i]["key_internal"] === samples_depleted_to_splice[j]) {
+		// 				samples_excluding_shipped_tubes.splice(i, 1);
+		// 			}
+		// 		}
+		// 	}
+
+		// 	this.setState({
+		// 		samples: samples_excluding_shipped_tubes,
+		// 		samplesvisible: samples_excluding_shipped_tubes,
+		// 	});
+
+		// } else {
+		// console.error(request_tubes.statusText);
+		// }
+		// }.bind(this);
+
+		// request_tubes.send();
+
+		// 			} else {
+		// 	console.error(requestAllSamples.statusText);
+		// }
+		// 		}.bind(this);
+
+		//requestAllSamples.send();
 
 	}
 
@@ -260,17 +347,6 @@ class CreateShipments extends Component {
 
 	}
 
-	// async getLocations() {
-	// 	const id = Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
-	// 		//console.log("frtch lovstiond", response.data)
-	// 		// var obj = JSON.parse(response.data);
-	// 		// var values = Object.values(obj);
-	// 		// console.log("valiues",values);
-	// 		this.setState({ locationoptions: id.data.options })
-
-	// 	console.log("printing ids", id)
-
-	// }
 
 	async getLocations() {
 		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
@@ -322,10 +398,7 @@ class CreateShipments extends Component {
 
 			return keyB - keyA;
 		});
-		// const getoptions=()=>{
-		// 	var options = this.state.locationoptions.map(location => (<option>{location.location_name}</option>))
-		// 	return options
-		// }
+		
 		return (
 			<div>
 				{/* {console.log("locations in render ", this.state.locationoptions)} */}
@@ -480,7 +553,7 @@ class CreateShipments extends Component {
 					</Col>
 					<Col md="auto">
 						<div style={{ padding: 25 }}>
-							<Button as="input" value=">>" variant="dark" onClick={this.selectAliquotsForShipment}></Button><p />
+							<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
 							<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
 						</div>
 					</Col>
@@ -513,22 +586,25 @@ class CreateShipments extends Component {
 	handleCloseModal = () => {
 		this.setState({ showModal: false });
 	}
+	handleOpenModal = () => {
+		this.setState({ showModal: true});
+	}
 
 	/* Table callback: tracks which rows in the table are checked in
 	 * this.state.checkedRowsSamples. When it updates it also resets the checks
 	 * using this.state.resetChecksSamples.
 	 */
-	getCheckedStateFromSamplesTable = (checkedRows) => {
+	getCheckedStateFromSamplesTable = (selectedRows) => {
 		this.setState({
-			checkedRowsSamples: checkedRows,
+			checkedRowsSamples: selectedRows,
 			resetChecksSamples: false,
 		});
 	}
 
 	/* Same as above, only for the Shipments table. */
-	getCheckedStateFromShipmentTable = (checkedRows) => {
+	getCheckedStateFromShipmentTable = (selectedRows) => {
 		this.setState({
-			checkedRowsShipment: checkedRows,
+			checkedRowsShipment: selectedRows,
 			resetChecksShipment: false,
 		});
 	}
@@ -594,7 +670,7 @@ class CreateShipments extends Component {
 			samples.splice(indicesToSplice[index - 1], 1);
 		}
 
-		var checkedSamples = this.state.checkedRowsSamples;
+		var checkedSamples = this.state.selectedRows;
 		for (var check in checkedSamples) {
 			check = false;
 		}
@@ -605,7 +681,7 @@ class CreateShipments extends Component {
 			numberAlquotsSelectedForShipment: [],
 			samplesvisible: samples,
 			samplesadded: samplesToAdd,
-			checkedRowsSamples: check,
+			selectedRows: check,
 			resetChecksSamples: true,
 		});
 
@@ -621,7 +697,7 @@ class CreateShipments extends Component {
 		console.log("move button clicked", this.state.selected)
 		var areChecks = false;
 		//alert("hi")
-		for (var checked in this.state.checkedRowsSamples) {
+		for (var checked in this.state.selectedRows) {
 			//alert("hi")
 			if (checked) {
 				areChecks = true;
@@ -630,7 +706,7 @@ class CreateShipments extends Component {
 		console.log("checked", areChecks)
 
 		if (areChecks) {
-			var checkedRows = this.state.checkedRowsSamples;
+			var checkedRows = this.state.selectedRows;
 			var toAliquotForShipment = [];
 
 			for (var i = 0; i < this.state.samplesvisible.length; i++) {
@@ -658,7 +734,7 @@ class CreateShipments extends Component {
 	 */
 	removeFromShipment() {
 		var areChecks = false;
-		for (var checked in this.state.checkedRowsShipment) {
+		for (var checked in this.state.selectedRows) {
 			if (checked) {
 				areChecks = true;
 			}
@@ -716,7 +792,7 @@ class CreateShipments extends Component {
 				to: '',
 				storageconditions: '',
 				shippingconditions: '',
-				othershippingconditions: '',
+				//othershippingconditions: '',
 				notes: '',
 				samplesadded: [],
 				alertVisibility: true,
