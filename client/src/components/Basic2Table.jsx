@@ -2,6 +2,9 @@ import DataTable from 'react-data-table-component';
 import React, { Component } from 'react';
 import Axios from 'axios';
 import Filter from './Filter';
+import ExpandedComponent from './ExpandedComponent'
+import memoize from 'memoize-one';
+import CustomAlertBanner from "./CustomAlertBanner";
 import { Button, Form, FormControl, InputGroup, Row, Col, Modal} from 'react-bootstrap';
 // const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
@@ -10,11 +13,12 @@ const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('
 //const data = [{ id: 1, Date: 'Conan the Barbarian', From: '1982' }, { id: 1, Date: 'Conan the Barbarian', From: '1982' }];
 
 
-const handleChange = (state) => {
-  // You can use setState or dispatch with something like Redux so we can use the retrieved data
-  console.log('Selected Rows: ', state.selectedRows);
-};
 
+const contextActions = memoize(deleteHandler => (
+  <>
+    <Button variant="dark" size="lg" onClick={deleteHandler}>Mark Received</Button>
+  </>
+));
 
 const columns = [
   {
@@ -39,35 +43,85 @@ const columns = [
   },
   {
     name: "Received Status",
-    selector: "reached",
+    selector: "status_name",
     //sortable: true,
   },
 ];
+const rowSelectCritera = row => {
+  return row.reached === 1;
+}
 class Basic2Table extends Component {
   constructor(props) {
 		super(props);
 		this.state = {
-			/* Array of sample data from the database. */
       data: [],
-      //filters: [<Filter key={1} number={1} retVals={this.getFilterValues}/>],
-			//returnedFilterValues: [],
-			//modal: [],
+      selectedRows: [],
+      toggleCleared: false,
+      alertVisibility: false,
+      alertText: 'Shipment Marked as Received',
+      alertVariant: 'success'
     }
   }
-  componentDidMount(){
-		Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response)=>{
-			console.log(response.data)
-			this.setState({
-				data : response.data
-			});
-		})
+  componentDidMount() {
+    Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
+      console.log(response.data)
+      this.setState({
+        data: response.data
+      });
+    })
+  }
+
+  handleChange = state => {
+
+    this.setState({ selectedRows: state.selectedRows });
+  };
+  handleRowClicked = row => {
+    console.log(`${row.shipment_id} was clicked!`);
+  }
+  markshipments = () => {
+    const { selectedRows } = this.state;
+    const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id]);
+    Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows })
+
+    Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
+      console.log(response.data)
+      this.setState({
+        data: response.data
+      });
+    })
+    // this.setState({
+    //   alertVisibility: true
+    // });
+    this.setState(state => ({ toggleCleared: !state.toggleCleared }));
   }
   
   render() {
+    const { data, toggleCleared } = this.state;
     return (
       <div>
-        {/* <input value={filterInput} onChange={handleFilterChange} placeholder={"Search name"}/> */}
-        <DataTable title="Shipments" columns={columns} data={this.state.data} selectableRows Clicked Selected={handleChange}/>
+        {this.state.alertVisibility && (
+          <CustomAlertBanner
+            variant={this.state.alertVariant}
+            text={this.state.alertText}
+          />
+        )}
+        <DataTable
+          columns={columns}
+          data={data}
+          keyField="shipment_id"
+          selectableRows
+          striped={true}
+          highlightOnHover
+          pagination
+          expandableRows
+          selectableRowsHighlight
+          expandableRowsComponent={<ExpandedComponent />}
+          contextActions={contextActions(this.markshipments)}
+          onSelectedRowsChange={this.handleChange}
+          selectableRowDisabled={rowSelectCritera}
+          clearSelectedRows={toggleCleared}
+          onRowClicked={this.handleRowClicked}
+        />
       </div>
     )
   }
