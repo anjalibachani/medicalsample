@@ -108,6 +108,7 @@ class Basic2Table extends Component {
           selectableRowDisabled={rowSelectCritera}
           clearSelectedRows={toggleCleared}
           onRowClicked={this.handleRowClicked}
+          pointerOnHover
         />
       </div>
     )

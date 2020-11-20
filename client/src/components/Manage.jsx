@@ -7,6 +7,7 @@ import LogsTable from './LogsTable';
 
 export default class Manage extends Component {
     render() {
+        let location = window.location.pathname;
         return (
             <div>
                 <Navbar className="bg-light">
@@ -19,17 +20,26 @@ export default class Manage extends Component {
                     </Nav>
                 </Navbar>
                 <Container fluid>
-                    <Row>
-                        <Col>
-                            <UsersTable />
-                        </Col>
-                        <Col>
-                            <LocationsTable />
-                        </Col>
-                        <Col>
-                            <LogsTable />
-                        </Col>
-                   </Row>
+                    <ButtonGroup>
+                        {
+                            location === "/users" ?
+                                <CustomHeaderButton href="/users" text="Manage Users" variant="dark" />
+                                :
+                                <CustomHeaderButton href="/users" text="Manage Users" variant="outline-dark" />
+                        }
+                        {
+                            location === "/locations" ?
+                                <CustomHeaderButton href="/locations" text="Manage Locations" variant="dark" />
+                                :
+                                <CustomHeaderButton href="/locations" text="Manage Locations" variant="outline-dark" />
+                        }
+                        {
+                            location === "/logs" ?
+                                <CustomHeaderButton href="/logs" text="View Logs" variant="dark" />
+                                :
+                                <CustomHeaderButton href="/logs" text="View Logs" variant="outline-dark" />
+                        }
+                    </ButtonGroup>
                 </Container>
                 <hr />
             </div>

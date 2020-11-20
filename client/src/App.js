@@ -21,6 +21,9 @@ import Logout from './components/Logout'
 import filterandExports from './components/filterandExports';
 import Header from "./components/Header";
 import Manage from "./components/Manage"
+import UsersTable from "./components/UsersTable";
+import LocationsTable from "./components/LocationsTable";
+import LogsTable from "./components/LogsTable";
 //import NewFile from "./components/NewFile";
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('./config/deploy_config.json') : require('./config/local_config.json');
 function App() {
@@ -39,6 +42,9 @@ function App() {
           <Route path="/logout" component={Logout} />
           <Route path="/filterandExports" component={filterandExports} />
           <Route path="/manage" component={Manage} />
+          <Route path="/users" component={UsersTable} />
+          <Route path="/locations" component={LocationsTable} />
+          <Route path="/logs" component={LogsTable} />
           {/* <Route path="/newfile" component={newFile} /> */}
 
           {/* <Route path="/ViewSamples" component={ViewSamples} />
