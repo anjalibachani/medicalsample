@@ -14,11 +14,12 @@ const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
 const addshipment = require('./routes/addshipment');
 const child = require('./routes/child');
+const manage = require('./routes/manage');
 const filter = require('./routes/filter')
 const validatetoken = require('./routes/validatetoken')
 const app = express();
 const viewshipments = require('./routes/viewshipments');
-const deletesamples = require('./routes/deletesamples')
+const deletesamples = require('./routes/deletesamples');
 // app.use(express.static(path.join(__dirname, "../client/build")));
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
@@ -36,6 +37,7 @@ app.use('/samples', samples);
 app.use("/child", child);
 app.use('/addshipment',addshipment);
 app.use('/shipment', viewshipments);
+app.use('/manage', manage);
 port = config.port;
 
 app.listen(port,()=>{

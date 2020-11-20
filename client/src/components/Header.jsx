@@ -17,8 +17,8 @@ export default class Header extends Component {
                         <h2>SAM Sample Database</h2>
                     </Navbar.Brand>
                     <Nav className="justify-content-end">
-                        <Nav.Link href="/logout" >Log Out</Nav.Link>
-                        <Nav.Link href="/manage" target="_blank">Manage </Nav.Link>
+                        <Nav.Link href="/logout" className="text-primary">Log Out</Nav.Link>
+                        <Nav.Link href="/manage" target="_blank" className="text-primary">Manage </Nav.Link>
                     </Nav>
                 </Navbar>
                 <Container fluid>

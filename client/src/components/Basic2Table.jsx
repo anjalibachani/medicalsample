@@ -75,7 +75,7 @@ class Basic2Table extends Component {
   }
   getShipmentsData=() => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
-      console.log(response.data)
+      // console.log(response.data)
       this.setState({
         data: response.data
       });
