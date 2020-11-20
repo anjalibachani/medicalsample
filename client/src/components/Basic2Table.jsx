@@ -6,13 +6,7 @@ import ExpandedComponent from './ExpandedComponent'
 import memoize from 'memoize-one';
 import CustomAlertBanner from "./CustomAlertBanner";
 import { Button, Form, FormControl, InputGroup, Row, Col, Modal} from 'react-bootstrap';
-// const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
-
- 
-//const data = [{ id: 1, Date: 'Conan the Barbarian', From: '1982' }, { id: 1, Date: 'Conan the Barbarian', From: '1982' }];
-
-
 
 const contextActions = memoize(deleteHandler => (
   <>
@@ -63,12 +57,7 @@ class Basic2Table extends Component {
     }
   }
   componentDidMount() {
-    Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
-      console.log(response.data)
-      this.setState({
-        data: response.data
-      });
-    })
+    this.getShipmentsData();
   }
 
   handleChange = state => {
@@ -82,21 +71,19 @@ class Basic2Table extends Component {
     const { selectedRows } = this.state;
     const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id]);
     Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows })
-
+    this.setState(state => ({ toggleCleared: !state.toggleCleared }));
+  }
+  getShipmentsData=() => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
       console.log(response.data)
       this.setState({
         data: response.data
       });
     })
-    // this.setState({
-    //   alertVisibility: true
-    // });
-    this.setState(state => ({ toggleCleared: !state.toggleCleared }));
   }
-  
   render() {
-    const { data, toggleCleared } = this.state;
+    const { data, toggleCleared } = this.state; 
+    this.getShipmentsData();
     return (
       <div>
         {this.state.alertVisibility && (
