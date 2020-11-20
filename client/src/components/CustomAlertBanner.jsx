@@ -19,7 +19,10 @@ class CustomAlertBanner extends Component {
 	render() {
     	return (
         	<Alert variant={this.props.variant}>
-          		<Alert.Heading>{this.props.text}</Alert.Heading>
+				<Alert.Heading>{this.props.text}{' '}
+					<Alert.Link href={this.props.href}>{this.props.hrefText}</Alert.Link>
+				</Alert.Heading>
+				
         	</Alert>
       	);
     }

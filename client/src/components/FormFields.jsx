@@ -65,6 +65,7 @@ export default class FormFields extends Component {
                                     id={item.fieldName}
                                     value={data[item.fieldName]}
                                     type="number"
+                                    // disabled={this.props.isDisabled}
                                     onChange={e =>
                                         this.props.handleTextChange(e.target.value, item.fieldName, index)
                                     } />
@@ -136,14 +137,6 @@ export default class FormFields extends Component {
                     </Row>
                 </Container>
                 <hr />
-                {/* {flag ?
-                <>
-                    <Button className="ml-2" variant="outline-dark" size="lg"  onClick={this.clearFields}> Clear</Button>
-                    <Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save} > Save </Button>
-                 </>
-                :
-                null} */}
-                 <SaveModal handleClose={this.handleClose} data={this.state.data} show={this.state.show} />
             </div>
         )
     }

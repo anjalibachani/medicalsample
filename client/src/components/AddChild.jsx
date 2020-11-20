@@ -6,7 +6,6 @@ import Header from './Header';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 
-// const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 export default class AddChild extends Component {
     constructor(props) {
@@ -32,27 +31,11 @@ export default class AddChild extends Component {
             console.log(typeof value);
             if (key !=='formErrors') {
                 child[key] = value
-                // if (key === 'date') {
-                //     // child[key] = formatISO(value, { representation: 'date' })
-                //     child[key] = value
-                // }
-                // else if (key === 'pb') {
-                //     child[key] = (parseFloat(value)).toFixed(1)
-                // }
-                // else if (key === 'hb') {
-                //     child[key] = (parseFloat(value)).toFixed(1)
-                // }
-                // else if (key === 'density') {
-                //     child[key] = (parseFloat(value)).toFixed(3)
-                // }
-                // else {
-                //     child[key] = value
-                // }
             }
 
         }
         child['user_id'] = localStorage.getItem("user_id")
-        console.log(child);
+        // console.log(child);
         return child
     }
     validateForms = async () => {
@@ -93,7 +76,7 @@ export default class AddChild extends Component {
     }
     saveAndExit = async () => {
         this.setState({ formErrors: await this.validateForms() })
-        console.log(this.state.formErrors);
+        // console.log(this.state.formErrors);
         if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
             this.props.history.push('/Home')
@@ -101,7 +84,7 @@ export default class AddChild extends Component {
     }
     saveAndAddAnother = async () => {
         this.setState({ formErrors: await this.validateForms() })
-        console.log(this.state.formErrors);
+        // console.log(this.state.formErrors);
         if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
             this.setState({
@@ -116,7 +99,7 @@ export default class AddChild extends Component {
     }
     checkSampleIDAndEval = async (evl,sample_id) => {
         const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/checkIDandEval`, { params: { sample_id: sample_id,eval:evl } })
-        console.log(res.data.rows);
+        // console.log(res.data.rows);
         if (res.data.rows===0) {
             return false;
         }
@@ -124,9 +107,9 @@ export default class AddChild extends Component {
     }
     send = async () => {
         const result = this.createJson();
-        console.log(result)
+        // console.log(result)
         const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
-        console.log(res.data)
+        // console.log(res.data)
     }
     render() {
         return (
@@ -146,6 +129,8 @@ export default class AddChild extends Component {
                                         <FormControl
                                             id="sample_id"
                                             type="number"
+                                            min="0"
+                                            oninput="validity.valid||(value='')"
                                             value={this.state.sample_id}
                                             onChange={e => this.setState({ sample_id: e.target.value })} />                     
                                     </InputGroup>

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Redirect } from 'react-router-dom';
-import { Button, Row, Col, Container, Form } from 'react-bootstrap';
+import { Button, Row, Col, Container, Form, Nav, Alert} from 'react-bootstrap';
 import Select from 'react-select';
 import FormFields from './FormFields';
 import Header from './Header';
 import axios from 'axios';
 import _ from 'lodash';
+import CustomAlertBanner from "./CustomAlertBanner";
 import 'react-datepicker/dist/react-datepicker.css'
 
 
@@ -13,6 +14,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 const sampleTypes = require("../config/types.json");
 // const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
+
 
 class AddSamples extends Component {
 	constructor(props) {
@@ -26,12 +28,31 @@ class AddSamples extends Component {
 			sampleIdOptions: [],
 			evalOptions: [],
 			multiValue: [],
-			tabsMapping: []
+			fixedVal: [],
+			tabsMapping: [],
+			alertVisibility: false,
+			alertText: 'Want to delete already saved samples ?',
+			alertVariant: 'info'
 		}
 	}
+
+	styles = {
+		multiValue: (base, state) => {
+			return state.data.isFixed ? { ...base, backgroundColor: "gray" } : base;
+		},
+		multiValueLabel: (base, state) => {
+			return state.data.isFixed
+				? { ...base, fontWeight: "bold", color: "white", paddingRight: 6 }
+				: base;
+		},
+		multiValueRemove: (base, state) => {
+			return state.data.isFixed ? { ...base, display: "none" } : base;
+		}
+	};
+
 	async getsampleIdOptions() {
 		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
-		console.log("id.data.options", ids.data.options);
+		// console.log("id.data.options", ids.data.options);
 		this.setState({ sampleIdOptions: ids.data.options })
 	}
 	async getSampleTypes(sample_id,eval_number) {
@@ -61,25 +82,25 @@ class AddSamples extends Component {
 		this.setState({ selectedOption: null, formFields: [] });
 	}
 	handleIDChange = selectedOption => {
-		this.setState({ selectedIdOption: selectedOption });
+		this.setState({ selectedEvalOption: null, multiValue: [], tabsMapping:[], selectedIdOption: selectedOption });
 		this.getEvalOptions(selectedOption.value);
 	}
 	handleEvalChange = async selectedOption => {
 		this.setState({ selectedEvalOption: selectedOption });
 		let temp = await this.getSampleTypes(this.state.selectedIdOption.value, selectedOption.value)
-		console.log("temp", temp);
-		let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type } });
-		console.log("multiVal: ", multiVal);
+		// console.log("temp", temp);
+		let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
+		// console.log("multiVal: ", multiVal);
 		this.setState({ multiValue: multiVal }, () => this.generateTabsMapping(temp));
 	}
 
 	generateTabsMapping = (data) => {
 		const { types } = this.state;
 		let tabs = [];
-		console.log("inside generate Tabs mapping: ", data);
+		// console.log("inside generate Tabs mapping: ", data);
 		data.forEach((element) => {
 			element = _.mapKeys(element, (value, key) => _.startCase(_.toLower(key)));
-			console.log("element: ", element);
+			// console.log("element: ", element);
 			let obj = {};
 			obj["key"] = { "value": element.Type, "label": element.Type };
 			let type = element.Type;
@@ -89,10 +110,10 @@ class AddSamples extends Component {
 					return val.values
 			});
 			obj["fields"] = fields[0].values;
-			console.log(obj["fields"]);
+			// console.log(obj["fields"]);
 			let tempData = {};
 			for (const [key, value] of Object.entries(obj["fields"])) {
-				console.log(`element:`, key, value);
+				// console.log(`element:`, key, value);
 				if (value.fieldName === "Date")
 					tempData[value.fieldName] = new Date(element[value.fieldName]);
 				else
@@ -104,29 +125,16 @@ class AddSamples extends Component {
 			obj["data"] = tempData;
 			tabs.push(obj);
 		});
-		console.log("tabs: ", tabs);
 		this.setState({ tabsMapping: tabs });
-		// console.log("data: ", data);
-		// console.log("types: ", types);
 	}
 
-	handleMultiChange = selectedOption => {
-		let array = []
-			(() => {
-				if (selectedOption) {
-					selectedOption.map((ele) => {
-						var res = this.createTabsMppping(ele.value)
-						array.push({ key: ele, fields: res[0], data:{}});
-					})
-				}
-				this.setState({ multiValue: selectedOption });
-				this.setState({ tabsMapping: array });
-			})()
-	}
 	onChange = (value, { action, removedValue }) => {
-		console.log("OnChange: ", value , action, removedValue, "@");
+		this.setState({
+			alertVisibility: false
+		});
+		// console.log("OnChange: ", value , action, removedValue, "@");
 		let tabsMapping = this.state.tabsMapping;
-		const { selectedIdOption, selectedEvalOption } = this.state;
+		const { selectedIdOption, selectedEvalOption, multiValue } = this.state;
 		switch (action) {
 			case 'select-option':
 				const ele = value[value.length - 1];
@@ -138,12 +146,36 @@ class AddSamples extends Component {
 						"eval": selectedEvalOption.value, "Date": new Date()
 					}
 				});
+				value[value.length - 1]["isFixed"] = false;
 				break;
-			default:
-				tabsMapping = tabsMapping.filter(function (obj) {
-					console.log("obj ", obj);
-					return obj.key.value !== removedValue.value;
+			case "clear":
+				// console.log("inside clear: ", multiValue);
+				let flag = true;
+				value = multiValue.filter(function (obj) {
+					// console.log("inside clear obj: ", obj);
+					if (obj.isFixed === false) flag = false;
+					return obj.isFixed;
 				});
+				// console.log("val: ", value);
+				let fixedValues = value.map(vals => vals.value);
+				// console.log("fixedValues : ", fixedValues);
+				tabsMapping = tabsMapping.filter(function (obj) {
+					// console.log("obj ", obj);
+					return fixedValues.includes(obj.key.value);
+				});
+				this.setState({
+					alertVisibility: flag
+				});
+			default:
+				// console.log("inside default ", removedValue);
+				if (removedValue !== undefined) {
+					if (removedValue.isFixed == true)
+						return;
+					tabsMapping = tabsMapping.filter(function (obj) {
+						// console.log("obj ", obj);
+						return obj.key.value !== removedValue.value;
+					});
+				}
 				break;
 		}
 
@@ -179,9 +211,9 @@ class AddSamples extends Component {
 		let index = element.fields.findIndex(key => key.fieldName === "Aliquots")
 			if (index !== -1) {
 				let aliquots = element.data.Aliquots;
-				console.log("aliquots", aliquots);
+				// console.log("aliquots", aliquots);
 				if (aliquots === undefined || aliquots.length === 0) {
-					console.log("element", element.fields[index]);
+					// console.log("element", element.fields[index]);
 					element.fields[index]["fieldError"] = "Please enter a valid value"
 					flag = true
 				}
@@ -196,14 +228,14 @@ class AddSamples extends Component {
 		let tabsMapping = this.state.tabsMapping;
 		tabsMapping.forEach((element) => {
 			element.data = _.mapKeys(element.data, (value, key) => _.snakeCase(key));
-			console.log(element.data);
+			// console.log(element.data);
 		});
 		return tabsMapping;
 	}
 	send = async () => {
 		const result = this.createJson();
 		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
-		console.log(res.data)
+		// console.log(res.data)
 	}
 	save =  () => {
 		if (!this.validateForm()) {		
@@ -212,9 +244,10 @@ class AddSamples extends Component {
 		}
 	}
 	render() {
-		const { types, selectedIdOption, selectedEvalOption, multiValue, tabsMapping } = this.state;
+		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedVal, tabsMapping } = this.state;
 		const size = Object.keys(tabsMapping).length;
-		console.log("tabsMapping", tabsMapping);
+		// console.log("multiVal: ", multiValue);
+		// console.log("multiVal bool :", multiValue.some(v => v.isFixed));
 		return (
 			<div>
 				{(() => {
@@ -222,6 +255,13 @@ class AddSamples extends Component {
 						return (
 							<>
 								<Header />
+								{this.state.alertVisibility && (
+									<Col><CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} href="filterandExports"
+										hrefText=" Goto Samples Inventory"
+									/>
+
+									</Col>
+								)}
 								<Container>
 									<Row>
 										<Col md="4">
@@ -255,11 +295,13 @@ class AddSamples extends Component {
 													label="Sample Type"
 													placeholder="Select Sample Type"
 													isSearchable={true}
+													styles={this.styles}
 													value={multiValue}
 													defaultValue={types}
 													onChange={this.onChange}
 													options={types}
 													isMulti
+													isClearable={multiValue!==null && multiValue.some(v => v.isFixed)}
 												/>
 											</Col>
 										}
@@ -285,7 +327,6 @@ class AddSamples extends Component {
 								}
 								{size !== 0 ?
 									<>
-										<Button className="ml-2" variant="outline-dark" size="lg" onClick={this.clearFields}> Clear</Button>
 										<Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save}> Save </Button>
 									</>
 									:
