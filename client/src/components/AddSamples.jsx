@@ -78,14 +78,17 @@ class AddSamples extends Component {
 		this.setState({ types: array });
 		this.getsampleIdOptions();
 	}
-	clearFormFields = () => {
-		this.setState({ selectedOption: null, formFields: [] });
-	}
 	handleIDChange = selectedOption => {
+		this.setState({
+			alertVisibility: false
+		});
 		this.setState({ selectedEvalOption: null, multiValue: [], tabsMapping:[], selectedIdOption: selectedOption });
 		this.getEvalOptions(selectedOption.value);
 	}
 	handleEvalChange = async selectedOption => {
+		this.setState({
+			alertVisibility: false
+		});
 		this.setState({ selectedEvalOption: selectedOption });
 		let temp = await this.getSampleTypes(this.state.selectedIdOption.value, selectedOption.value)
 		// console.log("temp", temp);
@@ -194,11 +197,17 @@ class AddSamples extends Component {
 	}
 
 	handleTextChange = (value, fieldName, index) => {
+		this.setState({
+			alertVisibility: false
+		});
 		let tabsMapping = this.state.tabsMapping
 		tabsMapping[index].data[fieldName] = value
 		this.setState({ tabsMapping: tabsMapping })
 	}
 	handleCheckBoxChange = (value, fieldName, index) => {
+		this.setState({
+			alertVisibility: false
+		});
 		let tabsMapping = this.state.tabsMapping
 		value = value === true ? 1 : 0
 		tabsMapping[index].data[fieldName] = value
@@ -327,7 +336,7 @@ class AddSamples extends Component {
 								}
 								{size !== 0 ?
 									<>
-										<Button className="ml-4" variant="primary" size="lg" disabled={false} onClick={this.save}> Save </Button>
+										<Button variant="primary" size="lg" disabled={false} onClick={this.save}>Save</Button>
 									</>
 									:
 									null}
