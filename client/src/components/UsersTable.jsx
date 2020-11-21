@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import DataTable from 'react-data-table-component';
 import Axios from 'axios';
 import Manage from './Manage';
-import { Row, Col, ButtonGroup, Button, Container } from 'react-bootstrap';
+import { Row, Col, ButtonGroup, Button, Container, Form } from 'react-bootstrap';
 import memoize from 'memoize-one';
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const contextActions = memoize(deleteHandler => (
@@ -54,18 +54,22 @@ export default class UsersTable extends Component {
             toggleCleared: false,
             alertVisibility: false,
             alertText: 'User Deleted',
-            alertVariant: 'success'
+            alertVariant: 'success',
+            email_id: '',
+            admin:false,
+            formErrors: {}
         }
 
     }
     componentDidMount() {
         this.getUsersData();
     }
-    deleteUser = async () => {
+    deleteUser =  async() => {
         const { selectedRows } = this.state;
-        const rows = selectedRows.map(r => [r.user_id]);
+        const rows = selectedRows.map(r => r.user_id);
         console.log("user rows: ", rows);
-        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows })
+       
+         let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows });
         console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
     }
@@ -84,14 +88,68 @@ export default class UsersTable extends Component {
     static propTypes = {
         prop: PropTypes
     }
+    createJson = () => {
+        const { email_id, admin, formErrors } = this.state; 
+        let user = {}
+        user.user_id = 1998
+        user.password ="8879fa4ebd6b4725f5d99440d5957935f614262c"
+        user.email_id = email_id
+        user.admin=admin
+        console.log("createJson",user);
+        return user
+    }
+    validateForms = () => { 
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let errorsObj = {};
+        if (this.state.email_id === '') {
+            errorsObj.email_id = "Please Enter Email"
+        }
+        if()
+        console.log("errorsObj",errorsObj);
+        return errorsObj;
+    }
+    send =  async() => {
+        const result = this.createJson();
+        console.log("result",result);
+        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`, result);
+    }
+    save = () => {
+        const { email_id, admin, formErrors} = this.state; 
+        this.setState({ formErrors: this.validateForms() })
+        if (Object.keys(formErrors).length === 0) {
+            this.send();
+        }
+        console.log("Saved");
+    }
 
     render() {
-        const { data } = this.state; 
+        const { data,email_id,admin } = this.state; 
         // this.getUsersData();
+        // console.log(email_id, admin);
         return (
             <div>
                 <Manage />
                 <Container >
+                    <Form>
+                        <Row>
+                            <Col md="4">
+                                <Form.Control type="email" id="email_id" placeholder="Enter email"
+                                    value={email_id}
+                                    onChange={e => this.setState({ email_id: e.target.value })}
+                                />
+                            <Form.Text className="text-muted">Enter Email address of User to Add.</Form.Text>
+                            </Col>
+                            <Col md="1">
+                                <Form.Check type="checkbox" id="admin" label="Admin?"
+                                checked={admin}
+                                    onChange={e => this.setState({ admin: e.target.checked })}
+                                />
+                            </Col>
+                            <Col md="2">
+                                <Button variant="dark" className="ml-4" size="lg" onClick={this.save}>Add User</Button>
+                            </Col>
+                        </Row>
+                    </Form>
                     <DataTable className="block-example border border-dark rounded mb-0"
                     columns={columns}
                     data={data}
@@ -103,9 +161,9 @@ export default class UsersTable extends Component {
                     defaultSortField="admin"
                     defaultSortAsc={false}
                     customStyles={customStyles}
-                    selectableRows
-                    selectableRowsHighlight
-                    contextActions={contextActions(this.deleteUser)}
+                    // selectableRows
+                    // selectableRowsHighlight
+                    // contextActions={contextActions(this.deleteUser)}
                     onSelectedRowsChange={this.handleChange}
                     />
                 </Container>

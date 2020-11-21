@@ -92,10 +92,10 @@ export default class LocationsTable extends Component {
                     highlightOnHover
                     pointerOnHover
                     pagination
-                    selectableRows
-                    selectableRowsHighlight
-                    contextActions={contextActions(this.deleteLocation)}
-                    onSelectedRowsChange={this.handleChange}
+                    // selectableRows
+                    // selectableRowsHighlight
+                    // contextActions={contextActions(this.deleteLocation)}
+                    // onSelectedRowsChange={this.handleChange}
                     customStyles={customStyles}
                     /></Container>
             </div>
