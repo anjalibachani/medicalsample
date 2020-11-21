@@ -89,9 +89,10 @@ export default class UsersTable extends Component {
         prop: PropTypes
     }
     createJson = () => {
-        const { email_id, admin, formErrors } = this.state; 
+        let { email_id, admin, formErrors } = this.state; 
+        admin = admin === true ? 1 : 0;
         let user = {}
-        user.user_id = 1998
+        user.user_id = 1
         user.password ="8879fa4ebd6b4725f5d99440d5957935f614262c"
         user.email_id = email_id
         user.admin=admin
@@ -104,7 +105,9 @@ export default class UsersTable extends Component {
         if (this.state.email_id === '') {
             errorsObj.email_id = "Please Enter Email"
         }
-        if()
+        if ((this.state.email_id !== '' && !this.state.email_id.match(re))) {
+            errorsObj.email_id = "Please Enter Valid Email Address";
+        }
         console.log("errorsObj",errorsObj);
         return errorsObj;
     }
@@ -133,6 +136,7 @@ export default class UsersTable extends Component {
                     <Form>
                         <Row>
                             <Col md="4">
+                                <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text>
                                 <Form.Control type="email" id="email_id" placeholder="Enter email"
                                     value={email_id}
                                     onChange={e => this.setState({ email_id: e.target.value })}
