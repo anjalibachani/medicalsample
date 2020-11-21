@@ -25,7 +25,15 @@ router.post("/add", async (req, res) => {
         }
       );
       console.log(query.sql);
-    });
+});
+    
+router.get("/all", async (req, res) => {
+  await db.query("SELECT * FROM `samples`", (error, results, fields) => {
+    if (error) throw error;
+    //   console.log(results);
+    return res.status(200).json({ results: results });
+  });
+});
 
 module.exports = router;
 

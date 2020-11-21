@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import DataTable from 'react-data-table-component';
 import Axios from 'axios';
 import Manage from './Manage';
+import styled from 'styled-components';
 import { Row, Col, ButtonGroup, Button, Container, Form } from 'react-bootstrap';
 import CustomAlertBanner from "./CustomAlertBanner";
 import memoize from 'memoize-one';
@@ -46,6 +47,46 @@ const customStyles = {
         },
     },
 };
+const TextField = styled.input`
+  height: 32px;
+  width: 200px;
+  border-radius: 3px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid #e5e5e5;
+  padding: 0 32px 0 16px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const ClearButton = styled(Button)`
+  color: white;
+  background: black;
+  size="lg";
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 34px;
+  width: 32px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FilterComponent = ({ filterText, onFilter, onClear }) => (
+
+    <>
+        <TextField id="search" type="text" placeholder="Search" aria-label="Search Input" value={filterText} onChange={onFilter} />
+        <ClearButton type="button" onClick={onClear}>X</ClearButton>
+        {/* {console.log("filterCOmponent called")} */}
+    </>
+);
 export default class UsersTable extends Component {
     constructor(props) {
         super(props);
@@ -58,7 +99,8 @@ export default class UsersTable extends Component {
             alertVariant: 'success',
             email_id: '',
             admin:false,
-            formErrors: {}
+            formErrors: {},
+            filterText: ''
         }
 
     }
@@ -146,10 +188,34 @@ export default class UsersTable extends Component {
             this.send();
         }
     }
+    getSubHeaderComponent = () => {
+        return (
+            <FilterComponent 
+                onFilter={(e) => {
+                    let newFilterText = e.target.value;
 
+                    this.filteredItems = this.state.data.filter(
+                        (item) => {
+                            {
+                                console.log(item.email_id.toLowerCase())
+                                console.log(item.email_id.toLowerCase().includes(newFilterText.toLowerCase()))
+                            }
+                            item.email_id &&
+                                item.email_id.toLowerCase().includes(newFilterText.toLowerCase())
+                        }
+
+                    );
+                    this.setState({ filterText: newFilterText });
+                }}
+                onClear={this.handleClear}
+                filterText={this.state.filterText}
+            />
+        );
+    };
     render() {
         const { data,email_id,admin } = this.state; 
         this.getUsersData();
+        const filteredItems = data.filter(item => item.email_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         return (
             <div>
                 <Manage />
@@ -184,7 +250,7 @@ export default class UsersTable extends Component {
                     </Form>
                     <DataTable className="block-example border border-dark rounded mb-0"
                     columns={columns}
-                    data={data}
+                        data={filteredItems}
                     keyField="user_id"
                     striped={true}
                     highlightOnHover
@@ -196,7 +262,10 @@ export default class UsersTable extends Component {
                     // selectableRows
                     // selectableRowsHighlight
                     // contextActions={contextActions(this.deleteUser)}
-                    onSelectedRowsChange={this.handleChange}
+                        onSelectedRowsChange={this.handleChange}
+                        subHeader
+                        persistTableHead
+                        subHeaderComponent={this.getSubHeaderComponent()}
                     />
                 </Container>
             </div>
