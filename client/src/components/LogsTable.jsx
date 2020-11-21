@@ -84,12 +84,12 @@ export default class LogsTable extends Component {
 
     }
     componentDidMount() {
-        this.getUsersData();
+        this.getLogsData();
     }
     ExportAll = ({ onExport }) => (
         <Button className='ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>Export to CSV</Button>
     );
-    getUsersData = () => {
+    getLogsData = () => {
         Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlogs`).then((response) => {
             // console.log(response.data)
             this.setState({

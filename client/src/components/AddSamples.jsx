@@ -28,11 +28,11 @@ class AddSamples extends Component {
 			sampleIdOptions: [],
 			evalOptions: [],
 			multiValue: [],
-			fixedVal: [],
 			tabsMapping: [],
 			alertVisibility: false,
 			alertText: 'Want to delete already saved samples ?',
-			alertVariant: 'info'
+			alertVariant: 'info',
+			fixedValues:[]
 		}
 	}
 
@@ -93,8 +93,9 @@ class AddSamples extends Component {
 		let temp = await this.getSampleTypes(this.state.selectedIdOption.value, selectedOption.value)
 		// console.log("temp", temp);
 		let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
-		// console.log("multiVal: ", multiVal);
-		this.setState({ multiValue: multiVal }, () => this.generateTabsMapping(temp));
+		let fixedValues = multiVal.map(vals => vals.value);
+		console.log("multiVal fixed value: ", fixedValues);
+		this.setState({ multiValue: multiVal, fixedValues:fixedValues }, () => this.generateTabsMapping(temp));
 	}
 
 	generateTabsMapping = (data) => {
@@ -137,7 +138,7 @@ class AddSamples extends Component {
 		});
 		// console.log("OnChange: ", value , action, removedValue, "@");
 		let tabsMapping = this.state.tabsMapping;
-		const { selectedIdOption, selectedEvalOption, multiValue } = this.state;
+		const { selectedIdOption, selectedEvalOption, multiValue, fixedValues } = this.state;
 		switch (action) {
 			case 'select-option':
 				const ele = value[value.length - 1];
@@ -160,7 +161,7 @@ class AddSamples extends Component {
 					return obj.isFixed;
 				});
 				// console.log("val: ", value);
-				let fixedValues = value.map(vals => vals.value);
+				// let fixedValues = value.map(vals => vals.value);
 				// console.log("fixedValues : ", fixedValues);
 				tabsMapping = tabsMapping.filter(function (obj) {
 					// console.log("obj ", obj);
@@ -253,7 +254,7 @@ class AddSamples extends Component {
 		}
 	}
 	render() {
-		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedVal, tabsMapping } = this.state;
+		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedValues, tabsMapping } = this.state;
 		const size = Object.keys(tabsMapping).length;
 		// console.log("multiVal: ", multiValue);
 		// console.log("multiVal bool :", multiValue.some(v => v.isFixed));
@@ -327,6 +328,7 @@ class AddSamples extends Component {
 												fields={item.fields} flag={flag}
 												data={item.data}
 												index={index}
+												fixedValues={fixedValues}
 												handleTextChange={this.handleTextChange}
 												handleCheckBoxChange={this.handleCheckBoxChange}
 											/>

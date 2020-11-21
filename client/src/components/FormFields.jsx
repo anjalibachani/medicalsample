@@ -34,8 +34,8 @@ export default class FormFields extends Component {
         console.log();
     }
     render() {
-        const { fields,data, index} = this.props;
-        // console.log("data",data);
+        const { fields, data, index, fixedValues} = this.props;
+        console.log("data",data);
         // console.log("data state: ", this.state);
         return (
             <div>
@@ -65,7 +65,7 @@ export default class FormFields extends Component {
                                     id={item.fieldName}
                                     value={data[item.fieldName]}
                                     type="number"
-                                    // disabled={this.props.isDisabled}
+                                    disabled={fixedValues.includes(data.type)}
                                     onChange={e =>
                                         this.props.handleTextChange(e.target.value, item.fieldName, index)
                                     } />
