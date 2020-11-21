@@ -12,7 +12,7 @@ import Header from './Header';
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 //import DataTable from 'react-data-table-component';
-import DataTable from './DataTable'
+import DataTable from 'react-data-table-component';
 import { getWeekWithOptions } from 'date-fns/fp';
 // const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
@@ -237,12 +237,12 @@ class CreateShipments extends Component {
 		// 	true
 		// );
 
-		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/aliquots`).then((response) => {
-			console.log(response.requestAllSamples)
-			this.setState({
-				data: response.requestAllSamples
-			});
-		})
+		// axios.get(`http://${config.server.host}:${config.server.port}/addshipment/aliquots`).then((response) => {
+		// 	console.log(response.requestAllSamples)
+		// 	this.setState({
+		// 		data: response.requestAllSamples
+		// 	});
+		// })
 
 		// requestAllSamples.onload = function (e) {
 		// 	if (requestAllSamples.readyState === 4 && requestAllSamples.status === 200) {
@@ -373,7 +373,8 @@ class CreateShipments extends Component {
 		}),
 	};
 	render() {
-		const { selectedIdOption } = this.state;
+		const { selectedIdOption, selectedRows } = this.state;
+		console.log("Selected Rows render:",selectedRows);
 		//Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
 		//	console.log(response.data)});
 
@@ -545,7 +546,6 @@ class CreateShipments extends Component {
 							keyField="sample_key"
 							selectableRows
 							onSelectedRowsChange={this.handleChange}
-							//clearSelectedRows={toggleCleared}
 							striped={true}
 							highlightOnHover
 							pagination
@@ -569,7 +569,32 @@ class CreateShipments extends Component {
 					</Modal.Header>
 					<Modal.Body>
 						<p>Click 'Save' to add all aliquots for each sample you selected to your shipment. Or, specify the number of available aliquots to go to the shipment below.</p>
-						{this.state.aliquotSelectorsForModal}
+						{
+							selectedRows.map((element, key) => {
+								let rows = []
+								for (let index = 0; index < element.aliquots; index++) {
+									rows.push({ "value": index + 1, "label": index+1 })
+									
+								}
+									// console.log(element.sample_id);
+									// let rows = element.map(r => [{ "value":r.aliquots, "label":r.aliquots}]);
+									// temp.push({ "value": 111, "label": 111 })
+								
+								return (<>
+									<Row>
+										<Col><p>Select Number of Aliquots for {element.sample_id} of {element.type}</p></Col>
+									<Col><Select
+									label="Number of Aliquots"
+									placeholder="Number of Aliquots"
+									value={selectedIdOption}
+									onChange={this.handleAliquotNumberChange}
+									options={rows}
+										/></Col>
+									</Row>
+								</>)
+							})
+						}
+
 					</Modal.Body>
 					<Modal.Footer>
 						<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>
@@ -587,6 +612,7 @@ class CreateShipments extends Component {
 		this.setState({ showModal: false });
 	}
 	handleOpenModal = () => {
+		console.log("on modal open: ,", this.state.selectedRows);
 		this.setState({ showModal: true});
 	}
 
@@ -609,8 +635,8 @@ class CreateShipments extends Component {
 		});
 	}
 	handleChange = state => {
-		this.setState({ selectedRows: state.selectedRows });
 		console.log("selected rows", this.state.selectedRows)
+		this.setState({ selectedRows: state.selectedRows });
 	};
 	/* Modal callback that indicates how many tubes are going into the shipment. */
 	numberOfAliquotsSelectedForShipment = (key, number) => {

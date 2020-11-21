@@ -17,6 +17,19 @@ router.post("/adduser", async (req, res) => {
         return res.status(200).json({ results: results });
       });
 });
+router.get("/checkemail", async (req, res) => {
+  var query = await db.query(
+    "SELECT distinct `email_id` FROM `users` WHERE `email_id`=?",
+    [req.query.email_id],
+    (error, results, fields) => {
+      if (error) throw error;
+      // console.log(results.length);
+      return res.status(200).json({ rows: results.length });
+    }
+  );
+  console.log(query.sql);
+});
+
 router.delete("/deleteuser",  (req, res) => {
   let rowsData =  req.body;
   console.log("rowsData:", rowsData);
@@ -32,8 +45,24 @@ router.get("/viewlocation", async (req, res) => {
         return res.status(200).json({ results: results });
       });
 });
-router.get("/addlocation", async (req, res) => {
-  res.json("addlocation");
+router.post("/addlocation", async (req, res) => {
+  console.log(req.body);
+        await db.query("INSERT INTO `locations` SET ?", req.body, (error, results, fields) => {
+        if (error) throw error;
+        return res.status(200).json({ results: results });
+      });
+});
+router.get("/checklocation", async (req, res) => {
+  var query = await db.query(
+    "SELECT distinct `location_name` FROM `locations` WHERE `location_name`=?",
+    [req.query.location_name],
+    (error, results, fields) => {
+      if (error) throw error;
+      // console.log(results.length);
+      return res.status(200).json({ rows: results.length });
+    }
+  );
+  console.log(query.sql);
 });
 router.delete("/deletelocation", async (req, res) => {
   res.json("deletelocation");

@@ -4,6 +4,7 @@ import DataTable from 'react-data-table-component';
 import Axios from 'axios';
 import Manage from './Manage';
 import { Row, Col, ButtonGroup, Button, Container, Form } from 'react-bootstrap';
+import CustomAlertBanner from "./CustomAlertBanner";
 import memoize from 'memoize-one';
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const contextActions = memoize(deleteHandler => (
@@ -53,7 +54,7 @@ export default class UsersTable extends Component {
             selectedRows: [],
             toggleCleared: false,
             alertVisibility: false,
-            alertText: 'User Deleted',
+            alertText: 'User saved successfully with default password: ChangeMe! ',
             alertVariant: 'success',
             email_id: '',
             admin:false,
@@ -92,14 +93,22 @@ export default class UsersTable extends Component {
         let { email_id, admin, formErrors } = this.state; 
         admin = admin === true ? 1 : 0;
         let user = {}
-        user.user_id = 1
+        user.user_id = 3445
         user.password ="8879fa4ebd6b4725f5d99440d5957935f614262c"
         user.email_id = email_id
         user.admin=admin
         console.log("createJson",user);
         return user
     }
-    validateForms = () => { 
+    checkEmailExist = async (email_id) => {
+        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id} })
+        // console.log(res.data.rows);
+        if (res.data.rows === 0) {
+            return false;
+        }
+        return true;
+    }
+    validateForms = async () => { 
         const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         let errorsObj = {};
         if (this.state.email_id === '') {
@@ -108,42 +117,61 @@ export default class UsersTable extends Component {
         if ((this.state.email_id !== '' && !this.state.email_id.match(re))) {
             errorsObj.email_id = "Please Enter Valid Email Address";
         }
-        console.log("errorsObj",errorsObj);
+        if (await this.checkEmailExist(this.state.email_id)) {
+            errorsObj.email_id = `Email Already Exists, Please enter different Email Address`
+        }
+        // console.log("errorsObj",await errorsObj);
         return errorsObj;
     }
     send =  async() => {
         const result = this.createJson();
         console.log("result",result);
         const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`, result);
+        if (res.status === 200) {
+            console.log("Added");
+            this.setState({
+                alertVisibility: true,
+            });
+            this.setState({
+                email_id: '',
+            });
+        }
     }
-    save = () => {
-        const { email_id, admin, formErrors} = this.state; 
-        this.setState({ formErrors: this.validateForms() })
-        if (Object.keys(formErrors).length === 0) {
+    save = async() => { 
+        this.setState({ formErrors: await this.validateForms() })
+        console.log(this.state.formErrors);
+        // console.log(Object.keys(this.state.formErrors).length);
+        if (Object.keys(this.state.formErrors).length === 0) {
+            console.log("No Error");
             this.send();
         }
-        console.log("Saved");
     }
 
     render() {
         const { data,email_id,admin } = this.state; 
-        // this.getUsersData();
-        // console.log(email_id, admin);
+        this.getUsersData();
         return (
             <div>
                 <Manage />
                 <Container >
+                    {this.state.alertVisibility && (
+                        <CustomAlertBanner
+                            variant={this.state.alertVariant}
+                            text={this.state.alertText}
+                        />
+                    )}
                     <Form>
                         <Row>
                             <Col md="4">
-                                <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text>
+                                {/* <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text> */}
                                 <Form.Control type="email" id="email_id" placeholder="Enter email"
                                     value={email_id}
                                     onChange={e => this.setState({ email_id: e.target.value })}
                                 />
-                            <Form.Text className="text-muted">Enter Email address of User to Add.</Form.Text>
+                                <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text>
+                            {/* <Form.Text className="text-muted">Enter Email address of User to Add.</Form.Text> */}
                             </Col>
-                            <Col md="1">
+                            <Col md="1" className="mt-2">
                                 <Form.Check type="checkbox" id="admin" label="Admin?"
                                 checked={admin}
                                     onChange={e => this.setState({ admin: e.target.checked })}
