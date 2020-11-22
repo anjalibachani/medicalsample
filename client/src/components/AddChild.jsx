@@ -5,8 +5,96 @@ import DatePicker from 'react-datepicker';
 import Header from './Header';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
+import styled from 'styled-components';
+import DataTable from 'react-data-table-component';
 
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
+
+
+
+const columns = [
+    {
+        name: "Child ID",
+        selector: "sample_id",
+        sortable: true
+    },
+    {
+        name: "Eval",
+        selector: "eval",
+        sortable: true
+    },
+    {
+        name: "Hb",
+        selector: "hb",
+        sortable: true
+    },
+    {
+        name: "Pb",
+        selector: "pb",
+        sortable: true
+    },
+    {
+        name: "Density",
+        selector: "density",
+        sortable: true
+    }
+];
+const customStyles = {
+    headCells: {
+        style: {
+            fontSize: '100%',
+            fontWeight: "bold",
+            paddingLeft: '8px', // override the cell padding for head cells
+            paddingRight: '8px',
+        },
+    },
+    rows: {
+        style: {
+            fontSize: '100%',
+            fontWeight: "bold",
+        },
+    },
+};
+const TextField = styled.input`
+  height: 32px;
+  width: 200px;
+  border-radius: 3px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid #e5e5e5;
+  padding: 0 32px 0 16px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const ClearButton = styled(Button)`
+  color: white;
+  background: black;
+  size="lg";
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 34px;
+  width: 32px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FilterComponent = ({ filterText, onFilter, onClear }) => (
+
+    <>
+        <TextField id="search" type="text" placeholder="Search Child" aria-label="Search Input" value={filterText} onChange={onFilter} />
+        <ClearButton type="button" onClick={onClear}>X</ClearButton>
+        {/* {console.log("filterCOmponent called")} */}
+    </>
+);
 export default class AddChild extends Component {
     constructor(props) {
         super(props);
@@ -17,14 +105,46 @@ export default class AddChild extends Component {
             hb: '',
             pb: '',
             density: '',
-            formErrors: {}
+            formErrors: {},
+            data: [],
+            filterText: ''
         }
 
     }
     static propTypes = {
         prop: PropTypes
     }
+    componentDidMount() {
+        this.getChildData();
+    }
+    getChildData = () => {
+        axios.get(`http://${config.server.host}:${config.server.port}/child/all`).then((response) => {
+            // console.log(response.data)
+            this.setState({
+                data: response.data.results
+            });
+        })
+    }
+    getSubHeaderComponent = () => {
+        return (
+            <FilterComponent
+                onFilter={(e) => {
+                    let newFilterText = e.target.value;
 
+                    this.filteredItems = this.state.data.filter(
+                        (item) => {
+                            item.sample_id &&
+                                JSON.stringify(item).toLowerCase().includes(newFilterText.toLowerCase())
+                        }
+
+                    );
+                    this.setState({ filterText: newFilterText });
+                }}
+                onClear={this.handleClear}
+                filterText={this.state.filterText}
+            />
+        );
+    };
     createJson = () => {
         let child = {}
         for (const [key, value] of Object.entries(this.state)) {
@@ -60,6 +180,14 @@ export default class AddChild extends Component {
         if (this.state.density === '') {
             errorsObj.density = "Please Enter Density"
         }
+        if ((this.state.eval !== '' && !(parseInt(this.state.eval) > 0))) {
+            errorsObj.eval = "Please Enter Valid Eval (typically > 0)";
+        }  
+        if ((this.state.sample_id !== '' && !(parseInt(this.state.sample_id) > 0))) {
+            errorsObj.sample_id = "Please Enter Valid ID (typically > 0)";
+        }  
+
+
         if (await this.checkSampleIDAndEval(this.state.eval,this.state.sample_id)) {
             errorsObj.id_eval = `Please enter different ID and Eval values OR Goto Add Samples for this child with ID: ${this.state.sample_id}`
         }
@@ -112,6 +240,9 @@ export default class AddChild extends Component {
         // console.log(res.data)
     }
     render() {
+        const { data, email_id, admin } = this.state; 
+        // console.log(data.filter(item => item.sample_id));
+        const filteredItems = data.filter(item => item.sample_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         return (
             <div>
                 {(() => {
@@ -130,7 +261,6 @@ export default class AddChild extends Component {
                                             id="sample_id"
                                             type="number"
                                             min="0"
-                                            oninput="validity.valid||(value='')"
                                             value={this.state.sample_id}
                                             onChange={e => this.setState({ sample_id: e.target.value })} />                     
                                     </InputGroup>
@@ -201,6 +331,23 @@ export default class AddChild extends Component {
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndExit}> Save and Exit</Button>
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddAnother}> Save and add another</Button>
                                 <Button variant="dark" className="ml-4" size="lg" href="/AddSamples"> Go to Add Samples</Button>
+                            
+                                <DataTable className="block-example border border-dark rounded mb-0"
+                                    columns={columns}
+                                    data={filteredItems}
+                                    keyField="samples_key"
+                                    striped={true}
+                                    highlightOnHover
+                                    pointerOnHover
+                                    pagination
+                                    defaultSortField="sample_id"
+                                    defaultSortAsc={true}
+                                    customStyles={customStyles}
+                                    onSelectedRowsChange={this.handleChange}
+                                    subHeader
+                                    persistTableHead
+                                    subHeaderComponent={this.getSubHeaderComponent()}
+                                />
                             </Container>
                         </>)
                     } else {

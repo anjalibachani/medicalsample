@@ -14,7 +14,11 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 //import DataTable from 'react-data-table-component';
 import DataTable from 'react-data-table-component';
+<<<<<<< HEAD
 //import { getWeekWithOptions } from 'date-fns/fp';
+=======
+import { getWeekWithOptions } from 'date-fns/fp';
+>>>>>>> 5819a52c8ddeaadd30e6e3796bda4853f3ec3124
 // const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const phpServerURL = null
@@ -229,7 +233,105 @@ class CreateShipments extends Component {
 		//this.getLocations1();
 		this.getsampledata();
 
+<<<<<<< HEAD
 		
+=======
+		//alert('helo') 
+		var requestAllSamples;
+
+		//requestAllSamples = new XMLHttpRequest();
+
+		// requestAllSamples.open(
+		// 	"GET",
+		// 	phpServerURL+"/app/scripts/retrieve_all.php?table=Samples",
+		// 	true
+		// );
+
+		// axios.get(`http://${config.server.host}:${config.server.port}/addshipment/aliquots`).then((response) => {
+		// 	console.log(response.requestAllSamples)
+		// 	this.setState({
+		// 		data: response.requestAllSamples
+		// 	});
+		// })
+
+		// requestAllSamples.onload = function (e) {
+		// 	if (requestAllSamples.readyState === 4 && requestAllSamples.status === 200) {
+		// 		this.setState({
+		// 			samples: JSON.parse(requestAllSamples.responseText),
+		// 		});
+
+		/* Next, once the samples have loaded, get a SEPARATE list of
+		 * all the Tubes available. This is necessary because, while
+		 * the user sees a list of available samples, individual tubes
+		 * of each samples are tracked in shipments, and we need to
+		 * know where each tube is to know whether there are any
+		 * tubes remaining from a sample in order to add to a new
+		 * shipment.
+		 */
+		var request_tubes = new XMLHttpRequest();
+
+		request_tubes.open(
+			"GET",
+			phpServerURL + "/app/scripts/retrieve_all.php?table=Tubes",
+			true
+		);
+
+		// request_tubes.onload = function (e) {
+		// 	if (request_tubes.readyState === 4 && request_tubes.status === 200) {
+		// 		this.setState({
+		// 			tubes: JSON.parse(request_tubes.responseText),
+		// 		});
+
+		//Now that both samples and tubes are loeaded, we need to remove any aliquots already in a shipment from consideration for a
+		//new shiment.
+
+		// 	var samples_excluding_shipped_tubes = this.state.samples;
+		// 	var samples_depleted_to_splice = [];
+
+		// 	for (var i = 0; i < this.state.tubes.length; i++) {
+		// 		if (this.state.tubes[i]["in_shipment"] == 1) {
+		// 			for (var j = 0; j < samples_excluding_shipped_tubes.length; j++) {
+		// 				var sample_id = samples_excluding_shipped_tubes[j]["key_internal"];
+		// 				var tube_sample_id = this.state.tubes[i]["sample_key_internal"];
+		// 				if (sample_id === tube_sample_id) {
+		// 					samples_excluding_shipped_tubes[j]["aliquots"]--;
+		// 					if (samples_excluding_shipped_tubes[j]["aliquots"] == 0) {
+		// 						samples_depleted_to_splice.push(samples_excluding_shipped_tubes[j]["key_internal"]);
+		// 					}
+		// 					break;
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+
+		// 	//Finally, remove any sample records for which there are no available aliquots/tubes
+		// 	for (var i = (samples_excluding_shipped_tubes.length - 1); i > -1; i--) {
+		// 		for (var j = 0; j < samples_depleted_to_splice.length; j++) {
+		// 			if (samples_excluding_shipped_tubes[i]["key_internal"] === samples_depleted_to_splice[j]) {
+		// 				samples_excluding_shipped_tubes.splice(i, 1);
+		// 			}
+		// 		}
+		// 	}
+
+		// 	this.setState({
+		// 		samples: samples_excluding_shipped_tubes,
+		// 		samplesvisible: samples_excluding_shipped_tubes,
+		// 	});
+
+		// } else {
+		// console.error(request_tubes.statusText);
+		// }
+		// }.bind(this);
+
+		// request_tubes.send();
+
+		// 			} else {
+		// 	console.error(requestAllSamples.statusText);
+		// }
+		// 		}.bind(this);
+
+		//requestAllSamples.send();
+>>>>>>> 5819a52c8ddeaadd30e6e3796bda4853f3ec3124
 
 	}
 
@@ -523,6 +625,10 @@ class CreateShipments extends Component {
 								</>)
 							})
 						}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5819a52c8ddeaadd30e6e3796bda4853f3ec3124
 					</Modal.Body>
 					<Modal.Footer>
 						<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>

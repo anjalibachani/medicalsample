@@ -15,7 +15,8 @@ const resetpassword = require('./routes/resetpassword');
 const addshipment = require('./routes/addshipment');
 const child = require('./routes/child');
 const manage = require('./routes/manage');
-const filter = require('./routes/filter')
+//const filter = require('./routes/filter')
+const {filter,getUniqueIds} = require('./routes/filter')
 const validatetoken = require('./routes/validatetoken')
 const app = express();
 const viewshipments = require('./routes/viewshipments');
@@ -49,6 +50,8 @@ app.post("/api/googlelogin", googlelogin);
 app.post("/api/forgot-password",forgotpassword)
 app.post("/api/reset-password/:id",resetpassword)
 app.get("/api/filter",validatetoken,filter)
+app.get("/api/getUniqueIds",getUniqueIds)
+
 //app.delete("/api/deletesamples",validatetoken,deletesamples)
 app.post("/api/deletesamples",validatetoken,deletesamples)
 app.get('/test', (req, res) => { res.send({ result: "test success" }) });

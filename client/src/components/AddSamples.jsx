@@ -338,7 +338,7 @@ class AddSamples extends Component {
 								}
 								{size !== 0 ?
 									<>
-										<Button variant="primary" size="lg" disabled={false} onClick={this.save}>Save</Button>
+										<Button variant="dark" size="lg" disabled={false} onClick={this.save}>Save</Button>
 									</>
 									:
 									null}

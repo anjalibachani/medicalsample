@@ -4,8 +4,9 @@ import DataTable from 'react-data-table-component';
 import Axios from 'axios';
 import Manage from './Manage';
 import memoize from 'memoize-one';
-import { Row, Col, ButtonGroup, Button, Container } from 'react-bootstrap';
-
+import CustomAlertBanner from "./CustomAlertBanner";
+import { Row, Col, ButtonGroup, Button, Container, Form } from 'react-bootstrap';
+import styled from 'styled-components';
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const contextActions = memoize(deleteHandler => (
     <>
@@ -37,6 +38,47 @@ const customStyles = {
         },
     },
 };
+
+const TextField = styled.input`
+  height: 32px;
+  width: 200px;
+  border-radius: 3px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid #e5e5e5;
+  padding: 0 32px 0 16px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const ClearButton = styled(Button)`
+  color: white;
+  background: black;
+  size="lg";
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 34px;
+  width: 32px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FilterComponent = ({ filterText, onFilter, onClear }) => (
+
+    <>
+        <TextField id="search" type="text" placeholder="Search" aria-label="Search Input" value={filterText} onChange={onFilter} />
+        <ClearButton type="button" onClick={onClear}>X</ClearButton>
+        {/* {console.log("filterCOmponent called")} */}
+    </>
+);
 export default class LocationsTable extends Component {
     constructor(props) {
         super(props);
@@ -45,8 +87,11 @@ export default class LocationsTable extends Component {
             selectedRows: [],
             toggleCleared: false,
             alertVisibility: false,
-            alertText: 'Location Deleted',
-            alertVariant: 'success'
+            alertText: 'Location saved successfully',
+            alertVariant: 'success',
+            location_name: '',
+            formErrors: {},
+            filterText: ''
         }
 
     }
@@ -67,7 +112,7 @@ export default class LocationsTable extends Component {
     }
     getLocationData = () => {
         Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlocation`).then((response) => {
-            console.log(response.data.results)
+            // console.log(response.data.results)
             this.setState({
                 data: response.data.results
             });
@@ -76,27 +121,125 @@ export default class LocationsTable extends Component {
     static propTypes = {
         prop: PropTypes
     }
+    checkLocationExist = async (location_name) => {
+        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checklocation`, { params: { location_name: location_name } })
+        // console.log(res.data.rows);
+        if (res.data.rows === 0) {
+            return false;
+        }
+        return true;
+    }
+    validateForms = async () => {
+        let errorsObj = {};
+        if (this.state.location_name === '') {
+            errorsObj.location_name = "Please Enter Location Name"
+        }
+        if (await this.checkLocationExist(this.state.location_name)) {
+            errorsObj.location_name = `Location Already Exists, Please enter different Location`
+        }
+        return errorsObj;
+    }
+    createJson = () => {
+        let { location_name} = this.state;
+        let location = {}
+        location.location_name = location_name
+        location['user_id'] = localStorage.getItem("user_id")
+        console.log("createJson", location);
+        return location
+    }
+    send = async () => {
+        const result = this.createJson();
+        console.log("result", result);
+        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/addlocation`, result);
+        if (res.status === 200) {
+            console.log("Added");
+            this.setState({
+                alertVisibility: true,
+            });
+            this.setState({
+                location_name: '',
+            });
+        }
+    }
+    save = async () => {
+        this.setState({ formErrors: await this.validateForms() })
+        console.log(this.state.formErrors);
+        // console.log(Object.keys(this.state.formErrors).length);
+        if (Object.keys(this.state.formErrors).length === 0) {
+            console.log("No Error");
+            this.send();
+        }
+    }
+    getSubHeaderComponent = () => {
+        return (
+            <FilterComponent
+                onFilter={(e) => {
+                    let newFilterText = e.target.value;
+                    
+                    this.filteredItems = this.state.data.filter(
+                        (item) => {
+                            {
+                                console.log(item.location_name.toLowerCase())
+                                console.log(item.location_name.toLowerCase().includes(newFilterText.toLowerCase()))
+                            }
+                            item.location_name &&
+                                item.location_name.toLowerCase().includes(newFilterText.toLowerCase())                            
+                        }
 
+                    );
+                    this.setState({ filterText: newFilterText });
+                }}
+                onClear={this.handleClear}
+                filterText={this.state.filterText}
+            />
+        );
+    };
     render() {
-        const { data } = this.state;
-        // this.getUsersData();
+        const { data, location_name } = this.state;
+        this.getLocationData();
+        const filteredItems = data.filter(item => item.location_name && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         return (
             <div>
                 <Manage />
                 <Container >
+                    {this.state.alertVisibility && (
+                        <CustomAlertBanner
+                            variant={this.state.alertVariant}
+                            text={this.state.alertText}
+                        />
+                    )}
+                    <Form>
+                        <Row>
+                            <Col md="4">
+                                {/* <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text> */}
+                                <Form.Control type="text" id="location_name" placeholder="Enter Location Name"
+                                    value={location_name}
+                                    onChange={e => this.setState({ location_name: e.target.value })}
+                                />
+                                <Form.Text as={Col} className="text-danger">{this.state.formErrors.location_name}</Form.Text>
+                                {/* <Form.Text className="text-muted">Enter Email address of User to Add.</Form.Text> */}
+                            </Col>
+                            <Col md="3">
+                                <Button variant="dark" className="ml-4" size="lg" onClick={this.save}>Add Location</Button>
+                            </Col>
+                        </Row>
+                    </Form>
                     <DataTable className="block-example border border-dark rounded mb-0 w-50"
                     columns={columns}
-                    data={data}
+                        data={filteredItems}
                     keyField="location_id"
                     striped={true}
                     highlightOnHover
                     pointerOnHover
                     pagination
-                    selectableRows
-                    selectableRowsHighlight
-                    contextActions={contextActions(this.deleteLocation)}
-                    onSelectedRowsChange={this.handleChange}
-                    customStyles={customStyles}
+                    // selectableRows
+                    // selectableRowsHighlight
+                    // contextActions={contextActions(this.deleteLocation)}
+                    // onSelectedRowsChange={this.handleChange}
+                        customStyles={customStyles}
+                        subHeader
+                        persistTableHead
+                        subHeaderComponent={this.getSubHeaderComponent()}
                     /></Container>
             </div>
         )
