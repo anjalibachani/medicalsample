@@ -135,7 +135,6 @@ export default class UsersTable extends Component {
         let { email_id, admin, formErrors } = this.state; 
         admin = admin === true ? 1 : 0;
         let user = {}
-        user.user_id = 3445
         user.password ="8879fa4ebd6b4725f5d99440d5957935f614262c"
         user.email_id = email_id
         user.admin=admin
