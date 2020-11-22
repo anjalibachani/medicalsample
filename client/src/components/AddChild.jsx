@@ -261,7 +261,6 @@ export default class AddChild extends Component {
                                             id="sample_id"
                                             type="number"
                                             min="0"
-                                            oninput="validity.valid||(value='')"
                                             value={this.state.sample_id}
                                             onChange={e => this.setState({ sample_id: e.target.value })} />                     
                                     </InputGroup>
