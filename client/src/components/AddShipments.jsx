@@ -1,4 +1,4 @@
-  
+
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
@@ -14,11 +14,10 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 //import DataTable from 'react-data-table-component';
 import DataTable from 'react-data-table-component';
-<<<<<<< HEAD
+
 //import { getWeekWithOptions } from 'date-fns/fp';
-=======
+
 import { getWeekWithOptions } from 'date-fns/fp';
->>>>>>> 5819a52c8ddeaadd30e6e3796bda4853f3ec3124
 // const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const phpServerURL = null
@@ -233,9 +232,7 @@ class CreateShipments extends Component {
 		//this.getLocations1();
 		this.getsampledata();
 
-<<<<<<< HEAD
-		
-=======
+
 		//alert('helo') 
 		var requestAllSamples;
 
@@ -331,7 +328,6 @@ class CreateShipments extends Component {
 		// 		}.bind(this);
 
 		//requestAllSamples.send();
->>>>>>> 5819a52c8ddeaadd30e6e3796bda4853f3ec3124
 
 	}
 
@@ -395,7 +391,7 @@ class CreateShipments extends Component {
 	};
 	render() {
 		const { selectedIdOption, selectedRows } = this.state;
-		console.log("Selected Rows render:",selectedRows);
+		console.log("Selected Rows render:", selectedRows);
 		//Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
 		//	console.log(response.data)});
 
@@ -420,7 +416,7 @@ class CreateShipments extends Component {
 
 			return keyB - keyA;
 		});
-		
+
 		return (
 			<div>
 				{/* {console.log("locations in render ", this.state.locationoptions)} */}
@@ -604,36 +600,33 @@ class CreateShipments extends Component {
 							selectedRows.map((element, key) => {
 								let rows = []
 								for (let index = 0; index < element.aliquots; index++) {
-									rows.push({ "value": index + 1, "label": index+1 })
-									
+									rows.push({ "value": index + 1, "label": index + 1 })
+
 								}
-									// console.log(element.sample_id);
-									// let rows = element.map(r => [{ "value":r.aliquots, "label":r.aliquots}]);
-									// temp.push({ "value": 111, "label": 111 })
-								
+								// console.log(element.sample_id);
+								// let rows = element.map(r => [{ "value":r.aliquots, "label":r.aliquots}]);
+								// temp.push({ "value": 111, "label": 111 })
+
 								return (<>
 									<Row>
 										<Col><p>Select Number of Aliquots for {element.sample_id} of {element.type}</p></Col>
-									<Col><Select
-									label="Number of Aliquots"
-									placeholder="Number of Aliquots"
-									value={selectedIdOption}
-									onChange={this.handleAliquotNumberChange}
-									options={rows}
+										<Col><Select
+											label="Number of Aliquots"
+											placeholder="Number of Aliquots"
+											value={selectedIdOption}
+											onChange={this.handleAliquotNumberChange}
+											options={rows}
 										/></Col>
 									</Row>
 								</>)
 							})
 						}
-<<<<<<< HEAD
-=======
 
->>>>>>> 5819a52c8ddeaadd30e6e3796bda4853f3ec3124
 					</Modal.Body>
-					<Modal.Footer>
-						<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>
-						<Button variant="primary" onClick={this.moveAliquotsToShipment}>Save</Button>
-					</Modal.Footer>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>
+					<Button variant="primary" onClick={this.moveAliquotsToShipment}>Save</Button>
+				</Modal.Footer>
 				</Modal>
 			</div >
 
@@ -647,7 +640,7 @@ class CreateShipments extends Component {
 	}
 	handleOpenModal = () => {
 		console.log("on modal open: ,", this.state.selectedRows);
-		this.setState({ showModal: true});
+		this.setState({ showModal: true });
 	}
 
 	/* Table callback: tracks which rows in the table are checked in
