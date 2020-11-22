@@ -10,12 +10,16 @@ import { Button, ButtonGroup, Row, Col, Container } from 'react-bootstrap';
 import Axios from 'axios';
 import Filter from './Filter';
 import styled from 'styled-components';
+//import customFilter from './customFilter';
 //import DatePicker from 'react-datepicker'
 import Header from './Header';
 
 import memoize from 'memoize-one';
 //import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
+import AddChild from './AddChild';
+import AddSamples from './AddSamples';
+import SamplesFilter from './SamplesFilter';
 //import { isThisHour } from 'date-fns';
 //import { fil } from 'date-fns/locale';
 
@@ -58,7 +62,9 @@ const columns = [
 
 function convertArrayOfObjectsToCSV(array){
 	let result;
-console.log("array", array)
+  if(array.length<1){
+    return ''
+  }
 	const columnDelimiter = ',';
 	const lineDelimiter = '\n';
 	const keys = Object.keys(array[0]);
@@ -66,18 +72,20 @@ console.log("array", array)
 	result = '';
 	result += keys.join(columnDelimiter);
 	result += lineDelimiter;
-
-	array.forEach(item => {
-		let ctr = 0;
-		keys.forEach(key => {
-		if (ctr > 0) result += columnDelimiter;
-
-		result += item[key];
-		
-		ctr++;
-		});
-	result += lineDelimiter;
-	});
+  if(array.length>0){
+    array.forEach(item => {
+      let ctr = 0;
+      keys.forEach(key => {
+      if (ctr > 0) result += columnDelimiter;
+  
+      result += item[key];
+      
+      ctr++;
+      });
+    result += lineDelimiter;
+    });
+  }
+	
 
 	return result;
 }
@@ -135,7 +143,6 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
   <>
     <TextField id="search" type="text" placeholder="Filter" aria-label="Search Input" value={filterText} onChange={onFilter} />
     <ClearButton type="button" onClick={onClear}>X</ClearButton>
-    {console.log("filterCOmponent called")}
   </>
 );
 
@@ -157,10 +164,14 @@ class filterandExports extends Component {
     toggleCleared:false,
     filterText: '',
       /* An array of filters, and another array for their returned values for processing. */
-    filters: [<Filter key={1} number={1} retVals={this.getFilterValues} />],
+    //filters: [<Filter key={1} number={1} retVals={this.getFilterValues} />],
+    //filters: [<SamplesFilter key={1} number={1} returnVals={this.getfilterValues}/>],
+    filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues}/>],
     returnedFilterValues: [],
     modal: [],
     resetPaginationToggle: false,
+    showWarning:false,
+    warningText: "",
     };
 
     this.addFilter = this.addFilter.bind(this);
@@ -176,10 +187,32 @@ ExportAll = ({ onExport }) => (
 	<Button className= 'ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>ExportAll</Button>
 );
 getFilterValues = (type, equality, value, key) => {
+  
+  console.log("returned values",type, equality, value, key);
   var filterVals = this.state.returnedFilterValues;
-
-  if (type === "Date") {
-    value = this.getDateFormat(value);
+  console.log("in get filter values filters",this.state.filters)
+  console.log("");
+  if(this.state.filters.length>1){
+    for(let i = 1; i<this.state.filters.length;i++){
+      console.log("returned filter vals:", this.state.returnVals)
+      console.log("filtervals vals:", filterVals)
+      console.log(i,"th filterval is:", filterVals[i]);
+      var addedfilters = this.state.filters
+      delete addedfilters[i]
+      if(type === filterVals[i][0]){
+        if(filterVals[i][0] === 'equals'){
+          this.setState({showWarning:true,
+            warningText: "ambigious filter, cannot add filters of same type",
+            filters:addedfilters})
+            return;
+        }else if(equality === filterVals[i][1]){
+          this.setState({showWarning:true,
+            warningText: "cannot add duplicate filters, please add unique filters",
+            filters:addedfilters})
+            return;
+        }
+      }
+    }
   }
 
   filterVals[key] = [type, equality, value];
@@ -187,12 +220,14 @@ getFilterValues = (type, equality, value, key) => {
   this.setState({ returnedFilterValues: filterVals });
 };
 clearFilters(){
-  this.setState({filters:[<Filter key={1} number={1} retVals={this.getFilterValues} />]})
+  //window.location.reload(false)
+  this.setState({returnedFilterValues: []})
+  this.setState({filters:[<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />]})
   this.getsampledata();
 }
 addFilter() {
   console.log("add filter called")
-  var newFilterArray = this.state.filters.concat(<Filter key={this.state.filters.length + 1} number={this.state.filters.length + 1} retVals={this.getFilterValues} />);
+  var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
   this.setState({ filters: newFilterArray });
   console.log(`filters lenght is ${this.state.filters.length}`)
   console.log(this.state.filters)
@@ -203,41 +238,37 @@ processFilter(){
 
     if (i >= 1) {
       console.log("filters exists")
+      console.log(this.state.filters)
     //}
     //check to see if the filter's Type and Value aren't empty
-    console.log(this.state.returnedFilterValues[i])
-    let field = this.state.returnedFilterValues[i][0]
-    
-    let condition = this.state.returnedFilterValues[i][1]
-    let value = this.state.returnedFilterValues[i][2]
-    console.log(field,condition,value)
-    console.log("sdhs")
-    console.log("logging filed values ",this.state.data[0].field)
-    console.log("logging filed values ",this.state.data[0].sample_id)
+    const [field,condition,value] = this.state.returnedFilterValues[i]
+    console.log("in process filter filtercals",field,condition,value);
+    const valuearray=value.map(item=>item.value)
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
     try{
       //var filtereddata='';
       if(field === "ID"){
-        if(condition === '<')
-        var filtereddata = this.state.data.filter( p => p.sample_id < value );
-        else if(condition === '===')
-        var filtereddata = this.state.data.filter( p => p.sample_id == value );
-        else if(condition === '>')
-        var filtereddata = this.state.data.filter( p => p.sample_id > value );
+        if(condition === 'equals')
+        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id));
+        else if(condition === 'less than')
+        var filtereddata = this.state.data.filter( p => p.sample_id < valuearray[0] );
+        else if(condition === 'greater than')
+        console.log("filter values in greate than is: ", valuearray[0])
+        var filtereddata = this.state.data.filter( p => p.sample_id > valuearray[0] );
       }else if(field === "Eval"){
-        if(condition === '<')
-        var filtereddata = this.state.data.filter( p => p.eval < value );
-        else if(condition === '===')
-        var filtereddata = this.state.data.filter( p => p.eval == value );
-        else if(condition === '>')
-        var filtereddata = this.state.data.filter( p => p.eval > value );
+        if(condition === 'less than')
+        var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
+        else if(condition === 'equals')
+        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
+        else if(condition === 'greater than')
+        var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
       }else if(field === "aliquots"){
-        if(condition === '<')
-        var filtereddata = this.state.data.filter( p => p.eval < value );
-        else if(condition === '===')
-        var filtereddata = this.state.data.filter( p => p.eval == value );
-        else if(condition === '>')
-        var filtereddata = this.state.data.filter( p => p.eval > value );
+        if(condition === 'less than')
+        var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
+        else if(condition === 'equals')
+        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
+        else if(condition === 'greater than')
+        var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
       }
     }catch(err){
       console.log("filter failed")
@@ -341,8 +372,12 @@ render() {
             <Header />
 		    {/* const actionsMemo = React.useMemo(() => <this.Export onExport={() => downloadCSV(this.state.data)} />, []); */}
         {/* <Table columns={this.columns} data={this.state.data}/> */}
+        {this.state.showWarning && <p>{this.state.warningText}</p>}
         {this.state.filters}
+        <br/>
+      
         <Row>
+        
 						<Col align="left">
 							<ButtonGroup>
 								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
@@ -354,8 +389,6 @@ render() {
 						</Col>
 						<hr />
 					</Row>
-        
-        {console.log(typeof this.state.data)}
         <Container>
         {/* <DataTableExtensions
       {...tableData}
