@@ -4,7 +4,8 @@
 
  - Development server
 ```
-Change database credentials in server/config/config.json.
+Change database credentials in server/config/local_config.json.
+Chnage server details in client/src/config/local_config.json
 ```
 
 ```
@@ -37,7 +38,6 @@ setenv REACT_APP_MED_DEPLOY_ENV deployment
 ```
 **Start Application**:
 ```
-cd medicalsample
 cd server && pm2 start index.js --name "medsample_server" && cd ..
 cd client && pm2 start --name "medsample_client" npm -- start && cd ..
 
