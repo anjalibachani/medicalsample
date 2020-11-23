@@ -57,6 +57,38 @@ const columns = [
 	},
 ];
 
+const movedshipementscolumns = [
+	{
+		name: 'ID',
+		selector: 'sample_id',
+		sortable: true,
+	},
+	{
+		name: 'Eval',
+		selector: 'eval',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Date',
+		selector: 'date',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Type',
+		selector: 'type',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Aliquots',
+		selector: 'selectedAliquotValue',
+		sortable: true,
+		right: true,
+	},
+];
+
 const sampleTypes = require("../config/types.json");
 
 class CreateShipments extends Component {
@@ -98,8 +130,9 @@ class CreateShipments extends Component {
 			selectedIdOption: null,
 			selectedIdOption1: null,
 			selectedIdOption2: null,
+			selectedAliquotNumber: null,
 			evaloptions: null,
-
+			movedshipementsData: [],
 
 			/* Set the default rows in tables, so the tables don't disappear
 			 * when empty. */
@@ -236,99 +269,6 @@ class CreateShipments extends Component {
 		//alert('helo') 
 		var requestAllSamples;
 
-		//requestAllSamples = new XMLHttpRequest();
-
-		// requestAllSamples.open(
-		// 	"GET",
-		// 	phpServerURL+"/app/scripts/retrieve_all.php?table=Samples",
-		// 	true
-		// );
-
-		// axios.get(`http://${config.server.host}:${config.server.port}/addshipment/aliquots`).then((response) => {
-		// 	console.log(response.requestAllSamples)
-		// 	this.setState({
-		// 		data: response.requestAllSamples
-		// 	});
-		// })
-
-		// requestAllSamples.onload = function (e) {
-		// 	if (requestAllSamples.readyState === 4 && requestAllSamples.status === 200) {
-		// 		this.setState({
-		// 			samples: JSON.parse(requestAllSamples.responseText),
-		// 		});
-
-		/* Next, once the samples have loaded, get a SEPARATE list of
-		 * all the Tubes available. This is necessary because, while
-		 * the user sees a list of available samples, individual tubes
-		 * of each samples are tracked in shipments, and we need to
-		 * know where each tube is to know whether there are any
-		 * tubes remaining from a sample in order to add to a new
-		 * shipment.
-		 */
-		var request_tubes = new XMLHttpRequest();
-
-		request_tubes.open(
-			"GET",
-			phpServerURL + "/app/scripts/retrieve_all.php?table=Tubes",
-			true
-		);
-
-		// request_tubes.onload = function (e) {
-		// 	if (request_tubes.readyState === 4 && request_tubes.status === 200) {
-		// 		this.setState({
-		// 			tubes: JSON.parse(request_tubes.responseText),
-		// 		});
-
-		//Now that both samples and tubes are loeaded, we need to remove any aliquots already in a shipment from consideration for a
-		//new shiment.
-
-		// 	var samples_excluding_shipped_tubes = this.state.samples;
-		// 	var samples_depleted_to_splice = [];
-
-		// 	for (var i = 0; i < this.state.tubes.length; i++) {
-		// 		if (this.state.tubes[i]["in_shipment"] == 1) {
-		// 			for (var j = 0; j < samples_excluding_shipped_tubes.length; j++) {
-		// 				var sample_id = samples_excluding_shipped_tubes[j]["key_internal"];
-		// 				var tube_sample_id = this.state.tubes[i]["sample_key_internal"];
-		// 				if (sample_id === tube_sample_id) {
-		// 					samples_excluding_shipped_tubes[j]["aliquots"]--;
-		// 					if (samples_excluding_shipped_tubes[j]["aliquots"] == 0) {
-		// 						samples_depleted_to_splice.push(samples_excluding_shipped_tubes[j]["key_internal"]);
-		// 					}
-		// 					break;
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-
-		// 	//Finally, remove any sample records for which there are no available aliquots/tubes
-		// 	for (var i = (samples_excluding_shipped_tubes.length - 1); i > -1; i--) {
-		// 		for (var j = 0; j < samples_depleted_to_splice.length; j++) {
-		// 			if (samples_excluding_shipped_tubes[i]["key_internal"] === samples_depleted_to_splice[j]) {
-		// 				samples_excluding_shipped_tubes.splice(i, 1);
-		// 			}
-		// 		}
-		// 	}
-
-		// 	this.setState({
-		// 		samples: samples_excluding_shipped_tubes,
-		// 		samplesvisible: samples_excluding_shipped_tubes,
-		// 	});
-
-		// } else {
-		// console.error(request_tubes.statusText);
-		// }
-		// }.bind(this);
-
-		// request_tubes.send();
-
-		// 			} else {
-		// 	console.error(requestAllSamples.statusText);
-		// }
-		// 		}.bind(this);
-
-		//requestAllSamples.send();
-
 	}
 
 	handleIDChange = selectedOption => {
@@ -343,17 +283,14 @@ class CreateShipments extends Component {
 		//this.getLocations1(selectedOption.value);
 	}
 
-	// handleAliquotNumberChange = selectedOption => {
-	// 	console.log("selected option ", selectedOption)
-	// 	this.setState({ selectedIdOption2: selectedOption });
-	// 	this.getaliquotOptions(selectedOption.value);
-	// }
+	handleAliquotNumberChange = (selectedOption, key) => {
+		console.log("selected option ", selectedOption, key)
+		let selectedRows = this.state.selectedRows;
+		selectedRows[key].selectedAliquotValue = selectedOption;
+		this.setState({ selectedAliquotNumber: selectedOption, selectedRows: selectedRows });
+		// this.getaliquotOptions(selectedOption.value);
+	}
 
-	// async getaliquotOptions(sample_id) {
-	// 	const aliq = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/aliquots/${sample_id}`)
-	// 	// console.log('evals.data.options', evals.data.options);
-	// 	this.setState({ evalOptions: aliq.data.options })
-	// }
 	async getsampledata() {
 		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
 			console.log(response.data)
@@ -369,7 +306,6 @@ class CreateShipments extends Component {
 		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
 		this.setState({ locationoptions: id.data.options })
 	}
-
 
 
 	styles = {
@@ -389,250 +325,6 @@ class CreateShipments extends Component {
 			paddingBottom: 0,
 		}),
 	};
-	render() {
-		const { selectedIdOption, selectedRows } = this.state;
-		console.log("Selected Rows render:", selectedRows);
-		//Axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response)=>{
-		//	console.log(response.data)});
-
-		//This variable, and the following chunk of code, are necessary so that the
-		//shipment table doesn't disappear when there are no samples added!
-		var shippingTableRowData = [];
-
-		for (var i = 0; i < this.state.samplesadded.length; i++) {
-			shippingTableRowData.push(this.state.samplesadded[i]);
-		}
-
-		if (shippingTableRowData.length < this.state.minimumRowsInTable) {
-			while (shippingTableRowData.length < this.state.minimumRowsInTable) {
-				shippingTableRowData.push('');
-			}
-		}
-
-		/* This keeps the samples in the order in which they were entered. */
-		this.state.samplesvisible.sort(function (a, b) {
-			var keyA = a["key_internal"];
-			var keyB = b["key_internal"];
-
-			return keyB - keyA;
-		});
-
-		return (
-			<div>
-				{/* {console.log("locations in render ", this.state.locationoptions)} */}
-				<Header />
-				{this.state.alertVisibility &&
-					<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
-				}
-				<h2 align="left">&nbsp;&nbsp;&nbsp;Create Shipments:</h2>
-				<Row>
-					<Col>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>Date:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<DatePicker
-								className="form-control"
-								fixedHeight={false}
-								selected={this.state.date}
-
-								onChange={e => this.setState({ date: e })}
-							/>
-						</InputGroup>
-						{/* <InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>from:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Form.Control
-								id="from"
-								as="select"
-								value={this.state.selectedIdOption}
-								//option={this.state.locationoptions.map(location => (<option>{location.location_name}</option>))}
-								onChange={this.handleIDChange}
-								options={this.state.locationoptions}>
-								{/* <getoptions/> 
-							</Form.Control>
-						</InputGroup> */}
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>from:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Select
-
-								label="from"
-								placeholder="Select from"
-								isSearchable={true}
-								value={this.state.selectedIdOption}
-								onChange={this.handleIDChange}
-								options={this.state.locationoptions}
-								styles={this.styles}
-							/>
-						</InputGroup>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>Storage conditions:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Form.Control
-								id="storageconditions"
-								as="select"
-								value={this.state.storageconditions}
-								onChange={e => this.setState({ storageconditions: e.target.value })}>
-								<option>Room</option>
-								<option>4° C</option>
-								<option>-20° C</option>
-								<option>-80° C</option>
-							</Form.Control>
-						</InputGroup>
-					</Col>
-					<Col>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>Shipping Conditions:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Form.Control
-								id="shippingconditions"
-								as="select"
-								value={this.state.shippingconditions}
-								onChange={e => this.setState({ shippingconditions: e.target.value })}>
-								<option>None</option>
-								<option>Dry ice</option>
-								<option>Ice packs</option>
-							</Form.Control>
-						</InputGroup>
-						{/* <InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>To:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<FormControl
-								id="to"
-								value={this.state.to}
-								onChange={e => this.setState({ to: e.target.value })} />
-						</InputGroup> */}
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>To:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Select
-
-								label="To"
-								placeholder="Select To"
-								isSearchable={true}
-								value={this.state.selectedIdOption1}
-								onChange={this.handleIDChange1}
-								options={this.state.locationoptions}
-								styles={this.styles}
-							/>
-						</InputGroup>
-						<InputGroup>
-							<InputGroup.Prepend>
-								<InputGroup.Text>Notes:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Form.Control as="textarea" id="notes"
-								value={this.state.notes}
-								onChange={e => this.setState({ notes: e.target.value })} />
-						</InputGroup>
-					</Col>
-				</Row>
-
-				<p />
-
-				<div>
-					<hr />
-					{this.state.filters}
-					<Row>
-						<Col>
-							<ButtonGroup>
-								<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
-								<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
-								<Button variant="dark" size="lg" onClick={this.clearFilters}>Clear Filter</Button>
-								<Button variant="dark" size="lg" onClick={this.save}>Save</Button>
-							</ButtonGroup>
-						</Col>
-						<hr />
-					</Row>
-					<Col align="right">
-						{this.state.samplesadded.length} samples in shipment
-            		    </Col>
-				</div>
-				<Row>
-					<Col>
-						{/* <DataTable/> */}
-						<DataTable
-							columns={columns}
-							data={this.state.data}
-							keyField="sample_key"
-							selectableRows
-							onSelectedRowsChange={this.handleChange}
-							striped={true}
-							highlightOnHover
-							pagination
-						/>
-					</Col>
-					<Col md="auto">
-						<div style={{ padding: 25 }}>
-							<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
-							<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
-						</div>
-					</Col>
-					<Col>
-						{/* <DataTable/> */}
-						{/* <DataTable columns={columns} data={this.state.data} numRows={shippingTableRowData.length} cols={['ID', 'Eval', 'Date', 'Type', 'Aliquots']} getRows={this.getCheckedStateFromShipmentTable} toPopulateWith={shippingTableRowData} reset={this.state.resetChecksShipment} /> */}
-						<DataTable
-							columns={columns}
-							data={this.state.data}
-							keyField="sample_key"
-							selectableRows
-							onSelectedRowsChange={this.handleChange}
-							striped={true}
-							highlightOnHover
-							pagination
-						/>
-					</Col>
-				</Row>
-				<Modal size="lg" show={this.state.showModal}>
-
-					<Modal.Header>
-						<Modal.Title>Add samples to shipment</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<p>Click 'Save' to add all aliquots for each sample you selected to your shipment. Or, specify the number of available aliquots to go to the shipment below.</p>
-						{
-							selectedRows.map((element, key) => {
-								let rows = []
-								for (let index = 0; index < element.aliquots; index++) {
-									rows.push({ "value": index + 1, "label": index + 1 })
-
-								}
-								// console.log(element.sample_id);
-								// let rows = element.map(r => [{ "value":r.aliquots, "label":r.aliquots}]);
-								// temp.push({ "value": 111, "label": 111 })
-
-								return (<>
-									<Row>
-										<Col><p>Select Number of Aliquots for {element.sample_id} of {element.type}</p></Col>
-										<Col><Select
-											label="Number of Aliquots"
-											placeholder="Number of Aliquots"
-											value={selectedIdOption}
-											onChange={this.handleAliquotNumberChange}
-											options={rows}
-										/></Col>
-									</Row>
-								</>)
-							})
-						}
-
-					</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>
-					<Button variant="primary" onClick={this.moveAliquotsToShipment}>Save</Button>
-				</Modal.Footer>
-				</Modal>
-			</div >
-
-		);
-
-	}
 
 	/* Close the modal where the user specifies tubes to be added to shipment. */
 	handleCloseModal = () => {
@@ -662,8 +354,15 @@ class CreateShipments extends Component {
 		});
 	}
 	handleChange = state => {
-		console.log("selected rows", this.state.selectedRows)
-		this.setState({ selectedRows: state.selectedRows });
+		console.log("selected rows", state.selectedRows)
+		let selectedRows = state.selectedRows;
+		selectedRows.forEach((element, key) => {
+			selectedRows[key]["selectedAliquotValue"] = '';
+		});
+		// state.selectedRows[state.selectedRows.length - 1]["selectedAliquotValue"] = '';
+		console.log("selectedRows: ", selectedRows);
+		this.setState({ selectedRows: selectedRows });
+
 	};
 	/* Modal callback that indicates how many tubes are going into the shipment. */
 	numberOfAliquotsSelectedForShipment = (key, number) => {
@@ -677,67 +376,17 @@ class CreateShipments extends Component {
 	 * they no longer appear in the samples table.
 	 */
 	moveAliquotsToShipment = () => {
-		var samples = this.state.samplesvisible;
-		var indicesToSplice = [];
-		var samplesToAdd = [];
-		//Get aliquots for each sample allocated for shipment
-		//REFACTOR: figure out how to use javascript array methods to reduce the n^2 time complexity here
-		for (var i = 0; i < this.state.aliquotSelectorsForModal.length; i++) {
+		console.log("moveAliquotsToShipment", this.state.selectedRows);
+		let { selectedRows, data } = this.state;
+		selectedRows.forEach(element => {
 
-			//In this case, we're moving all aliquots for a given sample.
-			if (this.state.numberAliquotsSelectedForShipment[i] === this.state.samplesToSelectAliquotsFrom[i]["aliquots"]) {
-				for (var j = 0; j < samples.length; j++) {
-					//can't compare objects for equality in javascript...
-					//have to get value.
-					var samplesKey = samples[j]["key_internal"];
-					var aliquotsKey = this.state.samplesToSelectAliquotsFrom[i]["key_internal"];
-					if (samplesKey === aliquotsKey) {
-						indicesToSplice.push(j);
-						samplesToAdd.push(samples[j]);
-					} else {
-					}
-				}
-
-				//...aand here we're dealing with a situation where only SOME aliquots from a given sample are going in the shipment
-			} else if ((this.state.numberAliquotsSelectedForShipment[i] < this.state.samplesToSelectAliquotsFrom[i]["aliquots"])
-				&& (this.state.numberAliquotsSelectedForShipment[i] > 0)) {
-
-				var remaining_aliquots = this.state.samplesToSelectAliquotsFrom[i]["aliquots"] - this.state.numberAliquotsSelectedForShipment[i];
-				for (var j = 0; j < samples.length; j++) {
-					var samplesKey = samples[j]["key_internal"];
-					var aliquotsKey = this.state.samplesToSelectAliquotsFrom[i]["key_internal"];
-
-					if (samplesKey === aliquotsKey) {
-						var add = Object.assign({}, samples[j]);
-						add["aliquots"] = this.state.numberAliquotsSelectedForShipment[i];
-						samplesToAdd.push(add);
-						samples[j]["aliquots"] = remaining_aliquots;
-					}
-				}
-			} else {
-			}
-		}
-
-		//remove selected samples from the left table, from the highest index down to avoid slipping the values around
-		for (var index = indicesToSplice.length; index > 0; index--) {
-			samples.splice(indicesToSplice[index - 1], 1);
-		}
-
-		var checkedSamples = this.state.selectedRows;
-		for (var check in checkedSamples) {
-			check = false;
-		}
-
-		this.setState({
-			showModal: false,
-			samplesToSelectAliquotsFrom: [],
-			numberAlquotsSelectedForShipment: [],
-			samplesvisible: samples,
-			samplesadded: samplesToAdd,
-			selectedRows: check,
-			resetChecksSamples: true,
+			element.selectedAliquotValue = element.selectedAliquotValue.value
+			// element.aliquots -= element.selectedAliquotValue;
 		});
-
+		// data.forEach((element, key) => {
+		// 	data.
+		// });
+		this.setState({ movedshipementsData: selectedRows, showModal: false })
 	}
 
 	/* Prepare visible samples to have tubes selected by the user in the Modal.
@@ -770,9 +419,9 @@ class CreateShipments extends Component {
 			console.log("aliquotsforshipment", toAliquotForShipment)
 			var aliquotSelectors = [];
 
-			for (var j = 0; j < toAliquotForShipment.length; j++) {
-				aliquotSelectors.push(<AliquotSelector key={j} number={j} data={toAliquotForShipment[j]} aliquotsCallback={this.numberOfAliquotsSelectedForShipment} />);
-			}
+			// for (var j = 0; j < toAliquotForShipment.length; j++) {
+			// 	aliquotSelectors.push(<AliquotSelector key={j} number={j} data={toAliquotForShipment[j]} aliquotsCallback={this.numberOfAliquotsSelectedForShipment} />);
+			// }
 			console.log("aliquotSelectors", aliquotSelectors)
 			this.setState({
 				aliquotSelectorsForModal: aliquotSelectors,
@@ -871,11 +520,6 @@ class CreateShipments extends Component {
 			errorString = "Please enter the shipment's recipient in the 'To:' field."
 		}
 
-		// if (this.state.samplesadded.length === 0) {
-		// 	errors = true;
-		// 	errorString = "This shipment has no samples!"
-		// }
-
 		if (errors) {
 			this.setState({
 				alertVariant: 'danger',
@@ -913,41 +557,6 @@ class CreateShipments extends Component {
 			}
 		}
 
-		// var getQuery =
-		// 	"date=" + this.getDateFormat(this.state.date) + "&" +
-		// 	//TODO: make from location specific to user
-		// 	"from=University at Buffalo&" +
-		// 	"from=" + this.state.from + "&" +
-		// 	"to=" + this.state.to + "&" +
-		// 	"samples=" + this.state.samplesadded.length + "&" +
-		// 	"shipping_conditions=" + this.state.shippingconditions + "&" +
-		// 	//"other_shipping_conditions=" + this.state.othershippingconditions + "&" + 
-		// 	"notes=" + this.state.notes + "&" +
-		// 	sampleIDQuery + "&" +
-		// 	numberSamplesQuery;
-		//TODO: Add other queries to either shipment_batch table, or
-		//shipment_tubes table (whichever makes sense)
-
-		var sendReq;
-		// var getReq = phpServerURL+"/app/scripts/createshipment.php?" + getQuery;
-		// sendReq = new XMLHttpRequest();
-		// sendReq.open(
-		//     "GET",
-		//     getReq,
-		// 	true
-		// );
-		// sendReq.onload = function (e) {
-		// 	if (sendReq.readyState === 4 && sendReq.status === 200) {
-		// 	} else {
-		// 		this.setState({
-		// 			alertVariant: 'danger',
-		// 			alertText: "There was an error connecting to the database: " + sendReq.statusText,
-		// 			alertVisibility: true,
-		// 		});
-		// 	}
-		// }.bind(this);
-
-		//sendReq.send();
 	};
 
 	/* Converts Date object to a format that can be stored in the SQL database. */
@@ -960,58 +569,217 @@ class CreateShipments extends Component {
 		return formattedDate;
 	}
 
-}
-
-/* AliquotSelector: individual rows in the modal where the user can specify for
- * each sample allocated for shipment how many tubes of that sample should be
- * included.
- */
-class AliquotSelector extends Component {
-	constructor(props) {
-		/* the 'data' prop is a single sample from which the AliquotSelector
-		 * populates. */
-		super(props);
-		this.state = {
-			selected: this.props.data["aliquots"],
-		}
-	}
-
-	handleChange = (e) => {
-		this.props.aliquotsCallback(this.props.number, e.target.value);
-		this.setState({ selected: e.target.value });
-	}
-
-	componentDidMount() {
-		this.props.aliquotsCallback(this.props.number, this.state.selected);
-	}
-
 	render() {
-		var options = [];
+		const { selectedIdOption, selectedRows, selectedAliquotNumber, movedshipementsData } = this.state;
+		console.log("Selected Rows render:", selectedRows);
+		var shippingTableRowData = [];
 
-		for (var i = this.props.data["aliquots"]; i > 0; i--) {
-			options.push(<option>{i}</option>);
+		for (var i = 0; i < this.state.samplesadded.length; i++) {
+			shippingTableRowData.push(this.state.samplesadded[i]);
 		}
 
-		options.push(<option>0</option>);
+		if (shippingTableRowData.length < this.state.minimumRowsInTable) {
+			while (shippingTableRowData.length < this.state.minimumRowsInTable) {
+				shippingTableRowData.push('');
+			}
+		}
+
+		/* This keeps the samples in the order in which they were entered. */
+		this.state.samplesvisible.sort(function (a, b) {
+			var keyA = a["key_internal"];
+			var keyB = b["key_internal"];
+
+			return keyB - keyA;
+		});
 
 		return (
 			<div>
+				{/* {console.log("locations in render ", this.state.locationoptions)} */}
+				<Header />
+				{this.state.alertVisibility &&
+					<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
+				}
+				<h2 align="left">&nbsp;&nbsp;&nbsp;Create Shipments:</h2>
 				<Row>
-					<Col xs={6}>Sample #{this.props.number + 1}: Add up to {this.props.data["aliquots"]} aliquots of {this.props.data.type} (ID {this.props.data["id"]}, Eval {this.props.data["eval"]})</Col>
 					<Col>
-						<Form.Control
-							id="storageconditions"
-							as="select"
-							value={this.state.selected}
-							onChange={this.handleChange}>
-							{options}
-						</Form.Control>
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<InputGroup.Text>Date:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<DatePicker
+								className="form-control"
+								fixedHeight={false}
+								selected={this.state.date}
+
+								onChange={e => this.setState({ date: e })}
+							/>
+						</InputGroup>
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<InputGroup.Text>from:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Select
+
+								label="from"
+								placeholder="Select from"
+								isSearchable={true}
+								value={this.state.selectedIdOption}
+								onChange={this.handleIDChange}
+								options={this.state.locationoptions}
+								styles={this.styles}
+							/>
+						</InputGroup>
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<InputGroup.Text>Storage conditions:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Form.Control
+								id="storageconditions"
+								as="select"
+								value={this.state.storageconditions}
+								onChange={e => this.setState({ storageconditions: e.target.value })}>
+								<option>Room</option>
+								<option>4° C</option>
+								<option>-20° C</option>
+								<option>-80° C</option>
+							</Form.Control>
+						</InputGroup>
+					</Col>
+					<Col>
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<InputGroup.Text>Shipping Conditions:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Form.Control
+								id="shippingconditions"
+								as="select"
+								value={this.state.shippingconditions}
+								onChange={e => this.setState({ shippingconditions: e.target.value })}>
+								<option>None</option>
+								<option>Dry ice</option>
+								<option>Ice packs</option>
+							</Form.Control>
+						</InputGroup>
+						<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+								<InputGroup.Text>To:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Select
+
+								label="To"
+								placeholder="Select To"
+								isSearchable={true}
+								value={this.state.selectedIdOption1}
+								onChange={this.handleIDChange1}
+								options={this.state.locationoptions}
+								styles={this.styles}
+							/>
+						</InputGroup>
+						<InputGroup>
+							<InputGroup.Prepend>
+								<InputGroup.Text>Notes:</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Form.Control as="textarea" id="notes"
+								value={this.state.notes}
+								onChange={e => this.setState({ notes: e.target.value })} />
+						</InputGroup>
 					</Col>
 				</Row>
+
 				<p />
-			</div>
+
+				<div>
+					<hr />
+					{this.state.filters}
+					<Row>
+						<Col>
+							<ButtonGroup>
+								<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
+								<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
+								<Button variant="dark" size="lg" onClick={this.clearFilters}>Clear Filter</Button>
+								<Button variant="dark" size="lg" onClick={this.save}>Save</Button>
+							</ButtonGroup>
+						</Col>
+						<hr />
+					</Row>
+					<Col align="right">
+						{this.state.samplesadded.length} samples in shipment
+            		    </Col>
+				</div>
+				<Row>
+					<Col>
+						{/* <DataTable/> */}
+						<DataTable
+							columns={columns}
+							data={this.state.data}
+							keyField="sample_key"
+							selectableRows
+							onSelectedRowsChange={this.handleChange}
+							striped={true}
+							highlightOnHover
+							pagination
+						/>
+					</Col>
+					<Col md="auto">
+						<div style={{ padding: 25 }}>
+							<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
+							<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
+						</div>
+					</Col>
+					<Col>
+						<DataTable
+							columns={movedshipementscolumns}
+							data={movedshipementsData}
+							keyField="sample_key"
+							selectableRows
+							onSelectedRowsChange={this.handleChange}
+							striped={true}
+							highlightOnHover
+							pagination
+						/>
+					</Col>
+				</Row>
+				<Modal size="lg" show={this.state.showModal}>
+
+					<Modal.Header>
+						<Modal.Title>Add samples to shipment</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<p>Click 'Save' to add all aliquots for each sample you selected to your shipment. Or, specify the number of available aliquots to go to the shipment below.</p>
+						{
+							selectedRows.map((element, key) => {
+								console.log("element,key", element, key);
+								let rows = []
+								for (let index = 0; index < element.aliquots; index++) {
+									rows.push({ "value": index + 1, "label": index + 1 })
+								}
+								return (<>
+									<Row>
+										<Col><p>Select Number of Aliquots for {element.sample_id} of {element.type}</p></Col>
+										<Col><Select
+											label="Number of Aliquots"
+											placeholder="Number of Aliquots"
+											value={element.selectedAliquotValue}
+											onChange={e => this.handleAliquotNumberChange(e, key)}
+											options={rows}
+										/></Col>
+									</Row>
+								</>)
+							})
+						}
+
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>
+						<Button variant="primary" onClick={this.moveAliquotsToShipment}>Save</Button>
+					</Modal.Footer>
+				</Modal>
+			</div >
+
 		);
+
 	}
+
 }
 
 export default CreateShipments;
