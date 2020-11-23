@@ -236,7 +236,7 @@ addFilter() {
 processFilter(){
   for (var i = 1; i <= this.state.filters.length; i++) {
 
-    if (i >= 1) {
+    if (this.state.returnedFilterValues.length) {
       console.log("filters exists")
       console.log(this.state.filters)
     //}
@@ -248,27 +248,35 @@ processFilter(){
     try{
       //var filtereddata='';
       if(field === "ID"){
-        if(condition === 'equals')
-        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id));
-        else if(condition === 'less than')
-        var filtereddata = this.state.data.filter( p => p.sample_id < valuearray[0] );
-        else if(condition === 'greater than')
-        console.log("filter values in greate than is: ", valuearray[0])
-        var filtereddata = this.state.data.filter( p => p.sample_id > valuearray[0] );
+        if(condition === 'equals'){
+          var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id));
+        }
+        else if(condition === 'less than'){
+          var filtereddata = this.state.data.filter( p => p.sample_id < valuearray[0] );
+        }
+        else if(condition === 'greater than'){
+          var filtereddata = this.state.data.filter( p => p.sample_id > valuearray[0] );
+        }
       }else if(field === "Eval"){
-        if(condition === 'less than')
+        if(condition === 'less than'){
         var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
-        else if(condition === 'equals')
+      }
+        else if(condition === 'equals'){
         var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
-        else if(condition === 'greater than')
+      }
+        else if(condition === 'greater than'){
         var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
+      }
       }else if(field === "aliquots"){
-        if(condition === 'less than')
+        if(condition === 'less than'){
         var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
-        else if(condition === 'equals')
+      }
+        else if(condition === 'equals'){
         var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
-        else if(condition === 'greater than')
+      }
+        else if(condition === 'greater than'){
         var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
+      }
       }
     }catch(err){
       console.log("filter failed")
@@ -356,6 +364,17 @@ getSubHeaderComponent = () => {
     />
   );
 };
+
+// resestToken = () =>{
+//   Axios.post(
+// 		`http://${config.server.host}:${config.server.port}/api/resettoken`,{headers: {
+//       'Authorization': `bearer ${localStorage.getItem("token")}` 
+//     }}
+//     ).then((response) => {
+//     localStorage.setItem('token', response.data.token);
+//     });
+// }
+
 render() {
     const { data, toggleCleared } = this.state;
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
@@ -364,6 +383,7 @@ render() {
       columns,
       data,
     };
+    //{localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now()+600000)?this.resestToken:null}
     return (
       <div>
       {(() => {
