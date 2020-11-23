@@ -51,7 +51,7 @@ const columns = [
 	},
 	{
 		name: 'Aliquots',
-		selector: 'aliquots',
+		selector: 'aliquot_count',
 		sortable: true,
 		right: true,
 	},
@@ -292,11 +292,15 @@ class CreateShipments extends Component {
 	}
 
 	async getsampledata() {
-		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
-			console.log(response.data)
-			this.setState({
-				data: response.data
-			})
+		axios.get(
+			`http://${config.server.host}:${config.server.port}/api/filter`,{headers: {
+		  'Authorization': `bearer ${localStorage.getItem("token")}` 
+		}}
+		).then((response) => {
+		//console.log(response.data);
+		this.setState({
+			data: response.data,
+		});
 		});
 
 	}
@@ -454,8 +458,8 @@ class CreateShipments extends Component {
 						var samples_key = samples_updated[j]["key_internal"];
 						var shipment_key = this.state.samplesadded[i]["key_internal"];
 						if (samples_key === shipment_key) {
-							var total = parseInt(samples_updated[j]["aliquots"]) + parseInt(this.state.samplesadded[i]["aliquots"]);
-							samples_updated[j]["aliquots"] = total;
+							var total = parseInt(samples_updated[j]["aliquot_count"]) + parseInt(this.state.samplesadded[i]["aliquot_count"]);
+							samples_updated[j]["aliquot_count"] = total;
 						}
 					}
 				}
@@ -549,7 +553,7 @@ class CreateShipments extends Component {
 		for (var i = 0; i < this.state.samplesadded.length; i++) {
 			sampleIDQuery = sampleIDQuery + "id" + (i + 1) + "=" + this.state.samplesadded[i]["key_internal"];
 
-			numberSamplesQuery = numberSamplesQuery + "num" + (i + 1) + "=" + this.state.samplesadded[i]["aliquots"];
+			numberSamplesQuery = numberSamplesQuery + "num" + (i + 1) + "=" + this.state.samplesadded[i]["aliquot_count"];
 
 			if (i < (this.state.samplesadded.length - 1)) {
 				sampleIDQuery = sampleIDQuery + "&";
@@ -750,7 +754,7 @@ class CreateShipments extends Component {
 							selectedRows.map((element, key) => {
 								console.log("element,key", element, key);
 								let rows = []
-								for (let index = 0; index < element.aliquots; index++) {
+								for (let index = 0; index < element.aliquot_count; index++) {
 									rows.push({ "value": index + 1, "label": index + 1 })
 								}
 								return (<>
