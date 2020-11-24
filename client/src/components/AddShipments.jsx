@@ -438,34 +438,16 @@ class CreateShipments extends Component {
 				alertText: 'Success!',
 				alertVisibility: true,
 				movedshipementsData: [],
-				toggledClearRows: !this.state.toggledClearRows
+				toggledClearRows: !this.state.toggledClearRows,
+				selectedFromOption: null,
+				selectedToOption:null
 			});
 			const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, aliquots);
 		}
 	}
 	render() {
-		const { selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData ,data} = this.state;
-		console.log("srender data:", this.state.data);
-		// console.log("movedshipementsData:", movedshipementsData);
-		var shippingTableRowData = [];
-
-		for (var i = 0; i < this.state.samplesadded.length; i++) {
-			shippingTableRowData.push(this.state.samplesadded[i]);
-		}
-
-		if (shippingTableRowData.length < this.state.minimumRowsInTable) {
-			while (shippingTableRowData.length < this.state.minimumRowsInTable) {
-				shippingTableRowData.push('');
-			}
-		}
-
-		this.state.samplesvisible.sort(function (a, b) {
-			var keyA = a["key_internal"];
-			var keyB = b["key_internal"];
-
-			return keyB - keyA;
-		});
-
+		const { selectedRows, movedshipementsData ,data} = this.state;
+		console.log("render data:", data);
 		return (
 			<div>
 				<Header />
@@ -579,7 +561,7 @@ class CreateShipments extends Component {
 					<Col>
 						<DataTable
 							columns={this.columns}
-							data={this.state.data}
+							data={data}
 							keyField="sample_key"
 							selectableRows
 							onSelectedRowsChange={this.handleChange}
