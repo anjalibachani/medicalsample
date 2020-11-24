@@ -31,6 +31,29 @@ router.get("/fetchlocation", async (req, res) => {
     console.log(query.sql);
 });
 
+router.post("/locationIdbyName", async (req, res) => {
+    console.log(req.body);
+    var obj = {};
+  var query = await db.query("SELECT `location_id` FROM `locations` where `location_name` IN (?) ",[req.body],
+    (error, results, fields) => {
+        if (error) throw error;
+        console.log(results);
+        if (results.length === 1) {
+           obj["from_location_id"] = results[0].location_id;
+        //    delete results[0].location_id;
+           obj["to_location_id"] = results[0].location_id;
+       } else {
+            obj["from_location_id"] = results[0].location_id;
+            //    delete results[0].location_id;
+            obj["to_location_id"] = results[1].location_id; 
+       }
+
+      return res.status(200).json({ results: obj });
+    }
+  );
+  console.log(query.sql);
+});
+
 router.get("/aliquots/:sample_id", async (req, res) => {
     // console.log(req.params.sample_id);
     var query = await db.query(
@@ -64,12 +87,15 @@ router.get("/aliquots/:sample_id", async (req, res) => {
 
 function dbQueryFunc3() {
     return new Promise(function (resolve, reject) {
-        let query1 = db.query('select s.samples_key,s.sample_id,s.eval,s.type,s.aliquots,s.date from samples s join aliquots a on s.sample_id=a.sample_id', (error, result) => {
+        let query1 = db.query(
+          `SELECT S.*, L.location_name,L.location_id, COUNT(*) as aliquot_count from samples S INNER JOIN aliquots A ON S.samples_key=A.aliquots_samples_key INNER JOIN locations L ON L.location_id = A.location_id where S.type!='' GROUP BY S.sample_id, S.eval,S.type,L.location_name;`,
+          (error, result) => {
             if (error) {
-                reject(error)
+              reject(error);
             }
-            resolve(result)
-        });
+            resolve(result);
+          }
+        );
         console.log(query1.sql);
     })
 }
