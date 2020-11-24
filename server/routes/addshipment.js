@@ -31,6 +31,31 @@ router.get("/fetchlocation", async (req, res) => {
     console.log(query.sql);
 });
 
+
+router.post("/create", async (req, res) => {
+  console.log(req.body);
+  req.body.shipment_date = new Date(req.body.shipment_date);
+    var query = await db.query("INSERT INTO `shipments` SET ?", req.body, (error,results,fields)=>{
+      if (error) throw error;
+      console.log(results.insertId);
+      return res.status(202).json({ results });
+    });
+    console.log(query.sql);
+});
+
+router.post("/addshipmentId", async (req, res) => {
+  console.log(req.body);
+  var query = await db.query("UPDATE `aliquots` SET `shipment_id` = ?,`status_id` = 2 where aliquots_samples_key IN (?)",[req.body.shipment_id,req.body.aliquots_samples_key],(error, results, fields) => {
+      if (error) throw error;
+      console.log(results.affectedRows);
+    }
+  );
+  console.log(query.sql);
+});
+
+
+
+
 router.post("/locationIdbyName", async (req, res) => {
     console.log(req.body);
     var obj = {};
@@ -72,18 +97,6 @@ router.get("/aliquots/:sample_id", async (req, res) => {
     );
     console.log(query.sql);
   });
-
-// function dbQueryFunc2() {
-//     return new Promise(function (resolve, reject) {
-//         let query2 = db.query('select distinct location_name from locations', (error, result) => {
-//             if (error) {
-//                 reject(error)
-//             }
-//             resolve(result)
-//         });
-//         console.log(query2.sql);
-//     })
-// }
 
 function dbQueryFunc3() {
     return new Promise(function (resolve, reject) {
