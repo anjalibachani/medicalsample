@@ -18,27 +18,27 @@ const columns = [
   {
     name: "Date",
     selector: "shipment_date",
-    //sortable: true,
+    sortable: true,
   },
   {
     name: "From",
     selector: "from_location_name",
-    //sortable: true
+    sortable: true
   },
   {
     name: "To",
     selector: "to_location_name",
-    //sortable: true,
+    sortable: true,
   },
   {
     name: "Samples",
     selector: "no_of_samples",
-    //sortable: true,
+    sortable: true,
   },
   {
     name: "Received Status",
     selector: "status_name",
-    //sortable: true,
+    sortable: true,
   },
 ];
 const rowSelectCritera = row => {
@@ -96,6 +96,8 @@ class Basic2Table extends Component {
           columns={columns}
           data={data}
           keyField="shipment_id"
+          defaultSortField="shipment_date"
+          defaultSortAsc={false}
           selectableRows
           striped={true}
           highlightOnHover

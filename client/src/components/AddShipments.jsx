@@ -369,12 +369,14 @@ class CreateShipments extends Component {
 		this.setState({ movedshipementsData: [], data: data })
 	}
 	createShipmentJson = async () => {
-		let { date, shippingconditions, movedshipementsData,shippingcompany,notes} = this.state;
-		let shipment ={}
-		let location_ids = await this.getLocationIDByName(this.state.selectedFromOption.value, this.state.selectedToOption.value);
-		console.log(location_ids);
-		shipment.from_location_id = location_ids.from_location_id;
-		shipment.to_location_id = location_ids.to_location_id;
+		let { date, shippingconditions, movedshipementsData, shippingcompany, notes, selectedFromOption, selectedToOption} = this.state;
+		let shipment = {}
+		console.log("selectedFromOption.value", typeof selectedFromOption.value);
+		console.log("selectedToOption.value", typeof selectedToOption.value);
+		let locations = await this.getLocationIDByName(selectedFromOption.value, selectedToOption.value);
+		console.log("location ids: ", locations);
+		shipment.from_location_id = locations[0];
+		shipment.to_location_id = locations[1];
 		shipment.shipment_date = date;
 		shipment.reached = 2;
 		shipment.shipping_conditions = shippingconditions;
@@ -399,13 +401,13 @@ class CreateShipments extends Component {
 
 	}
 	async getLocationIDByName(from_location, to_location) {
+		console.log(from_location, to_location);
 		let locations = []
-		locations.push(from_location)
-		locations.push(to_location)
-		console.log(locations);
-		const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, locations)
-		console.log("locationIdbyName: ", res.data.results);
-		return res.data.results
+		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location} })
+		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location} })
+		locations.push(from_location_res.data.results);
+		locations.push(to_location_res.data.results);
+		return locations
 
 	}
 	save = async () => {

@@ -56,24 +56,13 @@ router.post("/addshipmentId", async (req, res) => {
 
 
 
-router.post("/locationIdbyName", async (req, res) => {
-    console.log(req.body);
-    var obj = {};
-  var query = await db.query("SELECT `location_id` FROM `locations` where `location_name` IN (?) ",[req.body],
+router.get("/locationIdbyName", async (req, res) => {
+    console.log(req.query.location);
+  var query = await db.query("SELECT `location_id` FROM `locations` where `location_name`= ?",[req.query.location],
     (error, results, fields) => {
         if (error) throw error;
         console.log(results);
-        if (results.length === 1) {
-           obj["from_location_id"] = results[0].location_id;
-        //    delete results[0].location_id;
-           obj["to_location_id"] = results[0].location_id;
-       } else {
-            obj["from_location_id"] = results[0].location_id;
-            //    delete results[0].location_id;
-            obj["to_location_id"] = results[1].location_id; 
-       }
-
-      return res.status(200).json({ results: obj });
+      return res.status(200).json({ results: results[0].location_id });
     }
   );
   console.log(query.sql);
