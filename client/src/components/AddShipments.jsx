@@ -329,44 +329,25 @@ class CreateShipments extends Component {
 	});
 }
 	moveAliquotsToShipment = () => {
-		let { selectedRows, data, dummyData} = this.state;
-		let temp = [];
-		let tempData = [];
+		let { selectedRows} = this.state;
+		let tempData = [...this.state.data];
 		selectedRows.forEach(element => {
-			console.log("sample_key: ", element);
-			var updatedEle = {}
-			element.selectedAliquotValue = element.selectedAliquotValue.value
-			// const index = data.findIndex(r => r.sample_keys === element.sample_keys);
-			// const updatedData = this.updateObjectInArray(data, index, {
-			// 	stack: updatedEle
-			// });
-			// this.setState({ data: updatedData })
-			// 
-			temp.push({ "samples_key": element.samples_key, "selectedAliquotValue": element.selectedAliquotValue });
+			element.selectedAliquotValue = element.selectedAliquotValue.value;
+			let indexOf = tempData.findIndex(sample => sample.samples_key === element.samples_key);
+			tempData[indexOf] = { ...tempData[indexOf], aliquot_count: tempData[indexOf].aliquot_count - element.selectedAliquotValue};
 		});
-		console.log("temp: ", temp);
-		for (let i = 0; i < temp.length; i++) {
-			const element = temp[i];
-			let index = data.findIndex(ele => ele.samples_key === element.samples_key);
-			console.log("index: ", index);
-			data[index].aliquot_count -= element.selectedAliquotValue;
-			dummyData.push(0);
-		}
-
-		this.setState({ movedshipementsData: selectedRows, showModal: false, data: data, dummyData: dummyData })
+		this.setState({ data: tempData, movedshipementsData: selectedRows, showModal: false, toggledClearRows: !this.state.toggledClearRows})
 	}
 
 	removeFromShipment() {
-		let { data, movedshipementsData } = this.state; 
+		let { movedshipementsData } = this.state; 
+		let tempData = [...this.state.data];
 		movedshipementsData.forEach(element => {
-			data.forEach((el) => {
-				if (el.samples_key === element.samples_key) {
-					console.log("el found", el);
-					el.aliquot_count += element.selectedAliquotValue
-				}
-			});
+			let indexOf = tempData.findIndex(sample => sample.samples_key === element.samples_key);
+			tempData[indexOf] = { ...tempData[indexOf], aliquot_count: tempData[indexOf].aliquot_count + element.selectedAliquotValue };
 		});
-		this.setState({ movedshipementsData: [], data: data })
+		console.log("tempData", tempData);
+		this.setState({ movedshipementsData: [], data: tempData })
 	}
 	createShipmentJson = async () => {
 		let { date, shippingconditions, movedshipementsData, shippingcompany, notes, selectedFromOption, selectedToOption} = this.state;
@@ -475,8 +456,6 @@ class CreateShipments extends Component {
 	}
 	render() {
 		const { selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData ,data} = this.state;
-		console.log("rrender data:", data);
-		// console.log("movedshipementsData:", movedshipementsData);
 		var shippingTableRowData = [];
 
 		for (var i = 0; i < this.state.samplesadded.length; i++) {
