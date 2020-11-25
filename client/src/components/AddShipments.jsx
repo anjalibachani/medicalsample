@@ -135,12 +135,7 @@ class CreateShipments extends Component {
 		for (var i = 1; i <= this.state.filters.length; i++) {
 
 			if (this.state.returnedFilterValues.length) {
-				console.log("filters exists")
-				console.log(this.state.filters)
-				//}
-				//check to see if the filter's Type and Value aren't empty
 				const [field, condition, value] = this.state.returnedFilterValues[i]
-				console.log("in process filter filtercals", field, condition, value);
 				const valuearray = value.map(item => item.value)
 				//const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
 				try {
@@ -177,13 +172,11 @@ class CreateShipments extends Component {
 						}
 					}
 				} catch (err) {
-					console.log("filter failed")
+					
 				}
 
 				this.setState({ data: filtereddata })
-				console.log(filtereddata)
 				this.state.data.filter(item => item.field && (item.field < value))
-				console.log(this.state.data)
 			}
 		}
 	}
@@ -194,24 +187,17 @@ class CreateShipments extends Component {
 		this.getsampledata();
 	}
 	addFilter() {
-		console.log("add filter called")
+		
 		var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
 		this.setState({ filters: newFilterArray });
-		console.log(`filters lenght is ${this.state.filters.length}`)
-		console.log(this.state.filters)
 	};
 
 	getFilterValues = (type, equality, value, key) => {
 
-		console.log("returned values", type, equality, value, key);
 		var filterVals = this.state.returnedFilterValues;
-		console.log("in get filter values filters", this.state.filters)
-		console.log("");
+		
 		if (this.state.filters.length > 1) {
 			for (let i = 1; i < this.state.filters.length; i++) {
-				console.log("returned filter vals:", this.state.returnVals)
-				console.log("filtervals vals:", filterVals)
-				console.log(i, "th filterval is:", filterVals[i]);
 				var addedfilters = this.state.filters
 				delete addedfilters[i]
 				if (type === filterVals[i][0]) {
@@ -245,17 +231,14 @@ class CreateShipments extends Component {
 	}
 
 	handleIDChange = selectedOption => {
-		console.log("selected option ", selectedOption)
 		this.setState({ selectedFromOption: selectedOption, from: selectedOption });
 	}
 
 	handleIDChange1 = selectedOption => {
-		console.log("selected option ", selectedOption)
 		this.setState({ selectedToOption: selectedOption, to: selectedOption });
 	}
 
 	handleAliquotNumberChange = (selectedOption, key) => {
-		console.log("selected option ", selectedOption, key)
 		let selectedRows = this.state.selectedRows;
 		selectedRows[key].selectedAliquotValue = selectedOption;
 		this.setState({ selectedAliquotNumber: selectedOption, selectedRows: selectedRows });
@@ -263,7 +246,6 @@ class CreateShipments extends Component {
 
 	async getsampledata() {
 		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
-			console.log(response.data)
 			this.setState({
 				data: response.data
 			})
@@ -299,17 +281,14 @@ class CreateShipments extends Component {
 		this.setState({ showModal: false });
 	}
 	handleOpenModal = () => {
-		console.log("on modal open: ,", this.state.selectedRows);
 		this.setState({ showModal: true });
 	}
 
 	handleChange = state => {
-		console.log("selected rows", state.selectedRows)
 		let selectedRows = state.selectedRows;
 		selectedRows.forEach((element, key) => {
 			selectedRows[key]["selectedAliquotValue"] = '';
 		});
-		console.log("selectedRows: ", selectedRows);
 		this.setState({ selectedRows: selectedRows });
 
 	};
@@ -346,16 +325,12 @@ class CreateShipments extends Component {
 			let indexOf = tempData.findIndex(sample => sample.samples_key === element.samples_key);
 			tempData[indexOf] = { ...tempData[indexOf], aliquot_count: tempData[indexOf].aliquot_count + element.selectedAliquotValue };
 		});
-		console.log("tempData", tempData);
 		this.setState({ movedshipementsData: [], data: tempData })
 	}
 	createShipmentJson = async () => {
 		let { date, shippingconditions, movedshipementsData, shippingcompany, notes, selectedFromOption, selectedToOption} = this.state;
 		let shipment = {}
-		console.log("selectedFromOption.value", typeof selectedFromOption.value);
-		console.log("selectedToOption.value", typeof selectedToOption.value);
 		let locations = await this.getLocationIDByName(selectedFromOption.value, selectedToOption.value);
-		console.log("location ids: ", locations);
 		shipment.from_location_id = locations[0];
 		shipment.to_location_id = locations[1];
 		shipment.shipment_date = date;
@@ -365,24 +340,20 @@ class CreateShipments extends Component {
 		shipment.shipping_company = shippingcompany;
 		shipment.notes = notes;
 		shipment.user_id = localStorage.getItem("user_id");
-		console.log("shipment", shipment);
 		return shipment;
 
 	}
 	createAliqoutJson = (shipment_id) => {
 		let { date, shippingconditions, movedshipementsData, shippingcompany, notes } = this.state;
 		let sample_keys = movedshipementsData.map(a => a.samples_key);
-		console.log("sample_keys", sample_keys);
 		let aliquots = {}
 		aliquots.shipment_id = shipment_id;
 		aliquots.status_id = 2;
 		aliquots.aliquots_samples_key = sample_keys
-		console.log("aliquots", aliquots);
 		return aliquots;
 
 	}
 	async getLocationIDByName(from_location, to_location) {
-		console.log(from_location, to_location);
 		let locations = []
 		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location} })
 		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location} })
@@ -413,9 +384,6 @@ class CreateShipments extends Component {
 	validateForms = () => {
 		var errorString = '';
 		var errors = false;
-		console.log("from", this.state.selectedFromOption)
-		console.log("to", this.state.selectedToOption)
-		console.log("from", this.state.selectedFromOption === null)
 		if (this.state.selectedFromOption === null) {
 			errors = true;
 			errorString = "Please enter the shipment's recipient in the 'From:' field."
@@ -455,7 +423,15 @@ class CreateShipments extends Component {
 		}
 	}
 	render() {
-		const { selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData ,data} = this.state;
+		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data } = this.state;
+		let filteredItems = [];
+		{
+			if (selectedFromOption !== null) {
+				filteredItems = data.filter(sample => sample.location_name.toLowerCase() === selectedFromOption.value.toLowerCase())
+				console.log("filteredItems", filteredItems);	
+			}
+		}
+		// console.log(locationBasedData);
 		var shippingTableRowData = [];
 
 		for (var i = 0; i < this.state.samplesadded.length; i++) {
@@ -586,24 +562,27 @@ class CreateShipments extends Component {
 				</div>
 				<Row>
 					<Col>
-						<DataTable
-							columns={columns}
-							data={data}
-							keyField="sample_key"
-							selectableRows
-							onSelectedRowsChange={this.handleChange}
-							striped={true}
-							highlightOnHover
-							pagination
-							clearSelectedRows={this.state.toggledClearRows}
+						{selectedFromOption !== null && selectedToOption !== null &&
+							<DataTable
+								columns={columns}
+								data={filteredItems}
+								keyField="sample_key"
+								selectableRows
+								onSelectedRowsChange={this.handleChange}
+								striped={true}
+								highlightOnHover
+								pagination
+								clearSelectedRows={this.state.toggledClearRows}
 
-						/>
+							/>}
 					</Col>
 					<Col md="auto">
-						<div style={{ padding: 25 }}>
-							<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
-							<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
+						{selectedFromOption !== null && selectedToOption !== null && selectedRows.length!==0&&
+							<div style={{ padding: 25 }}>
+								<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
+								<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
 						</div>
+						}
 					</Col>
 					<Col>
 						{movedshipementsData.length!==0 &&
@@ -625,7 +604,7 @@ class CreateShipments extends Component {
 						<Modal.Title>Add samples to shipment</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<p>Click 'Save' to add all aliquots for each sample you selected to your shipment. Or, specify the number of available aliquots to go to the shipment below.</p>
+						<p>Click 'Save' to add all aliquots for each sample you selected to your shipment by specifying the number of available aliquots to go to the shipment below.</p>
 						{
 							selectedRows.map((element, key) => {
 								let rows = []
