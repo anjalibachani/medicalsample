@@ -22,12 +22,12 @@ const columns = [
   },
   {
     name: "From",
-    selector: "location_name",
+    selector: "from_location_name",
     //sortable: true
   },
   {
     name: "To",
-    selector: "location_name",
+    selector: "to_location_name",
     //sortable: true,
   },
   {
@@ -75,7 +75,7 @@ class Basic2Table extends Component {
   }
   getShipmentsData=() => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
-      // console.log(response.data)
+      console.log(response.data)
       this.setState({
         data: response.data
       });
@@ -83,7 +83,7 @@ class Basic2Table extends Component {
   }
   render() {
     const { data, toggleCleared } = this.state; 
-    this.getShipmentsData();
+    // this.getShipmentsData();
     return (
       <div>
         {this.state.alertVisibility && (

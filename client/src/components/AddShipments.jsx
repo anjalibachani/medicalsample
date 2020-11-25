@@ -77,12 +77,14 @@ const movedshipementscolumns = [
 	},
 ];
 
+
 class CreateShipments extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			data: [],
 			date: new Date(),
+			dummyData:[],
 			from: '',
 			storageconditions: '',
 			shippingconditions: '',
@@ -312,21 +314,46 @@ class CreateShipments extends Component {
 
 	};
 
+	updateObjectInArray= (array, index, updatedItem) =>{
+	return array.map((item, i) => {
+		if (i !== index) {
+			// if not the item then bail
+			return item;
+		}
+
+		// Return the new item. we updated the object "deeply" and because map returns a new array
+		return {
+			...item,
+			...updatedItem
+		};
+	});
+}
 	moveAliquotsToShipment = () => {
-		let { selectedRows, data } = this.state;
+		let { selectedRows, data, dummyData} = this.state;
+		let temp = [];
+		let tempData = [];
 		selectedRows.forEach(element => {
+			console.log("sample_key: ", element);
+			var updatedEle = {}
 			element.selectedAliquotValue = element.selectedAliquotValue.value
-			this.state.data.map((el) => {
-				if (el.samples_key === element.samples_key) {
-					console.log("el found", el);
-					el.aliquot_count -= element.selectedAliquotValue
-				}
-			});
+			// const index = data.findIndex(r => r.sample_keys === element.sample_keys);
+			// const updatedData = this.updateObjectInArray(data, index, {
+			// 	stack: updatedEle
+			// });
+			// this.setState({ data: updatedData })
+			// 
+			temp.push({ "samples_key": element.samples_key, "selectedAliquotValue": element.selectedAliquotValue });
 		});
-		console.log("data after shipemnst", this.state.data)
-		this.setState({ movedshipementsData: selectedRows, showModal: false })
-		this.setState({ data: this.state.data })
-		console.log("data after shipemnst 3", this.state.data)
+		console.log("temp: ", temp);
+		for (let i = 0; i < temp.length; i++) {
+			const element = temp[i];
+			let index = data.findIndex(ele => ele.samples_key === element.samples_key);
+			console.log("index: ", index);
+			data[index].aliquot_count -= element.selectedAliquotValue;
+			dummyData.push(0);
+		}
+
+		this.setState({ movedshipementsData: selectedRows, showModal: false, data: data, dummyData: dummyData })
 	}
 
 	removeFromShipment() {
@@ -620,7 +647,6 @@ class CreateShipments extends Component {
 						<p>Click 'Save' to add all aliquots for each sample you selected to your shipment. Or, specify the number of available aliquots to go to the shipment below.</p>
 						{
 							selectedRows.map((element, key) => {
-								console.log("element,key", element, key);
 								let rows = []
 								for (let index = 0; index < element.aliquot_count; index++) {
 									rows.push({ "value": index + 1, "label": index + 1 })
