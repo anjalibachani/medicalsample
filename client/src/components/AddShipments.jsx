@@ -13,7 +13,69 @@ import _ from 'lodash';
 import SamplesFilter from './SamplesFilter';
 
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
+const columns = [
+	{
+		name: 'ID',
+		selector: 'sample_id',
+		sortable: true,
+	},
+	{
+		name: 'Eval',
+		selector: 'eval',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Date',
+		selector: 'date',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Type',
+		selector: 'type',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Aliquots',
+		selector: 'aliquot_count',
+		sortable: true,
+		right: true,
+	},
+];
 
+const movedshipementscolumns = [
+	{
+		name: 'ID',
+		selector: 'sample_id',
+		sortable: true,
+	},
+	{
+		name: 'Eval',
+		selector: 'eval',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Date',
+		selector: 'date',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Type',
+		selector: 'type',
+		sortable: true,
+		right: true,
+	},
+	{
+		name: 'Aliquots',
+		selector: 'selectedAliquotValue',
+		sortable: true,
+		right: true,
+	},
+];
 
 class CreateShipments extends Component {
 	constructor(props) {
@@ -67,69 +129,6 @@ class CreateShipments extends Component {
 		this.handleIDChange = this.handleIDChange.bind(this);
 	}
 
-	columns = [
-		{
-			name: 'ID',
-			selector: 'sample_id',
-			sortable: true,
-		},
-		{
-			name: 'Eval',
-			selector: 'eval',
-			sortable: true,
-			right: true,
-		},
-		{
-			name: 'Date',
-			selector: 'date',
-			sortable: true,
-			right: true,
-		},
-		{
-			name: 'Type',
-			selector: 'type',
-			sortable: true,
-			right: true,
-		},
-		{
-			name: 'Aliquots',
-			selector: 'aliquot_count',
-			sortable: true,
-			right: true,
-		},
-	];
-
-	movedshipementscolumns = [
-		{
-			name: 'ID',
-			selector: 'sample_id',
-			sortable: true,
-		},
-		{
-			name: 'Eval',
-			selector: 'eval',
-			sortable: true,
-			right: true,
-		},
-		{
-			name: 'Date',
-			selector: 'date',
-			sortable: true,
-			right: true,
-		},
-		{
-			name: 'Type',
-			selector: 'type',
-			sortable: true,
-			right: true,
-		},
-		{
-			name: 'Aliquots',
-			selector: 'selectedAliquotValue',
-			sortable: true,
-			right: true,
-		},
-	];
 	processFilter() {
 		for (var i = 1; i <= this.state.filters.length; i++) {
 
@@ -447,7 +446,7 @@ class CreateShipments extends Component {
 	}
 	render() {
 		const { selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData ,data} = this.state;
-		console.log("srender data:", this.state.data);
+		console.log("rrender data:", data);
 		// console.log("movedshipementsData:", movedshipementsData);
 		var shippingTableRowData = [];
 
@@ -580,8 +579,8 @@ class CreateShipments extends Component {
 				<Row>
 					<Col>
 						<DataTable
-							columns={this.columns}
-							data={this.state.data}
+							columns={columns}
+							data={data}
 							keyField="sample_key"
 							selectableRows
 							onSelectedRowsChange={this.handleChange}
@@ -603,7 +602,7 @@ class CreateShipments extends Component {
 							<Button variant="dark" size="lg" onClick={this.save}>Save</Button>
 						}
 						<DataTable
-							columns={this.movedshipementscolumns}
+							columns={movedshipementscolumns}
 							data={movedshipementsData}
 							keyField="sample_key"
 							striped={true}
