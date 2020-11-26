@@ -583,12 +583,12 @@ class CreateShipments extends Component {
 							/>}
 					</Col>
 					<Col md="auto">
-						{selectedFromOption !== null && selectedToOption !== null && selectedRows.length!==0&&
+						{/* {selectedFromOption !== null && selectedToOption !== null && selectedRows.length!==0&& */}
 							<div style={{ padding: 25 }}>
 								<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
 								<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
 						</div>
-						}
+						{/* } */}
 					</Col>
 					<Col>
 						{movedshipementsData.length!==0 &&
