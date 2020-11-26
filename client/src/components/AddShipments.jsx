@@ -139,7 +139,6 @@ class CreateShipments extends Component {
 				const valuearray = value.map(item => item.value)
 				//const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
 				try {
-					//var filtereddata='';
 					if (field === "ID") {
 						if (condition === 'equals') {
 							var filtereddata = this.state.data.filter(p => valuearray.includes(p.sample_id));
@@ -181,7 +180,6 @@ class CreateShipments extends Component {
 		}
 	}
 	clearFilters() {
-		//window.location.reload(false)
 		this.setState({ returnedFilterValues: [] })
 		this.setState({ filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />] })
 		this.getsampledata();
@@ -296,11 +294,8 @@ class CreateShipments extends Component {
 	updateObjectInArray= (array, index, updatedItem) =>{
 	return array.map((item, i) => {
 		if (i !== index) {
-			// if not the item then bail
 			return item;
 		}
-
-		// Return the new item. we updated the object "deeply" and because map returns a new array
 		return {
 			...item,
 			...updatedItem
@@ -431,7 +426,6 @@ class CreateShipments extends Component {
 				console.log("filteredItems", filteredItems);	
 			}
 		}
-		// console.log(locationBasedData);
 		var shippingTableRowData = [];
 
 		for (var i = 0; i < this.state.samplesadded.length; i++) {

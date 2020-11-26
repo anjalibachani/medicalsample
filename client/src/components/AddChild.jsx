@@ -10,8 +10,6 @@ import DataTable from 'react-data-table-component';
 
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
-
-
 const columns = [
     {
         name: "Child ID",
@@ -44,7 +42,7 @@ const customStyles = {
         style: {
             fontSize: '100%',
             fontWeight: "bold",
-            paddingLeft: '8px', // override the cell padding for head cells
+            paddingLeft: '8px', 
             paddingRight: '8px',
         },
     },
@@ -92,7 +90,6 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     <>
         <TextField id="search" type="text" placeholder="Search Child" aria-label="Search Input" value={filterText} onChange={onFilter} />
         <ClearButton type="button" onClick={onClear}>X</ClearButton>
-        {/* {console.log("filterCOmponent called")} */}
     </>
 );
 export default class AddChild extends Component {
@@ -119,7 +116,6 @@ export default class AddChild extends Component {
     }
     getChildData = () => {
         axios.get(`http://${config.server.host}:${config.server.port}/child/all`).then((response) => {
-            // console.log(response.data)
             this.setState({
                 data: response.data.results
             });
@@ -148,14 +144,12 @@ export default class AddChild extends Component {
     createJson = () => {
         let child = {}
         for (const [key, value] of Object.entries(this.state)) {
-            console.log(typeof value);
             if (key !=='formErrors') {
                 child[key] = value
             }
 
         }
         child['user_id'] = localStorage.getItem("user_id")
-        // console.log(child);
         return child
     }
     validateForms = async () => {
@@ -204,7 +198,6 @@ export default class AddChild extends Component {
     }
     saveAndExit = async () => {
         this.setState({ formErrors: await this.validateForms() })
-        // console.log(this.state.formErrors);
         if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
             this.props.history.push('/Home')
@@ -212,7 +205,6 @@ export default class AddChild extends Component {
     }
     saveAndAddAnother = async () => {
         this.setState({ formErrors: await this.validateForms() })
-        // console.log(this.state.formErrors);
         if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
             this.setState({
@@ -227,7 +219,6 @@ export default class AddChild extends Component {
     }
     checkSampleIDAndEval = async (evl,sample_id) => {
         const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/checkIDandEval`, { params: { sample_id: sample_id,eval:evl } })
-        // console.log(res.data.rows);
         if (res.data.rows===0) {
             return false;
         }
@@ -235,13 +226,10 @@ export default class AddChild extends Component {
     }
     send = async () => {
         const result = this.createJson();
-        // console.log(result)
         const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
-        // console.log(res.data)
     }
     render() {
         const { data, email_id, admin } = this.state; 
-        // console.log(data.filter(item => item.sample_id));
         const filteredItems = data.filter(item => item.sample_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         return (
             <div>

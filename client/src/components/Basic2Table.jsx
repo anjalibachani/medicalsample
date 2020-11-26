@@ -83,7 +83,6 @@ class Basic2Table extends Component {
   }
   render() {
     const { data, toggleCleared } = this.state; 
-    // this.getShipmentsData();
     return (
       <div>
         {this.state.alertVisibility && (

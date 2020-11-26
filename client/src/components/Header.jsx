@@ -41,23 +41,6 @@ export default class Header extends Component {
                                 :
                                 <CustomHeaderButton href="/filterandExports" text="Samples Inventory" variant="outline-dark" />
                         }
-                        {/*<CustomHeaderButton href="/Reports" text="Reports" />*/}
-
-                        {/* <CustomHeaderButton
-                            href="/AddShipments"
-                            text="Create a Shipment"
-                        /> */}
-                        {/* <CustomHeaderButton
-                            href="/ViewShipment"
-                            text="See Shipments"
-                        /> */}
-
-                        {/* {
-                            location === "/AddShipments" ?
-                                <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="dark" />
-                                :
-                                <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="outline-dark" />
-                        } */}
                         {
                             location === "/ViewShipment" ?
                                 <CustomHeaderButton href="/ViewShipment" text="Shipments" variant="dark" />
