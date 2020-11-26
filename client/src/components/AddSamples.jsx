@@ -247,23 +247,24 @@ class AddSamples extends Component {
 		return tabsMapping;
 	}
 	send = async () => {
+		console.log("Sending..")
 		const result = this.createJson();
 		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
+	}
+	save = () => {
+		// this.setState({ formErrors: this.validateForms() },()=> {
+		// 	if (Object.keys(this.state.formErrors).length === 0) {
+		// 		console.log("AAA");
+		// 	this.send();
+		// 	}
+		// });
+		this.send();
 		this.setState({
 			isVisible: true
 		});
-		// setTimeout(() => {
-		// 	this.props.history.push('/Home');
-		// }, 5000)
-	}
-	save = () => {
-		this.setState({ formErrors: this.validateForms() },()=> {
-			if (Object.keys(this.state.formErrors).length === 0) {
-				console.log("AAA");
-			// this.send();
-			}
-		});
-		// console.log("formWrro", this.validateForms());
+		setTimeout(() => {
+			this.props.history.push('/Home');
+		}, 5000)
 		
 	}
 	render() {
