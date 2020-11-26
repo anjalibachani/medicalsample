@@ -4,10 +4,14 @@ import { Navbar, Nav, Container, ButtonGroup } from "react-bootstrap";
 import CustomHeaderButton from "./CustomHeaderButton";
 
 export default class Header extends Component {
+    constructor(props) {
+        super(props);
+    }
     static propTypes = {
         prop: PropTypes
     }
     render() {
+        // console.log("props in header: ", this.props);
         // console.log("home: ", window.location.pathname);
         let location = window.location.pathname;
         return (

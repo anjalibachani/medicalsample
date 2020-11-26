@@ -65,7 +65,20 @@ class AddSamples extends Component {
 		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
 		this.setState({ evalOptions: evals.data.options })
 	}
-	componentDidMount() {
+	 componentDidMount() {
+		// const { sample_id, eval } = this.props.location.state;
+		console.log("props in addSamples", this.props.location.state);
+		if (this.props.location.state !== undefined) {
+			let sample_id = {"value":this.props.location.state.sample_id, "label":this.props.location.state.sample_id};
+			let evl = { "value": this.props.location.state.eval, "label": this.props.location.state.eval };
+			this.setState({ selectedIdOption: sample_id, selectedEvalOption: evl });
+			// this.setState({ selectedIdOption: sample_id, selectedEvalOption: evl }, async () => {
+			// 	let temp = await this.getSampleTypes(this.state.selectedIdOption.value, this.state.selectedEvalOption.value)
+			// 	let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
+			// 	let fixedValues = multiVal.map(vals => vals.value);
+			// 	this.setState({ multiValue: multiVal, fixedValues: fixedValues }, () => this.generateTabsMapping(temp));
+			// });
+		}
 		let array = []
 		sampleTypes.types.forEach(element => {
 			array.push({ value: element.name, label: element.name });
@@ -196,22 +209,35 @@ class AddSamples extends Component {
 	validateForms = () => {
 		let errorsObj = {};
 		let tabsMapping = this.state.tabsMapping;
+		let fixedValues = this.state.fixedValues;
+		console.log("tabsMapping", tabsMapping);
+		console.log("fixedValues", fixedValues);
 		tabsMapping.forEach(element => {
-		let index = element.fields.findIndex(key => key.fieldName === "Aliquots")
+			console.log("element",element);
+			let index = element.fields.findIndex((key) => {
+				return (key.fieldName === "Aliquots" && !fixedValues.includes(element.key.value)) 
+					
+				
+			});
+			console.log("index",index);
 			if (index !== -1) {
-				let aliquots = parseInt(element.data.Aliquots);
-				if (isNaN(aliquots)) {
-					errorsObj.aliquots ="Please enter value for Aliquots"
-				}
-				if ((!isNaN(aliquots) && aliquots < 0) || !isNaN(aliquots) && aliquots<-0) {
-					errorsObj.aliquots = "Please Enter Valid Aliquots (typically > 0)";
-				} 
+				let aliquots = (element.data.Aliquots);
+				console.log("aliquots", typeof aliquots);
+				console.log("aliquots", aliquots);
+				// if (typeof aliquots==="number") {
+				// 	break;
+				// }
+				// if (typeof aliquots !== 'number') {
+				// 	if (aliquots === undefined) {
+				// 		errorsObj.aliquots = "Please Enter Eval"
+				// 	}
+				// 	if ((aliquots !== undefined || aliquots !== '') && !(parseInt(aliquots) >= 0)) {
+				// 		errorsObj.aliquots = "Please Enter Valid Eval (typically > 0)"
+				// 	}
+				// } 
 			}
-			
 		})
-
 		return errorsObj;
-
 	}
 	createJson = () => {
 		let tabsMapping = this.state.tabsMapping;
@@ -223,18 +249,22 @@ class AddSamples extends Component {
 	send = async () => {
 		const result = this.createJson();
 		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
+		this.setState({
+			isVisible: true
+		});
+		// setTimeout(() => {
+		// 	this.props.history.push('/Home');
+		// }, 5000)
 	}
 	save = () => {
-		this.setState({ formErrors: this.validateForms() })
-		if (Object.keys(this.state.formErrors).length === 0) {
-			this.send();
-			this.setState({
-				isVisible: true
-			});
-			setTimeout(() => {
-				this.props.history.push('/Home');
-			}, 5000)
-		}
+		this.setState({ formErrors: this.validateForms() },()=> {
+			if (Object.keys(this.state.formErrors).length === 0) {
+				console.log("AAA");
+			// this.send();
+			}
+		});
+		// console.log("formWrro", this.validateForms());
+		
 	}
 	render() {
 		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedValues, tabsMapping, formErrors } = this.state;

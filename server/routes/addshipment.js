@@ -34,23 +34,51 @@ router.get("/fetchlocation", async (req, res) => {
 
 router.post("/create", async (req, res) => {
   console.log(req.body);
-  req.body.shipment_date = new Date(req.body.shipment_date);
-    var query = await db.query("INSERT INTO `shipments` SET ?", req.body, (error,results,fields)=>{
+  let aliArray = req.body.tempArray;
+  let countArray = req.body.countArray;
+  let shipment = {};
+   for (const [key, value] of Object.entries(req.body)) {
+     if (key !== "tempArray" && key !== "countArray") {
+       shipment[key] = value;
+       if (key === "shipment_date") {
+         shipment[key] = new Date(value);
+       }
+     }
+   }
+    await db.query("INSERT INTO `shipments` SET ?", shipment, (error,results)=>{
       if (error) throw error;
       console.log(results.insertId);
+      // aliArray.forEach((element, index) => {
+      //  var delete_query = db.query(
+      //     "delete from medsample_db.aliquots where sample_id=? and location_id=? and aliquots_samples_key=? limit ?;",
+      //     [element[0], element[1], element[2], countArray[index][0]],
+      //     (err, delete_results) => {
+      //       if (err) throw err;
+      //       console.log(delete_results.affectedRows);
+      //     }
+      //   );
+      //   console.log(delete_query.sql);
+      // });
+      
       return res.status(202).json({ results });
     });
-    console.log(query.sql);
+    // return res.status(202).json({ results });
 });
 
-router.post("/addshipmentId", async (req, res) => {
+router.post("/addshipmentId",  (req, res) => {
   console.log(req.body);
-  var query = await db.query("UPDATE `aliquots` SET `shipment_id` = ?,`status_id` = 2 where aliquots_samples_key IN (?)",[req.body.shipment_id,req.body.aliquots_samples_key],(error, results, fields) => {
+  let aliquots_samples_key = req.body.aliquots_samples_key;
+  let countArray = req.body.countArray;
+  console.log("aliquots_samples_key", aliquots_samples_key);
+  console.log("countArray",countArray);
+  aliquots_samples_key.forEach( (element,index) => {
+     var query =  db.query("UPDATE `aliquots` SET `shipment_id` = ?,`status_id` = 2 where aliquots_samples_key=? limit ?",[req.body.shipment_id,element,countArray[index]],(error, results, fields) => {
       if (error) throw error;
       console.log(results.affectedRows);
     }
   );
   console.log(query.sql);
+  });
 });
 
 
@@ -90,7 +118,7 @@ router.get("/aliquots/:sample_id", async (req, res) => {
 function dbQueryFunc3() {
     return new Promise(function (resolve, reject) {
         let query1 = db.query(
-          `SELECT S.*, L.location_name,L.location_id, COUNT(*) as aliquot_count from samples S INNER JOIN aliquots A ON S.samples_key=A.aliquots_samples_key INNER JOIN locations L ON L.location_id = A.location_id where S.type!='' GROUP BY S.sample_id, S.eval,S.type,L.location_name;`,
+          `SELECT S.*, L.location_name,L.location_id, COUNT(*) as aliquot_count from samples S INNER JOIN aliquots A ON S.samples_key=A.aliquots_samples_key INNER JOIN locations L ON L.location_id = A.location_id where S.type!='' AND A.status_id!=2 GROUP BY S.sample_id, S.eval,S.type,L.location_name;`,
           (error, result) => {
             if (error) {
               reject(error);

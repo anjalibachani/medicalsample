@@ -221,7 +221,7 @@ getFilterValues = (type, equality, value, key) => {
 };
 clearFilters(){
   //window.location.reload(false)
-  this.setState({returnedFilterValues: []})
+  // this.setState({returnedFilterValues: []})
   this.setState({filters:[<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />]})
   this.getsampledata();
 }

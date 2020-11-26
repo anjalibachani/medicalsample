@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import DataTable from 'react-data-table-component';
+import CustomAlertBanner from './CustomAlertBanner';
 
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
@@ -104,7 +105,10 @@ export default class AddChild extends Component {
             density: '',
             formErrors: {},
             data: [],
-            filterText: ''
+            filterText: '',
+            alertVisibility: false,
+            alertText: 'Child added successfully.',
+            alertVariant: 'success',
         }
 
     }
@@ -143,13 +147,20 @@ export default class AddChild extends Component {
     };
     createJson = () => {
         let child = {}
-        for (const [key, value] of Object.entries(this.state)) {
-            if (key !=='formErrors') {
-                child[key] = value
-            }
+        let { sample_id, date,hb,pb,density } = this.state; 
+        child.sample_id = sample_id;
+        child.eval = this.state.eval;
+        child.date = date;
+        child.hb = hb;
+        child.pb = pb;
+        child.density = density;
+        // for (const [key, value] of Object.entries(this.state)) {
+        //     if (key !== 'formErrors' && key !== 'data' && key !== 'filterText') {
+        //         child[key] = value
+        //     }
 
-        }
-        child['user_id'] = localStorage.getItem("user_id")
+        // }
+        child.user_id = localStorage.getItem("user_id");
         return child
     }
     validateForms = async () => {
@@ -205,6 +216,18 @@ export default class AddChild extends Component {
             }, 5000)
         }
     }
+    saveAndAddSamples = async() => {
+        this.setState({ formErrors: await this.validateForms() })
+        if (Object.keys(this.state.formErrors).length === 0) {
+            this.send();
+            setTimeout(() => {
+                this.props.history.push({
+                    pathname: '/AddSamples',
+                    state: { "sample_id": this.state.sample_id, "eval": this.state.eval }
+                });
+            }, 5000)
+        }
+    }
     saveAndAddAnother = async () => {
         this.setState({ formErrors: await this.validateForms() })
         if (Object.keys(this.state.formErrors).length === 0) {
@@ -229,6 +252,9 @@ export default class AddChild extends Component {
     send = async () => {
         const result = this.createJson();
         const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
+        this.setState({
+            alertVisibility: true,
+        });
     }
     render() {
         const { data, email_id, admin } = this.state; 
@@ -239,6 +265,9 @@ export default class AddChild extends Component {
                     if (localStorage.getItem("user_id") !== null) {
                         return (<>
                             <Header />
+                            {this.state.alertVisibility &&
+                                <CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
+                            }
                             <Container fluid>
                                 <Form.Text as={Col} className="text-danger">{this.state.formErrors.id_eval}</Form.Text>
                                 <Row> <Col className="custom-col" md="auto">
@@ -320,7 +349,7 @@ export default class AddChild extends Component {
                                 <hr />
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndExit}> Save and Exit</Button>
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddAnother}> Save and add another</Button>
-                                <Button variant="dark" className="ml-4" size="lg" href="/AddSamples"> Go to Add Samples</Button>
+                                <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddSamples}>Save and Add Samples</Button>
                             
                                 <DataTable className="block-example border border-dark rounded mb-0"
                                     columns={columns}

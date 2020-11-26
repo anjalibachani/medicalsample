@@ -324,6 +324,7 @@ class CreateShipments extends Component {
 	}
 	createShipmentJson = async () => {
 		let { date, shippingconditions, movedshipementsData, shippingcompany, notes, selectedFromOption, selectedToOption} = this.state;
+		console.log("movedshipementsData", movedshipementsData);
 		let shipment = {}
 		let locations = await this.getLocationIDByName(selectedFromOption.value, selectedToOption.value);
 		shipment.from_location_id = locations[0];
@@ -335,6 +336,10 @@ class CreateShipments extends Component {
 		shipment.shipping_company = shippingcompany;
 		shipment.notes = notes;
 		shipment.user_id = localStorage.getItem("user_id");
+		let tempArray = movedshipementsData.map(item => [item.sample_id, item.location_id, item.samples_key])
+		let countArray = movedshipementsData.map(item => [item.aliquot_count])
+		shipment.tempArray = tempArray;
+		shipment.countArray = countArray;
 		return shipment;
 
 	}
@@ -345,8 +350,15 @@ class CreateShipments extends Component {
 		aliquots.shipment_id = shipment_id;
 		aliquots.status_id = 2;
 		aliquots.aliquots_samples_key = sample_keys
+		aliquots.countArray = movedshipementsData.map(a => a.selectedAliquotValue);
+		console.log("createAliqoutJson",aliquots);
 		return aliquots;
 
+	}
+	createJson = () => {
+		let { movedshipementsData } = this.state;
+		// let tempArray = movedshipementsData.map(item => [item.sample_id, item.location_id, item.samples_key])
+		// let countArray = movedshipementsData.map(item => [item.aliquot_count])
 	}
 	async getLocationIDByName(from_location, to_location) {
 		let locations = []
@@ -414,7 +426,7 @@ class CreateShipments extends Component {
 				selectedFromOption: null,
 				selectedToOption: null
 			});
-			const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, aliquots);
+			const res =  axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, aliquots);
 		}
 	}
 	render() {
