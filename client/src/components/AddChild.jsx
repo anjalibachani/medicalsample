@@ -200,7 +200,9 @@ export default class AddChild extends Component {
         this.setState({ formErrors: await this.validateForms() })
         if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
-            this.props.history.push('/Home')
+            setTimeout(() => {
+                this.props.history.push('/Home');
+            }, 5000)
         }
     }
     saveAndAddAnother = async () => {

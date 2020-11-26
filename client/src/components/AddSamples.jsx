@@ -26,6 +26,7 @@ class AddSamples extends Component {
 			multiValue: [],
 			tabsMapping: [],
 			alertVisibility: false,
+			isVisible:false,
 			alertText: 'Want to delete already saved samples ?',
 			alertVariant: 'info',
 			fixedValues: [],
@@ -226,8 +227,13 @@ class AddSamples extends Component {
 	save = () => {
 		this.setState({ formErrors: this.validateForms() })
 		if (Object.keys(this.state.formErrors).length === 0) {
-			 this.send();
-			this.props.history.push('/Home')
+			this.send();
+			this.setState({
+				isVisible: true
+			});
+			setTimeout(() => {
+				this.props.history.push('/Home');
+			}, 5000)
 		}
 	}
 	render() {
@@ -247,6 +253,11 @@ class AddSamples extends Component {
 
 									</Col>
 								)}
+								{this.state.isVisible && 
+									<Alert variant='success'>
+										<Alert.Heading>Successfully Saved Samples.</Alert.Heading>
+									</Alert>
+								}
 								<Container>
 									<Row>
 										<Col md="4">
