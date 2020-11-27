@@ -42,7 +42,7 @@ class Login extends React.Component{
                     localStorage.setItem("isLoggedIn", true);
                     localStorage.setItem("isAdmin", response.data.admin);
                     localStorage.setItem("expiresin",Date.now()+6000000);
-                    console.log("logging date",Date.now());
+                    //console.log("logging date",Date.now());
                     this.redirectToHome();
                 }
                 else{
@@ -83,7 +83,7 @@ class Login extends React.Component{
             e.preventDefault();
             let array1 = [1,2,3];
             Axios.post(`http://${config.server.host}:${config.server.port}/api/login`,{email_id:this.state.email_id, password: this.state.password, array1:array1}).then((response)=>{
-              console.log(response);
+              //console.log(response);
                 if (response.status === 200) {
                     localStorage.setItem('user_id',response.data.user_id);
                     localStorage.setItem('email_id',this.state.email_id);
