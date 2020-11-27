@@ -226,6 +226,7 @@ class CreateShipments extends Component {
 	componentDidMount() {
 		this.getLocations();
 		this.getsampledata();
+
 	}
 
 	handleIDChange = selectedOption => {
@@ -241,6 +242,7 @@ class CreateShipments extends Component {
 		selectedRows[key].selectedAliquotValue = selectedOption;
 		this.setState({ selectedAliquotNumber: selectedOption, selectedRows: selectedRows });
 	}
+
 
 	async getsampledata() {
 		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
@@ -274,6 +276,7 @@ class CreateShipments extends Component {
 			paddingBottom: 0,
 		}),
 	};
+
 
 	handleCloseModal = () => {
 		this.setState({ showModal: false });

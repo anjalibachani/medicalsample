@@ -191,7 +191,8 @@ getFilterValues = (type, equality, value, key) => {
   console.log("returned values",type, equality, value, key);
   var filterVals = this.state.returnedFilterValues;
   console.log("in get filter values filters",this.state.filters)
-  console.log("");
+  console.log("filtervals", filterVals);
+  console.log("filtervals_len", filterVals.length);
   if(this.state.filters.length>1){
     for(let i = 1; i<this.state.filters.length;i++){
       console.log("returned filter vals:", this.state.returnVals)
@@ -200,12 +201,15 @@ getFilterValues = (type, equality, value, key) => {
       var addedfilters = this.state.filters
       delete addedfilters[i]
       if(type === filterVals[i][0]){
-        if(filterVals[i][0] === 'equals'){
+        console.log("type matched")
+        if(filterVals[i][1] === 'equals'){
+          console.log("equality matched with equals")
           this.setState({showWarning:true,
             warningText: "ambigious filter, cannot add filters of same type",
             filters:addedfilters})
             return;
         }else if(equality === filterVals[i][1]){
+          console.log("equality matched with other")
           this.setState({showWarning:true,
             warningText: "cannot add duplicate filters, please add unique filters",
             filters:addedfilters})
@@ -283,7 +287,6 @@ processFilter(){
     }
     
     this.setState({data:filtereddata})
-    console.log(filtereddata)
     this.state.data.filter(item => item.field && (item.field < value))
     console.log(this.state.data)
   }
@@ -365,15 +368,18 @@ getSubHeaderComponent = () => {
   );
 };
 
-// resestToken = () =>{
-//   Axios.post(
-// 		`http://${config.server.host}:${config.server.port}/api/resettoken`,{headers: {
-//       'Authorization': `bearer ${localStorage.getItem("token")}` 
-//     }}
-//     ).then((response) => {
-//     localStorage.setItem('token', response.data.token);
-//     });
-// }
+resestToken = () =>{
+  Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`,{user_id:localStorage.getItem("user_id")},{headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response) => {
+    console.log("status is :",response.status)
+    if(response.status === 200){
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem("expiresin",Date.now()+6000000);
+    }else{
+      localStorage.clear();
+    }
+    
+    });
+}
 
 render() {
     const { data, toggleCleared } = this.state;
@@ -383,7 +389,9 @@ render() {
       columns,
       data,
     };
-    //{localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now()+600000)?this.resestToken:null}
+    {if(localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now()+600000))
+    this.resestToken()
+    }
     return (
       <div>
       {(() => {
