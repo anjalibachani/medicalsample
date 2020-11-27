@@ -224,13 +224,10 @@ getFilterValues = (type, equality, value, key) => {
   this.setState({ returnedFilterValues: filterVals });
 };
 clearFilters(){
-  this.resestToken();
   //window.location.reload(false)
-  //this.setState({returnedFilterValues: []})
-  //this.setState({filters:<samplesFilter/>})
-  //this.getsampledata();
-  this.setState({filters:[<SamplesFilter key={1} number={1} returnVals={this.getFilterValues({value:'',label:''},{value:'',label:''},[])} />]})
-  
+  // this.setState({returnedFilterValues: []})
+  this.setState({filters:[<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />]})
+  this.getsampledata();
 }
 addFilter() {
   console.log("add filter called")

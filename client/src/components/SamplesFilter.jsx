@@ -103,8 +103,8 @@ export default class SamplesFilter extends Component {
             <div>
                 <Container>
                 {this.state.setwarning===true && <p>enter valid integer</p>}
-                <Row>
-                    <Col md="4">
+                    <Row className="mt-2">
+                        <Col md="4">
                         <Select
 							label="Filter Type"
 							placeholder="filter type"

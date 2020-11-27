@@ -5,7 +5,6 @@
  - Development server
 ```
 Change database credentials in server/config/local_config.json.
-Chnage server details in client/src/config/local_config.json
 ```
 
 ```

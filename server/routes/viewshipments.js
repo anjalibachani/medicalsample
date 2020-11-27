@@ -5,7 +5,7 @@ const db = require("../db/dbconnect");
 router.get("/viewshipments", (req, res) => {
     
     var query = db.query(
-      "SELECT S.*,L.*,u.email_id,us.status_name FROM medsample_db.shipments as S JOIN medsample_db.locations as L ON S.from_location_id = L.location_id join medsample_db.users as u on S.user_id= u.user_id join statuses as us on S.reached=us.status_id",
+      "select s.*,u.email_id,us.status_name, (select location_name from locations where location_id = s.from_location_id) as from_location_name, (select location_name from locations where location_id = s.to_location_id) as to_location_name, u.email_id,us.status_name from shipments s join medsample_db.users as u on s.user_id= u.user_id join statuses as us on s.reached=us.status_id",
       (error, results, fields) => {
         if (error) throw error;
         // console.log(results);

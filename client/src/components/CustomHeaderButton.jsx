@@ -6,10 +6,6 @@ import { Link } from 'react-router-dom';
  * linked to and the message to be displayed on the button. */
 
 class CustomHeaderButton extends Component {
-    // state = {
-    //     variant: "outline-dark"
-    // }
-
     render() {
         const { variant } = this.props;
         return (

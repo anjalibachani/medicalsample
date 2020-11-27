@@ -26,7 +26,7 @@ const customStyles = {
         style: {
             fontSize: '100%',
             fontWeight: "bold",
-            paddingLeft: '8px', // override the cell padding for head cells
+            paddingLeft: '8px', 
             paddingRight: '8px',
         },
     },
@@ -76,7 +76,6 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     <>
         <TextField id="search" type="text" placeholder="Search" aria-label="Search Input" value={filterText} onChange={onFilter} />
         <ClearButton type="button" onClick={onClear}>X</ClearButton>
-        {/* {console.log("filterCOmponent called")} */}
     </>
 );
 export default class LocationsTable extends Component {
@@ -112,7 +111,6 @@ export default class LocationsTable extends Component {
     }
     getLocationData = () => {
         Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlocation`).then((response) => {
-            // console.log(response.data.results)
             this.setState({
                 data: response.data.results
             });
@@ -123,7 +121,6 @@ export default class LocationsTable extends Component {
     }
     checkLocationExist = async (location_name) => {
         const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checklocation`, { params: { location_name: location_name } })
-        // console.log(res.data.rows);
         if (res.data.rows === 0) {
             return false;
         }
@@ -164,7 +161,6 @@ export default class LocationsTable extends Component {
     save = async () => {
         this.setState({ formErrors: await this.validateForms() })
         console.log(this.state.formErrors);
-        // console.log(Object.keys(this.state.formErrors).length);
         if (Object.keys(this.state.formErrors).length === 0) {
             console.log("No Error");
             this.send();
@@ -175,17 +171,11 @@ export default class LocationsTable extends Component {
             <FilterComponent
                 onFilter={(e) => {
                     let newFilterText = e.target.value;
-                    
                     this.filteredItems = this.state.data.filter(
                         (item) => {
-                            {
-                                console.log(item.location_name.toLowerCase())
-                                console.log(item.location_name.toLowerCase().includes(newFilterText.toLowerCase()))
-                            }
                             item.location_name &&
                                 item.location_name.toLowerCase().includes(newFilterText.toLowerCase())                            
                         }
-
                     );
                     this.setState({ filterText: newFilterText });
                 }}
@@ -211,13 +201,11 @@ export default class LocationsTable extends Component {
                     <Form>
                         <Row>
                             <Col md="4">
-                                {/* <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text> */}
                                 <Form.Control type="text" id="location_name" placeholder="Enter Location Name"
                                     value={location_name}
                                     onChange={e => this.setState({ location_name: e.target.value })}
                                 />
                                 <Form.Text as={Col} className="text-danger">{this.state.formErrors.location_name}</Form.Text>
-                                {/* <Form.Text className="text-muted">Enter Email address of User to Add.</Form.Text> */}
                             </Col>
                             <Col md="3">
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.save}>Add Location</Button>
@@ -232,10 +220,6 @@ export default class LocationsTable extends Component {
                     highlightOnHover
                     pointerOnHover
                     pagination
-                    // selectableRows
-                    // selectableRowsHighlight
-                    // contextActions={contextActions(this.deleteLocation)}
-                    // onSelectedRowsChange={this.handleChange}
                         customStyles={customStyles}
                         subHeader
                         persistTableHead
