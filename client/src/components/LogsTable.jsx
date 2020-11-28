@@ -118,6 +118,7 @@ export default class LogsTable extends Component {
                     defaultSortField="timestamp"
                         defaultSortAsc={false}
                         customStyles={customStyles}
+                        paginationPerPage="25"
                     /></Container>
             </div>
         )

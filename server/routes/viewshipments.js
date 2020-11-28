@@ -9,7 +9,11 @@ router.get("/viewshipments", (req, res) => {
       (error, results, fields) => {
         if (error) throw error;
         // console.log(results);
-        return res.status(200).json(results);
+         let tempData = results;
+         tempData.map((item, index) => {
+           item.shipment_date = new Date(item.shipment_date).toISOString().substring(0, 10);
+         });
+        return res.status(200).json(tempData);
       }
     );
     // console.log(query.sql);
@@ -28,7 +32,7 @@ router.post("/markshipments", (req, res) => {
       console.log("shipments Row updated :", results.changedRows);
     });
     // console.log(update_query.sql);
-    let aliquot_update_query = db.query("UPDATE aliquots SET location_id = ? WHERE shipment_id = ?",[item[1],item[0]], (err, res) => {
+    let aliquot_update_query = db.query("UPDATE aliquots SET location_id = ?,`status_id` = 1 WHERE shipment_id = ?",[item[1],item[0]], (err, res) => {
       if (err) throw err;
       console.log("aliquotsRow updated :", res.changedRows);
     });

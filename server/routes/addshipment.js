@@ -123,10 +123,14 @@ function dbQueryFunc3() {
             if (error) {
               reject(error);
             }
-            resolve(result);
+             let tempData = result;
+             tempData.map((item, index) => {
+               item.date = new Date(item.date).toISOString().substring(0, 10);
+             });
+            resolve(tempData);
           }
         );
-        console.log(query1.sql);
+        // console.log(query1.sql);
     })
 }
 

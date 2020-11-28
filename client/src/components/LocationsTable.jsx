@@ -224,6 +224,7 @@ export default class LocationsTable extends Component {
                         subHeader
                         persistTableHead
                         subHeaderComponent={this.getSubHeaderComponent()}
+                        paginationPerPage="25"
                     /></Container>
             </div>
         )

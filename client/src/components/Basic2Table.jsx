@@ -75,7 +75,7 @@ class Basic2Table extends Component {
   }
   getShipmentsData=() => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
-      console.log(response.data)
+      console.log("response.data", response.data);
       this.setState({
         data: response.data
       });
@@ -83,6 +83,7 @@ class Basic2Table extends Component {
   }
   render() {
     const { data, toggleCleared } = this.state; 
+    this.getShipmentsData();
     return (
       <div>
         {this.state.alertVisibility && (
