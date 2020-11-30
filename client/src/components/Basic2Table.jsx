@@ -69,7 +69,7 @@ class Basic2Table extends Component {
   }
   markshipments = () => {
     const { selectedRows } = this.state;
-    const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id]);
+    const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id, r.user_id, r.to_location_name]);
     Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows })
     this.setState(state => ({ toggleCleared: !state.toggleCleared }));
   }

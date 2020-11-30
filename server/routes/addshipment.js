@@ -39,53 +39,58 @@ router.post("/create", async (req, res) => {
   console.log(req.body);
   let aliArray = req.body.tempArray;
   let countArray = req.body.countArray;
+  let locationNames = req.body.locationNames;
   let shipment = {};
-   for (const [key, value] of Object.entries(req.body)) {
-     if (key !== "tempArray" && key !== "countArray") {
-       shipment[key] = value;
-       if (key === "shipment_date") {
-         shipment[key] = new Date(value);
-       }
-     }
-   }
-    await db.query("INSERT INTO `shipments` SET ?", shipment, (error,results)=>{
+  for (const [key, value] of Object.entries(req.body)) {
+    if (key !== "tempArray" && key !== "countArray" && key!=="locationNames") {
+      shipment[key] = value;
+      if (key === "shipment_date") {
+        shipment[key] = new Date(value);
+      }
+    }
+  }
+  var transaction_history = {
+    user_id: shipment.user_id,
+    timestamp: new Date(),
+    desciption: " shipment created sucessfully from " + locationNames.from_location_name+ " to "+ locationNames.to_location_name,
+  };
+  console.log("shipment", shipment);
+  console.log("locationNames", locationNames);
+  await db.query(
+    "INSERT INTO `shipments` SET ?",shipment,(error, results) => {
       if (error) throw error;
-      console.log(results.insertId);
-      // aliArray.forEach((element, index) => {
-      //  var delete_query = db.query(
-      //     "delete from medsample_db.aliquots where sample_id=? and location_id=? and aliquots_samples_key=? limit ?;",
-      //     [element[0], element[1], element[2], countArray[index][0]],
-      //     (err, delete_results) => {
-      //       if (err) throw err;
-      //       console.log(delete_results.affectedRows);
-      //     }
-      //   );
-      //   console.log(delete_query.sql);
-      // });
-      
+      var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (err, res) => {
+        if (err) throw err;
+        console.log(res.insertId);
+      });
       return res.status(202).json({ results });
-    });
-    // return res.status(202).json({ results });
+    }
+  );
 });
 
 router.post("/addshipmentId",  (req, res) => {
   console.log(req.body);
   let aliquots_samples_key = req.body.aliquots_samples_key;
   let countArray = req.body.countArray;
-  console.log("aliquots_samples_key", aliquots_samples_key);
-  console.log("countArray",countArray);
-  aliquots_samples_key.forEach( (element,index) => {
+  let user_id = req.body.user_id;
+  aliquots_samples_key.forEach((element, index) => {
+    var transaction_history = {
+      user_id: user_id,
+      timestamp: new Date(),
+      desciption:" shipment id and status updated for aliquot having aliquots_samples_key " + element,
+    };
      var query =  db.query("UPDATE `aliquots` SET `shipment_id` = ?,`status_id` = 2 where aliquots_samples_key=? limit ?",[req.body.shipment_id,element,countArray[index]],(error, results, fields) => {
-      if (error) throw error;
+       if (error) throw error;
+      var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (err, res) => {
+        if (err) throw err;
+        console.log(res.insertId);
+      });
       console.log(results.affectedRows);
     }
   );
   console.log(query.sql);
   });
 });
-
-
-
 
 router.get("/locationIdbyName", async (req, res) => {
     console.log(req.query.location);
@@ -100,7 +105,6 @@ router.get("/locationIdbyName", async (req, res) => {
 });
 
 router.get("/filterOpts/", async (req, res) => {
-  console.log("req.query", typeof req.query);
   if (req.query.fromLocation===undefined) {
       var query = await db.query("select S.sample_id, S.eval, COUNT(*) as aliquot_count from samples S INNER JOIN aliquots A ON S.samples_key=A.aliquots_samples_key INNER JOIN locations L ON L.location_id = A.location_id where S.type!='' AND A.status_id!=2 GROUP BY S.sample_id, S.eval,S.type,L.location_name;", (error, results, fields) => {
         if (error) throw error;
@@ -119,18 +123,15 @@ router.get("/filterOpts/", async (req, res) => {
 });
 
 router.get("/aliquots/:sample_id", async (req, res) => {
-    // console.log(req.params.sample_id);
     var query = await db.query(
       "SELECT distinct `aliquot_id` FROM `aliquots` WHERE `sample_id`=?",
       [req.params.sample_id],
       (error, results, fields) => {
         if (error) throw error;
-        // console.log(results);
         let options = [];
         for (let element of results) {
           options.push({ value: element.aliquot_id, label: element.aliquot_id });
         }
-        // console.log(options);
         return res.status(200).json({ options: options });
       }
     );
@@ -152,7 +153,6 @@ function dbQueryFunc3() {
             resolve(tempData);
           }
         );
-        // console.log(query1.sql);
     })
 }
 

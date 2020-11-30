@@ -9,7 +9,6 @@ router.get("/checkIDandEval", async (req, res) => {
     [req.query.sample_id, req.query.eval],
     (error, results, fields) => {
       if (error) throw error;
-      // console.log(results.length);
       return res.status(200).json({ rows: results.length });
     }
   );
@@ -25,7 +24,6 @@ router.get("/getSampleIDs", async (req, res) => {
       for (let element of results) {
         options.push({ value: element.sample_id, label: element.sample_id });
       }
-      // console.log(options);
       return res.status(200).json({ options: options });
     }
   );
@@ -33,18 +31,15 @@ router.get("/getSampleIDs", async (req, res) => {
 });
 
 router.get("/getSampleEvals/:sample_id", async (req, res) => {
-  // console.log(req.params.sample_id);
   var query = await db.query(
     "SELECT distinct `eval` FROM `samples` WHERE `sample_id`=?",
     [req.params.sample_id],
     (error, results, fields) => {
       if (error) throw error;
-      // console.log(results);
       let options = [];
       for (let element of results) {
         options.push({ value: element.eval, label: element.eval });
       }
-      // console.log(options);
       return res.status(200).json({ options: options });
     }
   );
@@ -52,14 +47,10 @@ router.get("/getSampleEvals/:sample_id", async (req, res) => {
 });
 
 router.get("/getSampleTypes/", async (req, res) => {
-  // console.log(req.query.sample_id);
-  // console.log(req.query.eval);
   var query = await db.query("SELECT * FROM `samples` WHERE `sample_id`=? and `eval`=? AND type IS NOT NULL order by type",
     [req.query.sample_id, req.query.eval],
     (error, results, fields) => {
       if (error) throw error;
-      // console.log(results);
-      // console.log(options);
       return res.status(200).json({ results: results });
     }
   );
@@ -68,11 +59,9 @@ router.get("/getSampleTypes/", async (req, res) => {
 
 router.post("/add", (req, res) => {
   let result = req.body;
-  let aliquot_sum = 0;
-  let aliquots_array = [];
   for (let index = 0; index < result.length; index++) {
     let element = result[index].data;
-    // console.log("element:", element);
+    // console.log("result[index].user_id", result[index].user_id);
     let select_stmt = "SELECT * FROM samples WHERE sample_id=? AND eval=? order by type";
     var select_query = db.query(select_stmt, [element.sample_id, element.eval], (error, select_results) => {
       if (error) throw error;
@@ -83,68 +72,40 @@ router.post("/add", (req, res) => {
       const found = select_results.some((el) => el.type === element.type);
       console.log("found: ", found);
       if (found) {
-        // update query
-        // let temp_aliquot = element.aliquots===undefined ? 1 : element.aliquots;
-        // aliquot_sum += temp_aliquot;
-        // console.log("total sum is = ", temp_aliquot);
-        // aliquots_array.push(aliquot_sum);
-        // console.log("aliquots_array = ", aliquots_array);
-        // console.log("last index value", aliquots_array[aliquots_array.length-1]);
         let update_stmt = "UPDATE samples SET ? where sample_id=? AND eval=? AND type=?";
         var update_query = db.query(update_stmt, [element, element.sample_id, element.eval, element.type], (error, results, fields) => {
           if (error) {
             throw error;
           }
+      var transaction_history = {
+        user_id: result[index].user_id,
+        timestamp: new Date(),
+        desciption: " updated samples having ID " + element.sample_id+" eval "+element.eval+" type "+element.type,
+      };
+        var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (err, res) => {
+        if (err) throw err;
+        console.log(res.insertId);
+      });
           console.log("Row updated :", results.changedRows);
         }
         );
-      //   let test = "delete from aliquots where sample_id=?";
-      //   db.query(test, [element.sample_id], (error, test_res) => {
-      //     if (error) {
-      //       throw error;
-      //     }
-      //     console.log("Aliquots deleted: ",test_res.affectedRows);
-      //   });
-      //   var aliquot = {
-      //     sample_id: element.sample_id,
-      //     location_id: 4,
-      //     status_id: 1,
-      //   };
-      //   for (let i = 0; i < aliquots_array[aliquots_array.length-1]; i++) {
-      //     db.query("INSERT INTO `aliquots` SET ?", aliquot, (error, aliquot_insert_results, fields) => {
-      //       if (error) throw error;
-      //       console.log("Inserted: ",aliquot_insert_results.insertId);
-      //     }
-      //   );
-      // }
-        
-        /********aliquots update******/
-        // let ali_stmt ="select * from aliquots"
-        // db.query(ali_stmt, (error, res) => {
-        //    if (error) {
-        //      throw error;
-        //   }
-        //   console.log("Aliquotes:",res);
-        //   const aliquots_found = res.some((el) => el.aliquots_samples_key === element.samples_key);
-        //   if (aliquots_found) {
-        //     //update query
-        //   } else {
-        //     //insert query
-        //   }
-        // });
-        /********aliquots update******/
       }
       else {
-        // insert query
-        // console.log("new element", element);
         let insert_stmt = "INSERT INTO samples SET ?";
         var insert_query = db.query( insert_stmt,element,(error, results, fields) => {
             if (error) {
               throw error;
-            }
-          console.log("Row inserted :", results.insertId);
+          }
+          var transaction_history = {
+            user_id: result[index].user_id,
+            timestamp: new Date(),
+            desciption: " created samples having ID " + element.sample_id+" eval "+element.eval+" type "+element.type,
+          };
+          var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (err, res) => {
+            if (err) throw err;
+            console.log(res.insertId);
+          });
           var maxItr = element.aliquots === undefined ? 1 : element.aliquots;
-          console.log("aliquot field exists : ", maxItr);
           var aliquot = {
             sample_id: element.sample_id,
             aliquots_samples_key:results.insertId,
@@ -152,69 +113,24 @@ router.post("/add", (req, res) => {
             status_id: 1,
           };
           for (let i = 0; i < maxItr; i++) {
-          db.query("INSERT INTO `aliquots` SET ?", aliquot, (error, aliquot_insert_results, fields) => {
+            db.query("INSERT INTO `aliquots` SET ?", aliquot, (error, aliquot_insert_results, fields) => {
+            var transaction_history = {
+              user_id:result[index].user_id,
+              timestamp: new Date(),
+              desciption: " created aliquots at location id "+aliquot.location_id+" with aliquots_samples_key "+ aliquot.aliquots_samples_key,
+            };
             if (error) throw error;
+          var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (err, res) => {
+            if (err) throw err;
+            console.log(res.insertId);
+          });
             console.log("Inserted: ",aliquot_insert_results.insertId);
           }
         );
       }
           }
         );
-        
-        //       console.log(aliquot_insert_query.sql);
-        // console.log(insert_query.sql);
       }
-
-      // console.log("select_results[j]: ", select_results[j], typeof select_results[j]);
-      // if ( j<select_results.length && select_results[j].type !== element.type) {
-      //   console.log("new element", element);
-      //   let insert_stmt = "INSERT INTO samples SET ?";
-      //   var insert_query = db.query(insert_stmt, element, (error, results, fields) => {
-      //     if (error) {
-      //       throw error;
-      //     }
-      //     console.log("Row inserted :", results.insertId);
-      //   }
-      //   );
-      //   console.log(insert_query.sql);
-      //   var maxItr = element.aliquots === undefined ? 1 : element.aliquots;
-      //     console.log("aliquot field exists : ", maxItr);
-      //     var aliquot = {
-      //       sample_id: element.sample_id,
-      //       location_id: 4,
-      //       status_id: 1,
-      //     };
-      //     for (let i = 0; i < maxItr; i++) {
-      //       var aliquot_insert_query = db.query("INSERT INTO `aliquots` SET ?", aliquot, (error, aliquot_insert_results, fields) => {
-      //         if (error) throw error;
-      //         console.log(aliquot_insert_results.insertId);
-      //       }
-      //       );
-      //       console.log(aliquot_insert_query.sql);
-      //     }
-      // } else {
-      //   console.log("existing element", element);
-      //   let update_stmt = "UPDATE samples SET ? where sample_id=? AND eval=? AND type=?";
-      //   var update_query = db.query(update_stmt, [element, element.sample_id, element.eval, element.type], (error, results, fields) => {
-      //     if (error) {
-      //       throw error;
-      //     }
-      //     console.log("Row updated :", results.changedRows);
-      //   }
-      //   );
-      //   console.log(update_query.sql);
-        // var maxItr = element.aliquots === undefined ? 1 : element.aliquots;
-        // console.log("aliquot field exists : ", maxItr);
-        // var aliquot = { sample_id: element.sample_id, location_id: 4, status_id: 1, };
-        // for (let i = 0; i < maxItr; i++) {
-        //   var aliquot_insert_query = db.query("INSERT INTO `aliquots` SET ?", aliquot, (error, aliquot_insert_results, fields) => {
-        //     if (error) throw error;
-        //       console.log("inserted aliquots",aliquot_insert_results.insertId);
-        //     }
-        //   );
-        //   console.log(aliquot_insert_query.sql);
-        // }
-      // }
     }
     );
     console.log(select_query.sql);

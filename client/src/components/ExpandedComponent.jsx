@@ -1,22 +1,11 @@
 import React from 'react';
-import { Button, Form, FormControl, InputGroup, Row, Col, Modal,Table } from 'react-bootstrap';
-// eslint-disable-next-line react/prop-types
+import { Button, Form, FormControl, InputGroup, Row, Col, Modal, Table } from 'react-bootstrap';
+
 export default ({ data }) => 
 {
     return (
         <Row>
             <Col>
-                {/* ID: {data.shipment_id}
-                Received Status: {data.reached}
-                Shipping Company: {data.shipping_company}
-                From: {data.location_name}
-                To: {data.location_name}
-                Shipping Date: {data.shipping_date}
-                Shipping Condition: {data.shipment_condition}
-                Number of Samples: {data.no_of_samples}
-                Notes: {data.notes}
-                User ID: {data.user_id} */
-                }
                 <Table striped bordered hover size="sm" variant="dark">
                     <thead>
                         <tr>
@@ -37,10 +26,9 @@ export default ({ data }) =>
                             <td>{data.shipment_id}</td>
                             <td>{data.status_name}</td>
                             <td>{data.shipping_company}</td>
-                            <td>{data.location_name}</td>
-
-                            <td>{data.location_name}</td>
-                            <td>{data.shipping_date}</td>
+                            <td>{data.from_location_name}</td>
+                            <td>{data.to_location_name}</td>
+                            <td>{data.shipment_date}</td>
                             <td>{data.shipment_condition}</td>
                             <td>{data.no_of_samples}</td>
                             <td>{data.notes}</td>

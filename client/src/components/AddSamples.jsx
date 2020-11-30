@@ -66,18 +66,10 @@ class AddSamples extends Component {
 		this.setState({ evalOptions: evals.data.options })
 	}
 	 componentDidMount() {
-		// const { sample_id, eval } = this.props.location.state;
-		console.log("props in addSamples", this.props.location.state);
 		if (this.props.location.state !== undefined) {
 			let sample_id = {"value":this.props.location.state.sample_id, "label":this.props.location.state.sample_id};
 			let evl = { "value": this.props.location.state.eval, "label": this.props.location.state.eval };
 			this.setState({ selectedIdOption: sample_id, selectedEvalOption: evl });
-			// this.setState({ selectedIdOption: sample_id, selectedEvalOption: evl }, async () => {
-			// 	let temp = await this.getSampleTypes(this.state.selectedIdOption.value, this.state.selectedEvalOption.value)
-			// 	let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
-			// 	let fixedValues = multiVal.map(vals => vals.value);
-			// 	this.setState({ multiValue: multiVal, fixedValues: fixedValues }, () => this.generateTabsMapping(temp));
-			// });
 		}
 		let array = []
 		sampleTypes.types.forEach(element => {
@@ -110,6 +102,7 @@ class AddSamples extends Component {
 		data.forEach((element) => {
 			element = _.mapKeys(element, (value, key) => _.startCase(_.toLower(key)));
 			let obj = {};
+			obj.user_id = localStorage.getItem("user_id");
 			obj["key"] = { "value": element.Type, "label": element.Type };
 			let type = element.Type;
 			let fields = sampleTypes.types.filter((val, key) => {
@@ -144,6 +137,7 @@ class AddSamples extends Component {
 				const ele = value[value.length - 1];
 				var res = this.createTabsMppping(ele.value)
 				tabsMapping.push({
+					user_id: localStorage.getItem("user_id"),
 					key:ele,
 					fields: res[0], data: {
 						type: ele.value, "sample_id": selectedIdOption.value,
@@ -248,7 +242,9 @@ class AddSamples extends Component {
 	}
 	send = async () => {
 		console.log("Sending..")
-		const result = this.createJson();
+		let result = this.createJson();
+		// result.user_id = localStorage.getItem("user_id");
+		console.log("result", result);
 		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
 	}
 	save = () => {

@@ -156,6 +156,9 @@ export default class LocationsTable extends Component {
             this.setState({
                 location_name: '',
             });
+            setTimeout(() => {
+                this.props.history.push('/locations');
+            }, 5000)
         }
     }
     save = async () => {

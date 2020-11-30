@@ -11,9 +11,21 @@ router.get("/viewuser", async (req, res) => {
       );
 });
 router.post("/adduser", async (req, res) => {
-  console.log(req.body);
-        await db.query("INSERT INTO `users` SET ?", req.body, (error, results, fields) => {
+  let user = req.body;
+  console.log("user", user);
+    var transaction_history = {
+      user_id: user.user_id,
+      timestamp: new Date(),
+      desciption: "user added sucessfully having email " + user.email_id,
+  };
+  delete user.user_id;
+        await db.query("INSERT INTO `users` SET ?", user, (error, results) => {
         if (error) throw error;
+        var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (err, res) => {
+              if (err) throw err;
+          console.log(res.insertId);
+        }
+      );
         return res.status(200).json({ results: results });
       });
 });
@@ -47,8 +59,18 @@ router.get("/viewlocation", async (req, res) => {
 });
 router.post("/addlocation", async (req, res) => {
   console.log(req.body);
-        await db.query("INSERT INTO `locations` SET ?", req.body, (error, results, fields) => {
+  let location = req.body;
+  var transaction_history = {
+    user_id: location.user_id,
+    timestamp: new Date(),
+    desciption: location.location_name+" location added sucessfully",
+  };
+        await db.query("INSERT INTO `locations` SET ?", location, (error, results, fields) => {
         if (error) throw error;
+          var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (err, res) => {
+              if (err) throw err;
+          console.log(res.insertId);
+        });
         return res.status(200).json({ results: results });
       });
 });

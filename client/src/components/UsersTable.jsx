@@ -135,7 +135,8 @@ export default class UsersTable extends Component {
         let user = {}
         user.password ="8879fa4ebd6b4725f5d99440d5957935f614262c"
         user.email_id = email_id
-        user.admin=admin
+        user.admin = admin
+        user.user_id = localStorage.getItem("user_id");
         console.log("createJson",user);
         return user
     }
@@ -172,6 +173,9 @@ export default class UsersTable extends Component {
             this.setState({
                 email_id: '',
             });
+            setTimeout(() => {
+                this.props.history.push('/users');
+            }, 5000)
         }
     }
     save = async() => { 

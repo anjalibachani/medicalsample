@@ -348,6 +348,7 @@ class CreateShipments extends Component {
 		let countArray = movedshipementsData.map(item => [item.aliquot_count])
 		shipment.tempArray = tempArray;
 		shipment.countArray = countArray;
+		shipment.locationNames = { from_location_name: selectedFromOption.value, to_location_name:selectedToOption.value}
 		return shipment;
 
 	}
@@ -359,14 +360,10 @@ class CreateShipments extends Component {
 		aliquots.status_id = 2;
 		aliquots.aliquots_samples_key = sample_keys
 		aliquots.countArray = movedshipementsData.map(a => a.selectedAliquotValue);
+		aliquots.user_id = localStorage.getItem("user_id");
 		console.log("createAliqoutJson",aliquots);
 		return aliquots;
 
-	}
-	createJson = () => {
-		let { movedshipementsData } = this.state;
-		// let tempArray = movedshipementsData.map(item => [item.sample_id, item.location_id, item.samples_key])
-		// let countArray = movedshipementsData.map(item => [item.aliquot_count])
 	}
 	async getLocationIDByName(from_location, to_location) {
 		let locations = []
@@ -438,18 +435,16 @@ class CreateShipments extends Component {
 		}
 	}
 	render() {
-		// this.getShipmentData();
 		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data, locationoptions, filters} = this.state;
 		let locationTooptions = locationoptions;
+		let locationFromoptions = locationoptions;
 		console.log("filters",this.state.filters);
 		let filteredItems = [];
 		{
-			if (selectedFromOption !== null) {
+			if (selectedFromOption !== null && data) {
 				filteredItems = data.filter(sample => sample.location_name.toLowerCase() === selectedFromOption.value.toLowerCase())
-				// locationTooptions = locationoptions.filter();
 				locationTooptions = locationoptions.filter(x => x.value.toLowerCase() !== selectedFromOption.value.toLowerCase());
-				console.log(locationoptions);
-				console.log("filteredItems", filteredItems);	
+				// locationFromoptions = locationoptions.filter(x => x.value.toLowerCase() !== selectedToOption.value.toLowerCase());
 			}
 		}
 		var shippingTableRowData = [];
@@ -567,7 +562,6 @@ class CreateShipments extends Component {
 					{filters.map((item, key) => 
 						<SamplesFilter key={key+1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
 					)}
-					{/* {this.state.filters} */}
 					<Row>
 						<Col md="auto" className="mt-4">
 							<ButtonGroup>
@@ -601,12 +595,10 @@ class CreateShipments extends Component {
 							/>}
 					</Col>
 					<Col md="auto">
-						{/* {selectedFromOption !== null && selectedToOption !== null && selectedRows.length!==0&& */}
 							<div style={{ padding: 25 }}>
 								<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
 								<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
 						</div>
-						{/* } */}
 					</Col>
 					<Col>
 						{movedshipementsData.length!==0 &&
