@@ -249,6 +249,7 @@ export default class UsersTable extends Component {
                         subHeader
                         persistTableHead
                         subHeaderComponent={this.getSubHeaderComponent()}
+                        paginationPerPage="25"
                     />
                 </Container>
             </div>

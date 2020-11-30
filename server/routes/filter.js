@@ -14,8 +14,13 @@ async function filter(req,res){
             return res.status(400).json({message:"No Samples Present"})
         }
         else{
-            if(results.length>0){
-                res.status(200).json(results)
+            if (results.length > 0) {
+                // console.log("AA",results);
+                    let tempData = results;
+                    tempData.map((item, index) => {
+                        item.date = new Date(item.date).toISOString().substring(0, 10);
+                    });
+                res.status(200).json(tempData);
             }
         }
     });

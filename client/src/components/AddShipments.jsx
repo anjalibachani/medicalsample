@@ -77,6 +77,9 @@ const movedshipementscolumns = [
 	},
 ];
 
+const rowSelectCritera = row => {
+	return row.aliquot_count===0;
+}
 
 class CreateShipments extends Component {
 	constructor(props) {
@@ -115,7 +118,8 @@ class CreateShipments extends Component {
 			numberAliquotsSelectedForShipment: [],
 			resetChecksSamples: false,
 			resetChecksShipment: false,
-			filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />],
+			filters:[{"key": 1,"number":1}],
+			// filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues}  from={ this.selectedFromOption}/>],
 			returnedFilterValues: [],
 			alertVisibility: false,
 			alertText: 'Please enter all required fields.',
@@ -128,7 +132,7 @@ class CreateShipments extends Component {
 		this.processFilter = this.processFilter.bind(this);
 		this.clearFilters = this.clearFilters.bind(this);
 		this.send = this.send.bind(this);
-		this.handleIDChange = this.handleIDChange.bind(this);
+		this.handleFromLocationChange = this.handleFromLocationChange.bind(this);
 	}
 
 	processFilter() {
@@ -181,12 +185,12 @@ class CreateShipments extends Component {
 	}
 	clearFilters() {
 		this.setState({ returnedFilterValues: [] })
-		this.setState({ filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />] })
-		this.getsampledata();
+		this.setState({ filters: [{ "key": 1, "number": 1 }]})
+		this.getShipmentData();
 	}
 	addFilter() {
 		
-		var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
+		var newFilterArray = this.state.filters.concat({ "key": this.state.filters.length + 1, "number": this.state.filters.length + 1});
 		this.setState({ filters: newFilterArray });
 	};
 
@@ -225,15 +229,15 @@ class CreateShipments extends Component {
 
 	componentDidMount() {
 		this.getLocations();
-		this.getsampledata();
+		this.getShipmentData();
 
 	}
 
-	handleIDChange = selectedOption => {
+	handleFromLocationChange = selectedOption => {
 		this.setState({ selectedFromOption: selectedOption, from: selectedOption });
 	}
 
-	handleIDChange1 = selectedOption => {
+	handleToLocationChange = selectedOption => {
 		this.setState({ selectedToOption: selectedOption, to: selectedOption });
 	}
 
@@ -244,8 +248,9 @@ class CreateShipments extends Component {
 	}
 
 
-	async getsampledata() {
+	async getShipmentData() {
 		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
+			console.log("response.data", response.data);
 			this.setState({
 				data: response.data
 			})
@@ -433,11 +438,17 @@ class CreateShipments extends Component {
 		}
 	}
 	render() {
-		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data } = this.state;
+		// this.getShipmentData();
+		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data, locationoptions, filters} = this.state;
+		let locationTooptions = locationoptions;
+		console.log("filters",this.state.filters);
 		let filteredItems = [];
 		{
 			if (selectedFromOption !== null) {
 				filteredItems = data.filter(sample => sample.location_name.toLowerCase() === selectedFromOption.value.toLowerCase())
+				// locationTooptions = locationoptions.filter();
+				locationTooptions = locationoptions.filter(x => x.value.toLowerCase() !== selectedFromOption.value.toLowerCase());
+				console.log(locationoptions);
 				console.log("filteredItems", filteredItems);	
 			}
 		}
@@ -493,8 +504,8 @@ class CreateShipments extends Component {
 								placeholder="Select from"
 								isSearchable={true}
 								value={this.state.selectedFromOption}
-								onChange={this.handleIDChange}
-								options={this.state.locationoptions}
+								onChange={this.handleFromLocationChange}
+								options={locationoptions}
 								styles={this.styles}
 							/>
 						</InputGroup>
@@ -534,8 +545,8 @@ class CreateShipments extends Component {
 								placeholder="Select To"
 								isSearchable={true}
 								value={this.state.selectedToOption}
-								onChange={this.handleIDChange1}
-								options={this.state.locationoptions}
+								onChange={this.handleToLocationChange}
+								options={locationTooptions}
 								styles={this.styles}
 							/>
 						</InputGroup>
@@ -553,7 +564,10 @@ class CreateShipments extends Component {
 				<p />
 				<hr />
 				<div>
-					{this.state.filters}
+					{filters.map((item, key) => 
+						<SamplesFilter key={key+1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
+					)}
+					{/* {this.state.filters} */}
 					<Row>
 						<Col md="auto" className="mt-4">
 							<ButtonGroup>
@@ -571,7 +585,7 @@ class CreateShipments extends Component {
 				</div>
 				<Row>
 					<Col>
-						{selectedFromOption !== null && selectedToOption !== null &&
+						{selectedFromOption !== null &&
 							<DataTable
 								columns={columns}
 								data={filteredItems}
@@ -581,7 +595,8 @@ class CreateShipments extends Component {
 								striped={true}
 								highlightOnHover
 								pagination
-								clearSelectedRows={this.state.toggledClearRows}
+							clearSelectedRows={this.state.toggledClearRows}
+							selectableRowDisabled={rowSelectCritera}
 
 							/>}
 					</Col>
@@ -595,7 +610,7 @@ class CreateShipments extends Component {
 					</Col>
 					<Col>
 						{movedshipementsData.length!==0 &&
-							<Button variant="dark" size="lg" onClick={this.save}>Save</Button>
+							<Button variant="dark" size="lg" onClick={this.save}>Create Shipment</Button>
 						}
 						<DataTable
 							columns={movedshipementscolumns}
