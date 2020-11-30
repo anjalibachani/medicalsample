@@ -4,10 +4,14 @@ import { Navbar, Nav, Container, ButtonGroup } from "react-bootstrap";
 import CustomHeaderButton from "./CustomHeaderButton";
 
 export default class Header extends Component {
+    constructor(props) {
+        super(props);
+    }
     static propTypes = {
         prop: PropTypes
     }
     render() {
+        // console.log("props in header: ", this.props);
         // console.log("home: ", window.location.pathname);
         let location = window.location.pathname;
         return (
@@ -41,23 +45,6 @@ export default class Header extends Component {
                                 :
                                 <CustomHeaderButton href="/filterandExports" text="Samples Inventory" variant="outline-dark" />
                         }
-                        {/*<CustomHeaderButton href="/Reports" text="Reports" />*/}
-
-                        {/* <CustomHeaderButton
-                            href="/AddShipments"
-                            text="Create a Shipment"
-                        /> */}
-                        {/* <CustomHeaderButton
-                            href="/ViewShipment"
-                            text="See Shipments"
-                        /> */}
-
-                        {/* {
-                            location === "/AddShipments" ?
-                                <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="dark" />
-                                :
-                                <CustomHeaderButton href="/AddShipments" text="Create a Shipment" variant="outline-dark" />
-                        } */}
                         {
                             location === "/ViewShipment" ?
                                 <CustomHeaderButton href="/ViewShipment" text="Shipments" variant="dark" />

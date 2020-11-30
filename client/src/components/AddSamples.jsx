@@ -9,12 +9,8 @@ import _ from 'lodash';
 import CustomAlertBanner from "./CustomAlertBanner";
 import 'react-datepicker/dist/react-datepicker.css'
 
-
-
 const sampleTypes = require("../config/types.json");
-// const config = require('../config/config.json')
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
-
 
 class AddSamples extends Component {
 	constructor(props) {
@@ -30,9 +26,11 @@ class AddSamples extends Component {
 			multiValue: [],
 			tabsMapping: [],
 			alertVisibility: false,
+			isVisible:false,
 			alertText: 'Want to delete already saved samples ?',
 			alertVariant: 'info',
-			fixedValues:[]
+			fixedValues: [],
+			formErrors: {}
 		}
 	}
 
@@ -52,7 +50,6 @@ class AddSamples extends Component {
 
 	async getsampleIdOptions() {
 		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
-		// console.log("id.data.options", ids.data.options);
 		this.setState({ sampleIdOptions: ids.data.options })
 	}
 	async getSampleTypes(sample_id,eval_number) {
@@ -61,16 +58,27 @@ class AddSamples extends Component {
 			eval: eval_number
 		};
 		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleTypes`, { params })
-		// console.log("type: ", res.data);
 		return res.data.results;
 	}
 
 	async getEvalOptions(sample_id) {
 		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
-		// console.log('evals.data.options', evals.data.options);
 		this.setState({ evalOptions: evals.data.options })
 	}
-	componentDidMount() {
+	 componentDidMount() {
+		// const { sample_id, eval } = this.props.location.state;
+		console.log("props in addSamples", this.props.location.state);
+		if (this.props.location.state !== undefined) {
+			let sample_id = {"value":this.props.location.state.sample_id, "label":this.props.location.state.sample_id};
+			let evl = { "value": this.props.location.state.eval, "label": this.props.location.state.eval };
+			this.setState({ selectedIdOption: sample_id, selectedEvalOption: evl });
+			// this.setState({ selectedIdOption: sample_id, selectedEvalOption: evl }, async () => {
+			// 	let temp = await this.getSampleTypes(this.state.selectedIdOption.value, this.state.selectedEvalOption.value)
+			// 	let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
+			// 	let fixedValues = multiVal.map(vals => vals.value);
+			// 	this.setState({ multiValue: multiVal, fixedValues: fixedValues }, () => this.generateTabsMapping(temp));
+			// });
+		}
 		let array = []
 		sampleTypes.types.forEach(element => {
 			array.push({ value: element.name, label: element.name });
@@ -91,33 +99,26 @@ class AddSamples extends Component {
 		});
 		this.setState({ selectedEvalOption: selectedOption });
 		let temp = await this.getSampleTypes(this.state.selectedIdOption.value, selectedOption.value)
-		// console.log("temp", temp);
 		let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
 		let fixedValues = multiVal.map(vals => vals.value);
-		console.log("multiVal fixed value: ", fixedValues);
 		this.setState({ multiValue: multiVal, fixedValues:fixedValues }, () => this.generateTabsMapping(temp));
 	}
 
 	generateTabsMapping = (data) => {
 		const { types } = this.state;
 		let tabs = [];
-		// console.log("inside generate Tabs mapping: ", data);
 		data.forEach((element) => {
 			element = _.mapKeys(element, (value, key) => _.startCase(_.toLower(key)));
-			// console.log("element: ", element);
 			let obj = {};
 			obj["key"] = { "value": element.Type, "label": element.Type };
 			let type = element.Type;
 			let fields = sampleTypes.types.filter((val, key) => {
-				// console.log("val: ",val+" type: ",type);
 				if (val.name === type)
 					return val.values
 			});
 			obj["fields"] = fields[0].values;
-			// console.log(obj["fields"]);
 			let tempData = {};
 			for (const [key, value] of Object.entries(obj["fields"])) {
-				// console.log(`element:`, key, value);
 				if (value.fieldName === "Date")
 					tempData[value.fieldName] = new Date(element[value.fieldName]);
 				else
@@ -136,7 +137,6 @@ class AddSamples extends Component {
 		this.setState({
 			alertVisibility: false
 		});
-		// console.log("OnChange: ", value , action, removedValue, "@");
 		let tabsMapping = this.state.tabsMapping;
 		const { selectedIdOption, selectedEvalOption, multiValue, fixedValues } = this.state;
 		switch (action) {
@@ -153,30 +153,22 @@ class AddSamples extends Component {
 				value[value.length - 1]["isFixed"] = false;
 				break;
 			case "clear":
-				// console.log("inside clear: ", multiValue);
 				let flag = true;
 				value = multiValue.filter(function (obj) {
-					// console.log("inside clear obj: ", obj);
 					if (obj.isFixed === false) flag = false;
 					return obj.isFixed;
 				});
-				// console.log("val: ", value);
-				// let fixedValues = value.map(vals => vals.value);
-				// console.log("fixedValues : ", fixedValues);
 				tabsMapping = tabsMapping.filter(function (obj) {
-					// console.log("obj ", obj);
 					return fixedValues.includes(obj.key.value);
 				});
 				this.setState({
 					alertVisibility: flag
 				});
 			default:
-				// console.log("inside default ", removedValue);
 				if (removedValue !== undefined) {
 					if (removedValue.isFixed == true)
 						return;
 					tabsMapping = tabsMapping.filter(function (obj) {
-						// console.log("obj ", obj);
 						return obj.key.value !== removedValue.value;
 					});
 				}
@@ -214,50 +206,70 @@ class AddSamples extends Component {
 		tabsMapping[index].data[fieldName] = value
 		this.setState({ tabsMapping: tabsMapping })
 	}
-	validateForm = () => {
+	validateForms = () => {
+		let errorsObj = {};
 		let tabsMapping = this.state.tabsMapping;
-		let flag = false
+		let fixedValues = this.state.fixedValues;
+		console.log("tabsMapping", tabsMapping);
+		console.log("fixedValues", fixedValues);
 		tabsMapping.forEach(element => {
-		let index = element.fields.findIndex(key => key.fieldName === "Aliquots")
+			console.log("element",element);
+			let index = element.fields.findIndex((key) => {
+				return (key.fieldName === "Aliquots" && !fixedValues.includes(element.key.value)) 
+					
+				
+			});
+			console.log("index",index);
 			if (index !== -1) {
-				let aliquots = element.data.Aliquots;
-				// console.log("aliquots", aliquots);
-				if (aliquots === undefined || aliquots.length === 0) {
-					// console.log("element", element.fields[index]);
-					element.fields[index]["fieldError"] = "Please enter a valid value"
-					flag = true
-				}
+				let aliquots = (element.data.Aliquots);
+				console.log("aliquots", typeof aliquots);
+				console.log("aliquots", aliquots);
+				// if (typeof aliquots==="number") {
+				// 	break;
+				// }
+				// if (typeof aliquots !== 'number') {
+				// 	if (aliquots === undefined) {
+				// 		errorsObj.aliquots = "Please Enter Eval"
+				// 	}
+				// 	if ((aliquots !== undefined || aliquots !== '') && !(parseInt(aliquots) >= 0)) {
+				// 		errorsObj.aliquots = "Please Enter Valid Eval (typically > 0)"
+				// 	}
+				// } 
 			}
-			
 		})
-		this.setState({ tabsMapping: tabsMapping });
-		return flag;
-
+		return errorsObj;
 	}
 	createJson = () => {
 		let tabsMapping = this.state.tabsMapping;
 		tabsMapping.forEach((element) => {
 			element.data = _.mapKeys(element.data, (value, key) => _.snakeCase(key));
-			// console.log(element.data);
 		});
 		return tabsMapping;
 	}
 	send = async () => {
+		console.log("Sending..")
 		const result = this.createJson();
 		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
-		// console.log(res.data)
 	}
-	save =  () => {
-		if (!this.validateForm()) {		
-			 this.send();
-			this.props.history.push('/Home')
-		}
+	save = () => {
+		// this.setState({ formErrors: this.validateForms() },()=> {
+		// 	if (Object.keys(this.state.formErrors).length === 0) {
+		// 		console.log("AAA");
+		// 	this.send();
+		// 	}
+		// });
+		this.send();
+		this.setState({
+			isVisible: true
+		});
+		setTimeout(() => {
+			this.props.history.push('/Home');
+		}, 5000)
+		
 	}
 	render() {
-		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedValues, tabsMapping } = this.state;
+		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedValues, tabsMapping, formErrors } = this.state;
 		const size = Object.keys(tabsMapping).length;
-		// console.log("multiVal: ", multiValue);
-		// console.log("multiVal bool :", multiValue.some(v => v.isFixed));
 		return (
 			<div>
 				{(() => {
@@ -272,6 +284,11 @@ class AddSamples extends Component {
 
 									</Col>
 								)}
+								{this.state.isVisible && 
+									<Alert variant='success'>
+										<Alert.Heading>Successfully Saved Samples.</Alert.Heading>
+									</Alert>
+								}
 								<Container>
 									<Row>
 										<Col md="4">
@@ -331,6 +348,7 @@ class AddSamples extends Component {
 												fixedValues={fixedValues}
 												handleTextChange={this.handleTextChange}
 												handleCheckBoxChange={this.handleCheckBoxChange}
+												formErrors={formErrors}
 											/>
 										</>
 										)

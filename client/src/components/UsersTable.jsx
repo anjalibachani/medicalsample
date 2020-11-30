@@ -36,7 +36,7 @@ const customStyles = {
         style: {
             fontSize: '100%',
             fontWeight: "bold",
-            paddingLeft: '8px', // override the cell padding for head cells
+            paddingLeft: '8px', 
             paddingRight: '8px',
         },
     },
@@ -84,7 +84,6 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     <>
         <TextField id="search" type="text" placeholder="Search" aria-label="Search Input" value={filterText} onChange={onFilter} />
         <ClearButton type="button" onClick={onClear}>X</ClearButton>
-        {/* {console.log("filterCOmponent called")} */}
     </>
 );
 export default class UsersTable extends Component {
@@ -122,7 +121,6 @@ export default class UsersTable extends Component {
     };
     getUsersData = () => {
         Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewuser`).then((response) => {
-            // console.log(response.data)
             this.setState({
                 data: response.data.results
             });
@@ -143,7 +141,6 @@ export default class UsersTable extends Component {
     }
     checkEmailExist = async (email_id) => {
         const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id} })
-        // console.log(res.data.rows);
         if (res.data.rows === 0) {
             return false;
         }
@@ -161,7 +158,6 @@ export default class UsersTable extends Component {
         if (await this.checkEmailExist(this.state.email_id)) {
             errorsObj.email_id = `Email Already Exists, Please enter different Email Address`
         }
-        // console.log("errorsObj",await errorsObj);
         return errorsObj;
     }
     send =  async() => {
@@ -181,7 +177,6 @@ export default class UsersTable extends Component {
     save = async() => { 
         this.setState({ formErrors: await this.validateForms() })
         console.log(this.state.formErrors);
-        // console.log(Object.keys(this.state.formErrors).length);
         if (Object.keys(this.state.formErrors).length === 0) {
             console.log("No Error");
             this.send();
@@ -195,15 +190,9 @@ export default class UsersTable extends Component {
 
                     this.filteredItems = this.state.data.filter(
                         (item) => {
-                            {
-                                console.log(item.email_id.toLowerCase())
-                                console.log(item.email_id.toLowerCase().includes(newFilterText.toLowerCase()))
-                            }
                             item.email_id &&
                                 item.email_id.toLowerCase().includes(newFilterText.toLowerCase())
-                        }
-
-                    );
+                        }                    );
                     this.setState({ filterText: newFilterText });
                 }}
                 onClear={this.handleClear}
@@ -228,13 +217,11 @@ export default class UsersTable extends Component {
                     <Form>
                         <Row>
                             <Col md="4">
-                                {/* <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text> */}
                                 <Form.Control type="email" id="email_id" placeholder="Enter email"
                                     value={email_id}
                                     onChange={e => this.setState({ email_id: e.target.value })}
                                 />
                                 <Form.Text as={Col} className="text-danger">{this.state.formErrors.email_id}</Form.Text>
-                            {/* <Form.Text className="text-muted">Enter Email address of User to Add.</Form.Text> */}
                             </Col>
                             <Col md="1" className="mt-2">
                                 <Form.Check type="checkbox" id="admin" label="Admin?"
@@ -258,9 +245,6 @@ export default class UsersTable extends Component {
                     defaultSortField="admin"
                     defaultSortAsc={false}
                     customStyles={customStyles}
-                    // selectableRows
-                    // selectableRowsHighlight
-                    // contextActions={contextActions(this.deleteUser)}
                         onSelectedRowsChange={this.handleChange}
                         subHeader
                         persistTableHead

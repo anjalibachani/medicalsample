@@ -24,7 +24,7 @@ const customStyles = {
         style: {
             fontSize:'100%',
             fontWeight:"bold",
-            paddingLeft: '8px', // override the cell padding for head cells
+            paddingLeft: '8px', 
             paddingRight: '8px',
         },
     },
@@ -91,7 +91,6 @@ export default class LogsTable extends Component {
     );
     getLogsData = () => {
         Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlogs`).then((response) => {
-            // console.log(response.data)
             this.setState({
                 data: response.data.results
             });
@@ -103,7 +102,6 @@ export default class LogsTable extends Component {
 
     render() {
         const { data } = this.state;
-        // this.getUsersData();
         return (
             <div>
                 <Manage />

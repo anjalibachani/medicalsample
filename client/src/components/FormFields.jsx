@@ -2,14 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Form, Row, Col, InputGroup, FormControl, Container } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
-import SaveModal from './SaveModal';
 import _ from 'lodash';
 
 export default class FormFields extends Component {
     constructor(props) {
         super(props);
         var initialState = {
-            show: false,
              data: {}
         }
         this.state = initialState
@@ -18,25 +16,8 @@ export default class FormFields extends Component {
     static propTypes = {
         prop: PropTypes
     }
-    clearFields = () => {
-        const state = {
-            data: _.omit(this.state.data, Object.keys(this.state.data))
-          };
-          
-          this.setState(state, () => {
-            this.props.clearFormFields();
-          });
-    }
-    handleClose = () => {
-        this.setState({ show: false });
-    }
-    save = () => {
-        console.log();
-    }
     render() {
-        const { fields, data, index, fixedValues} = this.props;
-        console.log("data",data);
-        // console.log("data state: ", this.state);
+        const { fields, data, index, fixedValues, formErrors} = this.props;
         return (
             <div>
                 <Container fluid>
@@ -70,11 +51,9 @@ export default class FormFields extends Component {
                                         this.props.handleTextChange(e.target.value, item.fieldName, index)
                                     } />
                             </InputGroup>
-                            <Form.Text as={Col} className="text-danger">{item.fieldError}</Form.Text>
+                            <Form.Text as={Col} className="text-danger">{formErrors.aliquots}</Form.Text>
                             </Col>)
                     }else if (item.fieldType === "date") {
-                        // data[item.fieldName] = new Date()
-                        // console.log(data[item.fieldName].toISOString().split('T')[0]);
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -87,7 +66,6 @@ export default class FormFields extends Component {
                             />
                         </InputGroup></Col>)
                     } else if (item.fieldType === "select") {
-                        // this.state.data[item.fieldName] = item.values[0]
                         return (<Col className="custom-col" md="auto"><InputGroup className="mb-2">
                             <InputGroup.Prepend>
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
@@ -116,7 +94,6 @@ export default class FormFields extends Component {
                                 <InputGroup.Text>{item.fieldName}</InputGroup.Text>
                             </InputGroup.Prepend>
                             {item.values.map((val, key) => {
-                                // console.log("item", val);
                                 return (
                                     <InputGroup key={key}>
                                         <InputGroup.Prepend>

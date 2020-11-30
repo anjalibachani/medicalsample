@@ -18,27 +18,27 @@ const columns = [
   {
     name: "Date",
     selector: "shipment_date",
-    //sortable: true,
+    sortable: true,
   },
   {
     name: "From",
-    selector: "location_name",
-    //sortable: true
+    selector: "from_location_name",
+    sortable: true
   },
   {
     name: "To",
-    selector: "location_name",
-    //sortable: true,
+    selector: "to_location_name",
+    sortable: true,
   },
   {
     name: "Samples",
     selector: "no_of_samples",
-    //sortable: true,
+    sortable: true,
   },
   {
     name: "Received Status",
     selector: "status_name",
-    //sortable: true,
+    sortable: true,
   },
 ];
 const rowSelectCritera = row => {
@@ -75,7 +75,7 @@ class Basic2Table extends Component {
   }
   getShipmentsData=() => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
-      // console.log(response.data)
+      console.log(response.data)
       this.setState({
         data: response.data
       });
@@ -83,7 +83,6 @@ class Basic2Table extends Component {
   }
   render() {
     const { data, toggleCleared } = this.state; 
-    this.getShipmentsData();
     return (
       <div>
         {this.state.alertVisibility && (
@@ -96,6 +95,8 @@ class Basic2Table extends Component {
           columns={columns}
           data={data}
           keyField="shipment_id"
+          defaultSortField="shipment_date"
+          defaultSortAsc={false}
           selectableRows
           striped={true}
           highlightOnHover
