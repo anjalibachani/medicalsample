@@ -3,6 +3,7 @@ import differenceBy from 'lodash/differenceBy';
 import DataTable from 'react-data-table-component';
 import { Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Row, Col, Container } from 'react-bootstrap';
+import ExpandedComponent from './ExpandedComponent'
 
 //import CustomTable from './CustomTable';
 //import CustomAlertBanner from './CustomAlertBanner';
@@ -36,6 +37,11 @@ const columns = [
 	{
     name: "Eval",
     selector: "eval",
+    sortable: true
+  },
+  {
+    name: "location",
+    selector: "location_name",
     sortable: true
 	},
 	{
@@ -187,7 +193,8 @@ ExportAll = ({ onExport }) => (
 	<Button className= 'ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>ExportAll</Button>
 );
 getFilterValues = (type, equality, value, key) => {
-  
+  this.setState({showWarning:false,
+    warningText: "can't add filter, One or more filters are empty"})
   console.log("returned values",type, equality, value, key);
   var filterVals = this.state.returnedFilterValues;
   console.log("in get filter values filters",this.state.filters)
@@ -233,11 +240,14 @@ clearFilters(){
   
 }
 addFilter() {
-  console.log("add filter called")
-  var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
-  this.setState({ filters: newFilterArray });
-  console.log(`filters lenght is ${this.state.filters.length}`)
-  console.log(this.state.filters)
+  if(this.state.returnedFilterValues.length === this.state.filters.length+1){
+    var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
+    this.setState({ filters: newFilterArray });
+  }else{
+    this.setState({showWarning:true,
+      warningText: "can't add filter, One or more filters are empty"})
+  }
+  
 };
 
 processFilter(){
@@ -403,7 +413,7 @@ render() {
             <Header />
 		    {/* const actionsMemo = React.useMemo(() => <this.Export onExport={() => downloadCSV(this.state.data)} />, []); */}
         {/* <Table columns={this.columns} data={this.state.data}/> */}
-        {this.state.showWarning && <p>{this.state.warningText}</p>}
+        {this.state.showWarning && <p >{this.state.warningText}</p>}
         {this.state.filters}
         <br/>
       
@@ -441,6 +451,8 @@ render() {
             defaultSortAsc={true}
             defaultSortField = "Date"
             subHeader
+            expandableRows
+            expandableRowsComponent={<ExpandedComponent />}
             persistTableHead
             subHeaderComponent={this.getSubHeaderComponent()}
         />
@@ -456,7 +468,6 @@ render() {
     </div>
     );
 }
-
 
 }
 export default filterandExports;
