@@ -5,7 +5,7 @@ import Filter from './Filter';
 import ExpandedComponent from './ExpandedComponent'
 import memoize from 'memoize-one';
 import CustomAlertBanner from "./CustomAlertBanner";
-import { Button, Form, FormControl, InputGroup, Row, Col, Modal} from 'react-bootstrap';
+import { Button, Form, FormControl, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 const contextActions = memoize(deleteHandler => (
@@ -46,8 +46,8 @@ const rowSelectCritera = row => {
 }
 class Basic2Table extends Component {
   constructor(props) {
-		super(props);
-		this.state = {
+    super(props);
+    this.state = {
       data: [],
       selectedRows: [],
       toggleCleared: false,
@@ -73,7 +73,7 @@ class Basic2Table extends Component {
     Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows })
     this.setState(state => ({ toggleCleared: !state.toggleCleared }));
   }
-  getShipmentsData=() => {
+  getShipmentsData = () => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
       console.log("response.data", response.data);
       this.setState({
@@ -82,7 +82,7 @@ class Basic2Table extends Component {
     })
   }
   render() {
-    const { data, toggleCleared } = this.state; 
+    const { data, toggleCleared } = this.state;
     this.getShipmentsData();
     return (
       <div>
@@ -103,6 +103,7 @@ class Basic2Table extends Component {
           highlightOnHover
           pagination
           expandableRows
+          expandOnRowClicked
           selectableRowsHighlight
           expandableRowsComponent={<ExpandedComponent />}
           contextActions={contextActions(this.markshipments)}
