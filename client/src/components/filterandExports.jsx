@@ -5,21 +5,12 @@ import { Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Row, Col, Container } from 'react-bootstrap';
 import ExpandedComponent from './ExpandedComponent'
 
-//import CustomTable from './CustomTable';
-//import CustomAlertBanner from './CustomAlertBanner';
-
 import Axios from 'axios';
-import Filter from './Filter';
 import styled from 'styled-components';
-//import customFilter from './customFilter';
-//import DatePicker from 'react-datepicker'
 import Header from './Header';
 
 import memoize from 'memoize-one';
-//import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import AddChild from './AddChild';
-import AddSamples from './AddSamples';
 import SamplesFilter from './SamplesFilter';
 //import { isThisHour } from 'date-fns';
 //import { fil } from 'date-fns/locale';
@@ -193,18 +184,16 @@ ExportAll = ({ onExport }) => (
 	<Button className= 'ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>ExportAll</Button>
 );
 getFilterValues = (type, equality, value, key) => {
+  this.getsampledata();
+  console.log("enter get filter valiues",type, equality, value, key )
   this.setState({showWarning:false,
     warningText: "can't add filter, One or more filters are empty"})
-  console.log("returned values",type, equality, value, key);
+  
   var filterVals = this.state.returnedFilterValues;
-  console.log("in get filter values filters",this.state.filters)
-  console.log("filtervals", filterVals);
-  console.log("filtervals_len", filterVals.length);
+ 
   if(this.state.filters.length>1){
     for(let i = 1; i<this.state.filters.length;i++){
-      console.log("returned filter vals:", this.state.returnVals)
-      console.log("filtervals vals:", filterVals)
-      console.log(i,"th filterval is:", filterVals[i]);
+
       var addedfilters = this.state.filters
       delete addedfilters[i]
       if(type === filterVals[i][0]){
@@ -230,9 +219,10 @@ getFilterValues = (type, equality, value, key) => {
 
   this.setState({ returnedFilterValues: filterVals });
 };
-clearFilters(){
+async clearFilters(){
   //window.location.reload(false)
-  // this.setState({returnedFilterValues: []})
+  this.setState({returnedFilterValues: []})
+  await this.setState({filters:[]})
   this.setState({filters:[<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />]})
   this.getsampledata();
 }
@@ -247,19 +237,20 @@ addFilter() {
   
 };
 
-processFilter(){
+async processFilter(){
+  if (!this.state.returnedFilterValues.length) {
+    return
+  }
   for (var i = 1; i <= this.state.filters.length; i++) {
-
-    if (this.state.returnedFilterValues.length) {
-      console.log("filters exists")
-      console.log(this.state.filters)
     //}
     //check to see if the filter's Type and Value aren't empty
+    try{
     const [field,condition,value] = this.state.returnedFilterValues[i]
     console.log("in process filter filtercals",field,condition,value);
     const valuearray=value.map(item=>item.value)
+    console.log("valuearray",valuearray)
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
-    try{
+    
       //var filtereddata='';
       if(field === "ID"){
         if(condition === 'equals'){
@@ -276,7 +267,7 @@ processFilter(){
         var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
       }
         else if(condition === 'equals'){
-        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
+        var filtereddata = this.state.data.filter( p => valuearray.includes(p.eval) );
       }
         else if(condition === 'greater than'){
         var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
@@ -286,7 +277,7 @@ processFilter(){
         var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
       }
         else if(condition === 'equals'){
-        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
+        var filtereddata = this.state.data.filter( p => valuearray.includes(p.aliquot_count) );
       }
         else if(condition === 'greater than'){
         var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
@@ -297,9 +288,8 @@ processFilter(){
     }
     
     this.setState({data:filtereddata})
-    this.state.data.filter(item => item.field && (item.field < value))
+    //this.state.data.filter(item => item.field && (item.field < value))
     console.log(this.state.data)
-  }
   }
 }
 
@@ -307,7 +297,7 @@ componentDidMount() {
     this.getsampledata();
     console.log(this.state.data)
 }
-getsampledata(){
+async getsampledata(){
     Axios.get(
 		`http://${config.server.host}:${config.server.port}/api/filter`,{headers: {
       'Authorization': `bearer ${localStorage.getItem("token")}` 
@@ -331,11 +321,11 @@ handleRowClicked = row => {
 
 deleteAll = () => {
     const { selectedRows } = this.state;
-    const rows = selectedRows.map(r => r.samples_key);
+    const rows = selectedRows.map(r => r.sample_id);
     console.log("rows to be deleted",rows)
 
-    if (window.confirm(`Are you sure you want to delete:\r ${rows}?`)) {
-        this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'samples_key') }));
+    if (window.confirm(`Are you sure you want to delete samples for id: ${rows}?`)) {
+        this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'sample_id') }));
         console.log("selected rows in deleteall",rows)
         // Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows, headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
         Axios.post(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{user_id:localStorage.getItem("user_id"), rows:rows},{headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{

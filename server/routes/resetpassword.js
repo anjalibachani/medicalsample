@@ -12,15 +12,15 @@ const getsha1 = function(input){
 
 function resetpassword(req,res){
     //console.log(req)
-    console.log("reset pass func called")
+    //console.log("reset pass func called")
     //console.log(req.match.params.id)
-    console.log(req.params.id)
+    //console.log(req.params.id)
     const token = req.params.id
     const password = req.body.password
-    console.log("resetpass: ",req.body);
+    //console.log("resetpass: ",req.body);
     jwt.verify(token,config.JWT_RESET_KEY,(err,decoded)=>{
-        console.log("error",err);
-        console.log("decoded ",decoded)
+        //console.log("error",err);
+        //console.log("decoded ",decoded)
         if(err){
             return res.status(401).json({message:"UnAuthorized"});
         }else{

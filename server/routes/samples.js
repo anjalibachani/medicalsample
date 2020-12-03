@@ -81,7 +81,6 @@ router.post("/add", (req, res) => {
       element.density = select_results[0].density;
       element.date = new Date(element.date);
       const found = select_results.some((el) => el.type === element.type);
-      console.log("found: ", found);
       if (found) {
         // update query
         // let temp_aliquot = element.aliquots===undefined ? 1 : element.aliquots;

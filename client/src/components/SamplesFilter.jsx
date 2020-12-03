@@ -52,12 +52,16 @@ export default class SamplesFilter extends Component {
             }}
             ).then((response) => {
                 console.log("resp data in unique", response.data);
-                const idoptions = response.data.map(item => ({value:item.sample_id,label:item.sample_id}))
-                const evaloptions = response.data.map(item => ({value:item.eval,label:item.eval}))
-                const aliquotoptions = response.data.map(item => ({value:item.aliquot_count,label:item.aliquot_count}))
-                console.log("ids", idoptions);
-                console.log("evals", evaloptions);
-                console.log("aliqs", aliquotoptions);
+                let ids = Array.from(new Set(response.data.map(item => item.sample_id)))
+                let evals = Array.from(new Set(response.data.map(item => item.eval)))
+                let aliquots = Array.from(new Set(response.data.map(item => item.aliquot_count)))
+
+                console.log("ids", ids,"evals", evals, "aliquots", aliquots)
+
+                const idoptions = ids.map(item => ({value:item,label:item}))
+                const evaloptions = evals.map(item => ({value:item,label:item}))
+                const aliquotoptions = aliquots.map(item => ({value:item,label:item}))
+
                 this.setState({
                 sampleIdOptions:idoptions,
                 sampleEvalOptions:evaloptions,
@@ -68,11 +72,11 @@ export default class SamplesFilter extends Component {
 	}
     handleIDChange = selectedOption => {
         this.setState({selectedIdOption:selectedOption})
-        console.log("props", this.props)
+        
     }
     
-    handleeqChange = selectedOption => {
-        this.setState({selectedeqOption:selectedOption})
+    handleeqChange = async selectedOption => {
+        await this.setState({selectedeqOption:selectedOption})
         console.log("id selected:", this.state.selectedIdOption.value);
         console.log("eq selected:", this.state.selectedeqOption);
         console.log("option selected:",selectedOption);
@@ -83,27 +87,30 @@ export default class SamplesFilter extends Component {
         }else if(this.state.selectedIdOption.value === 'Aliquots'){
             this.setState({sampleOptions : this.state.sampleAliquotOptions})
         }
-       this.props.returnVals(this.state.selectedIdOption.value, selectedOption, this.state.multiValue, this.props.number);
+        this.props.returnVals(this.state.selectedIdOption.value, this.state.selectedeqOption, this.state.multiValue, this.props.number);
     }
-    handleValChange = selectedOption=>{
+    handleValChange = async selectedOption=>{
         if(isNaN(selectedOption.target.value)){
             this.setState({setwarning:true})
+        }else if(parseInt(selectedOption.target.value, 10)<0){
+            this.setState({setwarning:true})
         }else{
+            this.setState({setwarning:false})
             var a = []
             const parsedint = parseInt(selectedOption.target.value, 10)
             a = [{value:parsedint,label:parsedint}];
-            this.setState({multiValue:a})
+            await this.setState({multiValue:a})
             console.log("props in valchange",this.props)
             console.log("this.state.selectedoption", parsedint)
-            this.props.returnVals(this.state.selectedIdOption.value, this.state.selectedeqOption.value, a, this.props.number);
+            this.props.returnVals(this.state.selectedIdOption.value, this.state.selectedeqOption.value, this.state.multiValue, this.props.number);
         }
         
     }
 
-    onChange = (value, { action, removedValue }) => {
+    onChange = async (value, { action, removedValue }) => {
 		console.log("OnChange: ", value , action, removedValue, "@");
-        this.setState({ multiValue: value});
-        this.props.returnVals(this.state.selectedIdOption.value, this.state.selectedeqOption.value, value, this.props.number);
+        await this.setState({ multiValue: value});
+        this.props.returnVals(this.state.selectedIdOption.value, this.state.selectedeqOption.value, this.state.multiValue, this.props.number);
 	}
 
     render() {
@@ -118,7 +125,7 @@ export default class SamplesFilter extends Component {
         return (
             <div>
                 <Container>
-                {this.state.setwarning===true && <p>enter valid integer</p>}
+                {this.state.setwarning===true && <p>enter valid positive integer</p>}
                     <Row className="mt-2">
                         <Col md="4">
                         <Select

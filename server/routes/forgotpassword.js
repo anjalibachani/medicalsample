@@ -8,8 +8,7 @@ const jwt = require('jsonwebtoken');
 const config = process.env.MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 function forgotpassword(req,res){
-    const email_id = req.body.email_id ;
-    console.log(email_id);   
+    const email_id = req.body.email_id ;  
     db.query('SELECT * from users WHERE email_id = ?',[email_id], async function(error, results, fields){
         if(error){
             return res.status(400).json({message:"error occued"})
@@ -18,10 +17,8 @@ function forgotpassword(req,res){
             if(results.length>0){
                 if(req.body.email_id === results[0].email_id){
                     const user_id = results[0].user_id;
-                    console.log("forgotpasswd for user id ",user_id);
                     results[0].password = undefined
                     const token = jwt.sign({user_id:results[0].user_id}, config.JWT_RESET_KEY,{expiresIn:"1h"})
-                    console.log({token:token, message:"reset token generated"})
                     //return res.status(200).json({token:token, user_id:results[0].user_id,  message:"login successful"})
                     db.query('UPDATE users set resetlink = ?, timeout = ? WHERE user_id = ?',[token,Date.now()+1200000,user_id], async function(error, results,fields){
                         if(!error){
@@ -34,7 +31,6 @@ function forgotpassword(req,res){
                                 html: `<p>We have received a password reset request. Follow the link below to reset your password.\n</p><h3>Follow this link</h3><a href=${htmltext}>password reset link</a><p>If the link doesnt work copy the link in browser</p><br/><p>${htmltext}</p>`, // html body
                             });
                             if(error){
-                                console.log(error);
                                 return res.status(500).json({message:"server error couldn't reset the password."})
                             }
                             return res.status(200).json({message:"check your mail for the reset link."})
