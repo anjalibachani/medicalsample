@@ -78,7 +78,7 @@ const movedshipementscolumns = [
 ];
 
 const rowSelectCritera = row => {
-	return row.aliquot_count===0;
+	return row.aliquot_count === 0;
 }
 
 class CreateShipments extends Component {
@@ -87,7 +87,7 @@ class CreateShipments extends Component {
 		this.state = {
 			data: [],
 			date: new Date(),
-			dummyData:[],
+			dummyData: [],
 			from: '',
 			storageconditions: '',
 			shippingconditions: '',
@@ -104,7 +104,7 @@ class CreateShipments extends Component {
 			selectedFromOption: null,
 			selectedToOption: null,
 			selectedIdOption2: null,
-			shippingcompany:null,
+			shippingcompany: null,
 			selectedAliquotNumber: null,
 			evaloptions: null,
 			movedshipementsData: [],
@@ -118,7 +118,7 @@ class CreateShipments extends Component {
 			numberAliquotsSelectedForShipment: [],
 			resetChecksSamples: false,
 			resetChecksShipment: false,
-			filters:[{"key": 1,"number":1}],
+			filters: [{ "key": 1, "number": 1 }],
 			// filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues}  from={ this.selectedFromOption}/>],
 			returnedFilterValues: [],
 			alertVisibility: false,
@@ -135,75 +135,94 @@ class CreateShipments extends Component {
 		this.handleFromLocationChange = this.handleFromLocationChange.bind(this);
 	}
 
-	processFilter() {
+	async processFilter() {
+		if (!this.state.returnedFilterValues.length) {
+			return
+		}
 		for (var i = 1; i <= this.state.filters.length; i++) {
-
-			if (this.state.returnedFilterValues.length) {
+			//}
+			//check to see if the filter's Type and Value aren't empty
+			try {
 				const [field, condition, value] = this.state.returnedFilterValues[i]
+				console.log("in process filter filtercals", field, condition, value);
 				const valuearray = value.map(item => item.value)
+				console.log("valuearray", valuearray)
 				//const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
-				try {
-					if (field === "ID") {
-						if (condition === 'equals') {
-							var filtereddata = this.state.data.filter(p => valuearray.includes(p.sample_id));
-						}
-						else if (condition === 'less than') {
-							var filtereddata = this.state.data.filter(p => p.sample_id < valuearray[0]);
-						}
-						else if (condition === 'greater than') {
-							var filtereddata = this.state.data.filter(p => p.sample_id > valuearray[0]);
-						}
-					} else if (field === "Eval") {
-						if (condition === 'less than') {
-							var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
-						}
-						else if (condition === 'equals') {
-							var filtereddata = this.state.data.filter(p => valuearray.includes(p.sample_id));
-						}
-						else if (condition === 'greater than') {
-							var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
-						}
-					} else if (field === "aliquots") {
-						if (condition === 'less than') {
-							var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
-						}
-						else if (condition === 'equals') {
-							var filtereddata = this.state.data.filter(p => valuearray.includes(p.sample_id));
-						}
-						else if (condition === 'greater than') {
-							var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
-						}
-					}
-				} catch (err) {
-					
-				}
 
-				this.setState({ data: filtereddata })
-				this.state.data.filter(item => item.field && (item.field < value))
+				//var filtereddata='';
+				if (field === "ID") {
+					if (condition === 'equals') {
+						var filtereddata = this.state.data.filter(p => valuearray.includes(p.sample_id));
+					}
+					else if (condition === 'less than') {
+						var filtereddata = this.state.data.filter(p => p.sample_id < valuearray[0]);
+					}
+					else if (condition === 'greater than') {
+						var filtereddata = this.state.data.filter(p => p.sample_id > valuearray[0]);
+					}
+				} else if (field === "Eval") {
+					if (condition === 'less than') {
+						var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
+					}
+					else if (condition === 'equals') {
+						var filtereddata = this.state.data.filter(p => valuearray.includes(p.eval));
+					}
+					else if (condition === 'greater than') {
+						var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
+					}
+				} else if (field === "aliquots") {
+					if (condition === 'less than') {
+						var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
+					}
+					else if (condition === 'equals') {
+						var filtereddata = this.state.data.filter(p => valuearray.includes(p.aliquot_count));
+					}
+					else if (condition === 'greater than') {
+						var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
+					}
+				}
+			} catch (err) {
+				console.log("filter failed")
 			}
+
+			this.setState({ data: filtereddata })
+			//this.state.data.filter(item => item.field && (item.field < value))
+			//console.log(this.state.data)
 		}
 	}
-	clearFilters() {
-		this.setState({ returnedFilterValues: [] })
-		this.setState({ filters: [{ "key": 1, "number": 1 }]})
+	async clearFilters() {
+		//window.location.reload(false)
+		this.setState({ returnedFilterValues: [], warningText: false })
+		await this.setState({ filters: [] })
+		this.setState({ filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />] })
 		this.getShipmentData();
 	}
 	addFilter() {
-		
-		var newFilterArray = this.state.filters.concat({ "key": this.state.filters.length + 1, "number": this.state.filters.length + 1});
+
+		var newFilterArray = this.state.filters.concat({ "key": this.state.filters.length + 1, "number": this.state.filters.length + 1 });
 		this.setState({ filters: newFilterArray });
 	};
 
+
 	getFilterValues = (type, equality, value, key) => {
+		this.getShipmentData();
+		console.log("enter get filter valiues", type, equality, value, key)
+		this.setState({
+			showWarning: false,
+			warningText: "can't add filter, One or more filters are empty"
+		})
 
 		var filterVals = this.state.returnedFilterValues;
-		
+		console.log("filterVals", filterVals)
 		if (this.state.filters.length > 1) {
 			for (let i = 1; i < this.state.filters.length; i++) {
+				console.log("filter values in loop :", i, " ", filterVals[i]);
 				var addedfilters = this.state.filters
-				delete addedfilters[i]
 				if (type === filterVals[i][0]) {
-					if (filterVals[i][0] === 'equals') {
+					console.log("type matched")
+					if (filterVals[i][1] === 'equals') {
+						delete addedfilters[(this.state.filters.length) - 1]
+						console.log("equality matched with equals")
 						this.setState({
 							showWarning: true,
 							warningText: "ambigious filter, cannot add filters of same type",
@@ -211,6 +230,9 @@ class CreateShipments extends Component {
 						})
 						return;
 					} else if (equality === filterVals[i][1]) {
+						console.log("equality matched with other")
+						delete addedfilters[(this.state.filters.lenght)]
+						console.log("values", equality, filterVals[i][1])
 						this.setState({
 							showWarning: true,
 							warningText: "cannot add duplicate filters, please add unique filters",
@@ -299,30 +321,30 @@ class CreateShipments extends Component {
 
 	};
 
-	updateObjectInArray= (array, index, updatedItem) =>{
-	return array.map((item, i) => {
-		if (i !== index) {
-			return item;
-		}
-		return {
-			...item,
-			...updatedItem
-		};
-	});
-}
+	updateObjectInArray = (array, index, updatedItem) => {
+		return array.map((item, i) => {
+			if (i !== index) {
+				return item;
+			}
+			return {
+				...item,
+				...updatedItem
+			};
+		});
+	}
 	moveAliquotsToShipment = () => {
-		let { selectedRows} = this.state;
+		let { selectedRows } = this.state;
 		let tempData = [...this.state.data];
 		selectedRows.forEach(element => {
 			element.selectedAliquotValue = element.selectedAliquotValue.value;
 			let indexOf = tempData.findIndex(sample => sample.samples_key === element.samples_key);
-			tempData[indexOf] = { ...tempData[indexOf], aliquot_count: tempData[indexOf].aliquot_count - element.selectedAliquotValue};
+			tempData[indexOf] = { ...tempData[indexOf], aliquot_count: tempData[indexOf].aliquot_count - element.selectedAliquotValue };
 		});
-		this.setState({ data: tempData, movedshipementsData: selectedRows, showModal: false, toggledClearRows: !this.state.toggledClearRows})
+		this.setState({ data: tempData, movedshipementsData: selectedRows, showModal: false, toggledClearRows: !this.state.toggledClearRows })
 	}
 
 	removeFromShipment() {
-		let { movedshipementsData } = this.state; 
+		let { movedshipementsData } = this.state;
 		let tempData = [...this.state.data];
 		movedshipementsData.forEach(element => {
 			let indexOf = tempData.findIndex(sample => sample.samples_key === element.samples_key);
@@ -331,7 +353,7 @@ class CreateShipments extends Component {
 		this.setState({ movedshipementsData: [], data: tempData })
 	}
 	createShipmentJson = async () => {
-		let { date, shippingconditions, movedshipementsData, shippingcompany, notes, selectedFromOption, selectedToOption} = this.state;
+		let { date, shippingconditions, movedshipementsData, shippingcompany, notes, selectedFromOption, selectedToOption } = this.state;
 		console.log("movedshipementsData", movedshipementsData);
 		let shipment = {}
 		let locations = await this.getLocationIDByName(selectedFromOption.value, selectedToOption.value);
@@ -348,7 +370,7 @@ class CreateShipments extends Component {
 		let countArray = movedshipementsData.map(item => [item.aliquot_count])
 		shipment.tempArray = tempArray;
 		shipment.countArray = countArray;
-		shipment.locationNames = { from_location_name: selectedFromOption.value, to_location_name:selectedToOption.value}
+		shipment.locationNames = { from_location_name: selectedFromOption.value, to_location_name: selectedToOption.value }
 		return shipment;
 
 	}
@@ -361,14 +383,14 @@ class CreateShipments extends Component {
 		aliquots.aliquots_samples_key = sample_keys
 		aliquots.countArray = movedshipementsData.map(a => a.selectedAliquotValue);
 		aliquots.user_id = localStorage.getItem("user_id");
-		console.log("createAliqoutJson",aliquots);
+		console.log("createAliqoutJson", aliquots);
 		return aliquots;
 
 	}
 	async getLocationIDByName(from_location, to_location) {
 		let locations = []
-		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location} })
-		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location} })
+		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location } })
+		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location } })
 		locations.push(from_location_res.data.results);
 		locations.push(to_location_res.data.results);
 		return locations
@@ -418,7 +440,7 @@ class CreateShipments extends Component {
 		return false;
 	}
 	send = async () => {
-		const shipment = await  this.createShipmentJson();
+		const shipment = await this.createShipmentJson();
 		const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/create`, shipment);
 		const aliquots = await this.createAliqoutJson(res.data.results.insertId);
 		if (res.data.results.insertId) {
@@ -431,14 +453,14 @@ class CreateShipments extends Component {
 				selectedFromOption: null,
 				selectedToOption: null
 			});
-			const res =  axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, aliquots);
+			const res = axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, aliquots);
 		}
 	}
 	render() {
-		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data, locationoptions, filters} = this.state;
+		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data, locationoptions, filters } = this.state;
 		let locationTooptions = locationoptions;
 		let locationFromoptions = locationoptions;
-		console.log("filters",this.state.filters);
+		console.log("filters", this.state.filters);
 		let filteredItems = [];
 		{
 			if (selectedFromOption !== null && data) {
@@ -472,7 +494,7 @@ class CreateShipments extends Component {
 				{this.state.alertVisibility &&
 					<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
 				}
-				
+
 				<h2 align="left">&nbsp;&nbsp;&nbsp;Create Shipments:</h2>
 				<hr />
 				<Row>
@@ -559,8 +581,8 @@ class CreateShipments extends Component {
 				<p />
 				<hr />
 				<div>
-					{filters.map((item, key) => 
-						<SamplesFilter key={key+1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
+					{filters.map((item, key) =>
+						<SamplesFilter key={key + 1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
 					)}
 					<Row>
 						<Col md="auto" className="mt-4">
@@ -589,19 +611,19 @@ class CreateShipments extends Component {
 								striped={true}
 								highlightOnHover
 								pagination
-							clearSelectedRows={this.state.toggledClearRows}
-							selectableRowDisabled={rowSelectCritera}
+								clearSelectedRows={this.state.toggledClearRows}
+								selectableRowDisabled={rowSelectCritera}
 
 							/>}
 					</Col>
 					<Col md="auto">
-							<div style={{ padding: 25 }}>
-								<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
-								<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
+						<div style={{ padding: 25 }}>
+							<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
+							<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
 						</div>
 					</Col>
 					<Col>
-						{movedshipementsData.length!==0 &&
+						{movedshipementsData.length !== 0 &&
 							<Button variant="dark" size="lg" onClick={this.save}>Create Shipment</Button>
 						}
 						<DataTable
