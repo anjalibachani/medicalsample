@@ -70,7 +70,6 @@ router.post("/add", (req, res) => {
       element.density = select_results[0].density;
       element.date = new Date(element.date);
       const found = select_results.some((el) => el.type === element.type);
-      console.log("found: ", found);
       if (found) {
         let update_stmt = "UPDATE samples SET ? where sample_id=? AND eval=? AND type=?";
         var update_query = db.query(update_stmt, [element, element.sample_id, element.eval, element.type], (error, results, fields) => {

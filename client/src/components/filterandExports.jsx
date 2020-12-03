@@ -3,22 +3,14 @@ import differenceBy from 'lodash/differenceBy';
 import DataTable from 'react-data-table-component';
 import { Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Row, Col, Container } from 'react-bootstrap';
-
-//import CustomTable from './CustomTable';
-//import CustomAlertBanner from './CustomAlertBanner';
+import ExpandedComponent from './ExpandedComponent'
 
 import Axios from 'axios';
-import Filter from './Filter';
 import styled from 'styled-components';
-//import customFilter from './customFilter';
-//import DatePicker from 'react-datepicker'
 import Header from './Header';
 
 import memoize from 'memoize-one';
-//import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import AddChild from './AddChild';
-import AddSamples from './AddSamples';
 import SamplesFilter from './SamplesFilter';
 //import { isThisHour } from 'date-fns';
 //import { fil } from 'date-fns/locale';
@@ -36,6 +28,11 @@ const columns = [
 	{
     name: "Eval",
     selector: "eval",
+    sortable: true
+  },
+  {
+    name: "location",
+    selector: "location_name",
     sortable: true
 	},
 	{
@@ -187,22 +184,21 @@ ExportAll = ({ onExport }) => (
 	<Button className= 'ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>ExportAll</Button>
 );
 getFilterValues = (type, equality, value, key) => {
+  this.getsampledata();
+  console.log("enter get filter valiues",type, equality, value, key )
+  this.setState({showWarning:false,
+    warningText: "can't add filter, One or more filters are empty"})
   
-  console.log("returned values",type, equality, value, key);
   var filterVals = this.state.returnedFilterValues;
-  console.log("in get filter values filters",this.state.filters)
-  console.log("filtervals", filterVals);
-  console.log("filtervals_len", filterVals.length);
+  console.log("filterVals", filterVals)
   if(this.state.filters.length>1){
     for(let i = 1; i<this.state.filters.length;i++){
-      console.log("returned filter vals:", this.state.returnVals)
-      console.log("filtervals vals:", filterVals)
-      console.log(i,"th filterval is:", filterVals[i]);
+      console.log("filter values in loop :", i, " ", filterVals[i]);
       var addedfilters = this.state.filters
-      delete addedfilters[i]
-      if(type === filterVals[i][0]){
+      if(type === filterVals[i][0]){ 
         console.log("type matched")
         if(filterVals[i][1] === 'equals'){
+          delete addedfilters[(this.state.filters.length)-1] 
           console.log("equality matched with equals")
           this.setState({showWarning:true,
             warningText: "ambigious filter, cannot add filters of same type",
@@ -210,6 +206,8 @@ getFilterValues = (type, equality, value, key) => {
             return;
         }else if(equality === filterVals[i][1]){
           console.log("equality matched with other")
+          delete addedfilters[(this.state.filters.lenght)]
+          console.log("values", equality, filterVals[i][1])
           this.setState({showWarning:true,
             warningText: "cannot add duplicate filters, please add unique filters",
             filters:addedfilters})
@@ -223,33 +221,38 @@ getFilterValues = (type, equality, value, key) => {
 
   this.setState({ returnedFilterValues: filterVals });
 };
-clearFilters(){
+async clearFilters(){
   //window.location.reload(false)
-  // this.setState({returnedFilterValues: []})
+  this.setState({returnedFilterValues: [], warningText:false})
+  await this.setState({filters:[]})
   this.setState({filters:[<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />]})
   this.getsampledata();
 }
 addFilter() {
-  console.log("add filter called")
-  var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
-  this.setState({ filters: newFilterArray });
-  console.log(`filters lenght is ${this.state.filters.length}`)
-  console.log(this.state.filters)
+  if(this.state.returnedFilterValues.length === this.state.filters.length+1){
+    var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
+    this.setState({ filters: newFilterArray });
+  }else{
+    this.setState({showWarning:true,
+      warningText: "can't add filter, One or more filters are empty"})
+  }
+  
 };
 
-processFilter(){
+async processFilter(){
+  if (!this.state.returnedFilterValues.length) {
+    return
+  }
   for (var i = 1; i <= this.state.filters.length; i++) {
-
-    if (this.state.returnedFilterValues.length) {
-      console.log("filters exists")
-      console.log(this.state.filters)
     //}
     //check to see if the filter's Type and Value aren't empty
+    try{
     const [field,condition,value] = this.state.returnedFilterValues[i]
     console.log("in process filter filtercals",field,condition,value);
     const valuearray=value.map(item=>item.value)
+    console.log("valuearray",valuearray)
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
-    try{
+    
       //var filtereddata='';
       if(field === "ID"){
         if(condition === 'equals'){
@@ -266,7 +269,7 @@ processFilter(){
         var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
       }
         else if(condition === 'equals'){
-        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
+        var filtereddata = this.state.data.filter( p => valuearray.includes(p.eval) );
       }
         else if(condition === 'greater than'){
         var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
@@ -276,7 +279,7 @@ processFilter(){
         var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
       }
         else if(condition === 'equals'){
-        var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id) );
+        var filtereddata = this.state.data.filter( p => valuearray.includes(p.aliquot_count) );
       }
         else if(condition === 'greater than'){
         var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
@@ -287,9 +290,8 @@ processFilter(){
     }
     
     this.setState({data:filtereddata})
-    this.state.data.filter(item => item.field && (item.field < value))
-    console.log(this.state.data)
-  }
+    //this.state.data.filter(item => item.field && (item.field < value))
+    //console.log(this.state.data)
   }
 }
 
@@ -297,13 +299,13 @@ componentDidMount() {
     this.getsampledata();
     console.log(this.state.data)
 }
-getsampledata(){
+async getsampledata(){
     Axios.get(
 		`http://${config.server.host}:${config.server.port}/api/filter`,{headers: {
       'Authorization': `bearer ${localStorage.getItem("token")}` 
     }}
     ).then((response) => {
-    console.log(response.data);
+    //console.log(response.data);
     this.setState({
         data: response.data,
 	});
@@ -312,7 +314,7 @@ getsampledata(){
 
 handleChange = state => {
     this.setState({ selectedRows: state.selectedRows });
-    console.log("selected rows",this.state.selectedRows)
+    //console.log("selected rows",this.state.selectedRows)
 };
 
 handleRowClicked = row => {
@@ -321,12 +323,12 @@ handleRowClicked = row => {
 
 deleteAll = () => {
     const { selectedRows } = this.state;
-    const rows = selectedRows.map(r => r.samples_key);
-    console.log("rows to be deleted",rows)
+    const rows = selectedRows.map(r => [r.samples_key,r.location_id]);
+    //console.log("rows to be deleted",rows)
 
-    if (window.confirm(`Are you sure you want to delete:\r ${rows}?`)) {
-        this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'samples_key') }));
-        console.log("selected rows in deleteall",rows)
+    if (window.confirm(`Are you sure you want to delete samples for id: ${rows}?`)) {
+        this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'sample_id') }));
+        //console.log("selected rows in deleteall",rows)
         // Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows, headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
         Axios.post(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{user_id:localStorage.getItem("user_id"), rows:rows},{headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
           if(response.status === 200){
@@ -370,7 +372,7 @@ getSubHeaderComponent = () => {
 
 resestToken = () =>{
   Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`,{user_id:localStorage.getItem("user_id")},{headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response) => {
-    console.log("status is :",response.status)
+    //console.log("status is :",response.status)
     if(response.status === 200){
       localStorage.setItem('token', response.data.token);
       localStorage.setItem("expiresin",Date.now()+6000000);
@@ -400,7 +402,7 @@ render() {
             <Header />
 		    {/* const actionsMemo = React.useMemo(() => <this.Export onExport={() => downloadCSV(this.state.data)} />, []); */}
         {/* <Table columns={this.columns} data={this.state.data}/> */}
-        {this.state.showWarning && <p>{this.state.warningText}</p>}
+        {this.state.showWarning && <p >{this.state.warningText}</p>}
         {this.state.filters}
         <br/>
       
@@ -413,6 +415,7 @@ render() {
 								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.clearFilters}>ClearFilters</Button>
                 <this.Export onExport={() => downloadCSV(this.state.selectedRows)} />
                 <this.ExportAll onExport={() => downloadCSV(this.state.data)} />
+                <Button className= 'ml-3' variant="dark" size="lg" onClick={this.deleteAll}>Delete</Button>
 							</ButtonGroup>
 						</Col>
 						<hr />
@@ -431,13 +434,15 @@ render() {
             highlightOnHover
             pagination
             paginationResetDefaultPage={this.state.resetPaginationToggle} 
-            contextActions={contextActions(this.deleteAll)}
+            //contextActions={contextActions(this.deleteAll)}
             onSelectedRowsChange={this.handleChange}
             clearSelectedRows={toggleCleared}
             onRowClicked={this.handleRowClicked}
             defaultSortAsc={true}
             defaultSortField = "Date"
             subHeader
+            expandableRows
+            expandableRowsComponent={<ExpandedComponent />}
             persistTableHead
             subHeaderComponent={this.getSubHeaderComponent()}
         />
@@ -453,7 +458,6 @@ render() {
     </div>
     );
 }
-
 
 }
 export default filterandExports;
