@@ -190,15 +190,15 @@ getFilterValues = (type, equality, value, key) => {
     warningText: "can't add filter, One or more filters are empty"})
   
   var filterVals = this.state.returnedFilterValues;
- 
+  console.log("filterVals", filterVals)
   if(this.state.filters.length>1){
     for(let i = 1; i<this.state.filters.length;i++){
-
+      console.log("filter values in loop :", i, " ", filterVals[i]);
       var addedfilters = this.state.filters
-      delete addedfilters[i]
-      if(type === filterVals[i][0]){
+      if(type === filterVals[i][0]){ 
         console.log("type matched")
         if(filterVals[i][1] === 'equals'){
+          delete addedfilters[(this.state.filters.length)-1] 
           console.log("equality matched with equals")
           this.setState({showWarning:true,
             warningText: "ambigious filter, cannot add filters of same type",
@@ -206,6 +206,8 @@ getFilterValues = (type, equality, value, key) => {
             return;
         }else if(equality === filterVals[i][1]){
           console.log("equality matched with other")
+          delete addedfilters[(this.state.filters.lenght)]
+          console.log("values", equality, filterVals[i][1])
           this.setState({showWarning:true,
             warningText: "cannot add duplicate filters, please add unique filters",
             filters:addedfilters})
@@ -221,7 +223,7 @@ getFilterValues = (type, equality, value, key) => {
 };
 async clearFilters(){
   //window.location.reload(false)
-  this.setState({returnedFilterValues: []})
+  this.setState({returnedFilterValues: [], warningText:false})
   await this.setState({filters:[]})
   this.setState({filters:[<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />]})
   this.getsampledata();
@@ -289,7 +291,7 @@ async processFilter(){
     
     this.setState({data:filtereddata})
     //this.state.data.filter(item => item.field && (item.field < value))
-    console.log(this.state.data)
+    //console.log(this.state.data)
   }
 }
 
@@ -303,7 +305,7 @@ async getsampledata(){
       'Authorization': `bearer ${localStorage.getItem("token")}` 
     }}
     ).then((response) => {
-    console.log(response.data);
+    //console.log(response.data);
     this.setState({
         data: response.data,
 	});
@@ -312,7 +314,7 @@ async getsampledata(){
 
 handleChange = state => {
     this.setState({ selectedRows: state.selectedRows });
-    console.log("selected rows",this.state.selectedRows)
+    //console.log("selected rows",this.state.selectedRows)
 };
 
 handleRowClicked = row => {
@@ -321,12 +323,12 @@ handleRowClicked = row => {
 
 deleteAll = () => {
     const { selectedRows } = this.state;
-    const rows = selectedRows.map(r => r.sample_id);
-    console.log("rows to be deleted",rows)
+    const rows = selectedRows.map(r => [r.samples_key,r.location_id]);
+    //console.log("rows to be deleted",rows)
 
     if (window.confirm(`Are you sure you want to delete samples for id: ${rows}?`)) {
         this.setState(state => ({ toggleCleared: !state.toggleCleared, data: differenceBy(state.data, state.selectedRows, 'sample_id') }));
-        console.log("selected rows in deleteall",rows)
+        //console.log("selected rows in deleteall",rows)
         // Axios.delete(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{rows, headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
         Axios.post(`http://${config.server.host}:${config.server.port}/api/deletesamples`,{user_id:localStorage.getItem("user_id"), rows:rows},{headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response)=>{
           if(response.status === 200){
@@ -370,7 +372,7 @@ getSubHeaderComponent = () => {
 
 resestToken = () =>{
   Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`,{user_id:localStorage.getItem("user_id")},{headers: {'Authorization': `bearer ${localStorage.getItem("token")}`}}).then((response) => {
-    console.log("status is :",response.status)
+    //console.log("status is :",response.status)
     if(response.status === 200){
       localStorage.setItem('token', response.data.token);
       localStorage.setItem("expiresin",Date.now()+6000000);
@@ -413,6 +415,7 @@ render() {
 								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.clearFilters}>ClearFilters</Button>
                 <this.Export onExport={() => downloadCSV(this.state.selectedRows)} />
                 <this.ExportAll onExport={() => downloadCSV(this.state.data)} />
+                <Button className= 'ml-3' variant="dark" size="lg" onClick={this.deleteAll}>Delete</Button>
 							</ButtonGroup>
 						</Col>
 						<hr />
@@ -431,7 +434,7 @@ render() {
             highlightOnHover
             pagination
             paginationResetDefaultPage={this.state.resetPaginationToggle} 
-            contextActions={contextActions(this.deleteAll)}
+            //contextActions={contextActions(this.deleteAll)}
             onSelectedRowsChange={this.handleChange}
             clearSelectedRows={toggleCleared}
             onRowClicked={this.handleRowClicked}

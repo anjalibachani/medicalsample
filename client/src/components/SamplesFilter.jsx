@@ -51,12 +51,12 @@ export default class SamplesFilter extends Component {
             'Authorization': `bearer ${localStorage.getItem("token")}` 
             }}
             ).then((response) => {
-                console.log("resp data in unique", response.data);
+                //console.log("resp data in unique", response.data);
                 let ids = Array.from(new Set(response.data.map(item => item.sample_id)))
                 let evals = Array.from(new Set(response.data.map(item => item.eval)))
                 let aliquots = Array.from(new Set(response.data.map(item => item.aliquot_count)))
 
-                console.log("ids", ids,"evals", evals, "aliquots", aliquots)
+                //console.log("ids", ids,"evals", evals, "aliquots", aliquots)
 
                 const idoptions = ids.map(item => ({value:item,label:item}))
                 const evaloptions = evals.map(item => ({value:item,label:item}))
@@ -77,9 +77,9 @@ export default class SamplesFilter extends Component {
     
     handleeqChange = async selectedOption => {
         await this.setState({selectedeqOption:selectedOption})
-        console.log("id selected:", this.state.selectedIdOption.value);
-        console.log("eq selected:", this.state.selectedeqOption);
-        console.log("option selected:",selectedOption);
+        //console.log("id selected:", this.state.selectedIdOption.value);
+        //console.log("eq selected:", this.state.selectedeqOption);
+        //console.log("option selected:",selectedOption);
         if(this.state.selectedIdOption.value ==='ID'){
             this.setState({sampleOptions : this.state.sampleIdOptions})}
         else if (this.state.selectedIdOption.value ==='Eval'){
@@ -100,15 +100,15 @@ export default class SamplesFilter extends Component {
             const parsedint = parseInt(selectedOption.target.value, 10)
             a = [{value:parsedint,label:parsedint}];
             await this.setState({multiValue:a})
-            console.log("props in valchange",this.props)
-            console.log("this.state.selectedoption", parsedint)
+            //console.log("props in valchange",this.props)
+            //console.log("this.state.selectedoption", parsedint)
             this.props.returnVals(this.state.selectedIdOption.value, this.state.selectedeqOption.value, this.state.multiValue, this.props.number);
         }
         
     }
 
     onChange = async (value, { action, removedValue }) => {
-		console.log("OnChange: ", value , action, removedValue, "@");
+		//console.log("OnChange: ", value , action, removedValue, "@");
         await this.setState({ multiValue: value});
         this.props.returnVals(this.state.selectedIdOption.value, this.state.selectedeqOption.value, this.state.multiValue, this.props.number);
 	}
