@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
+const validatetoken = require("./validatetoken");
 
-router.post("/add", async (req, res) => {
+router.post("/add", validatetoken, async (req, res) => {
   console.log(req.body);
   var transaction_history = {
     user_id: req.body.user_id,
@@ -34,7 +35,7 @@ router.post("/add", async (req, res) => {
   console.log(query.sql);
 });
 
-router.get("/all", async (req, res) => {
+router.get("/all", validatetoken, async (req, res) => {
   await db.query(
     "SELECT * FROM medsample_db.samples GROUP BY sample_id,eval;",
     (error, results, fields) => {

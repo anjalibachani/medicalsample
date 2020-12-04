@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
+const validatetoken = require("./validatetoken");
 
-router.get("/viewuser", async (req, res) => {
+router.get("/viewuser", validatetoken, async (req, res) => {
   await db.query("SELECT * FROM `users`", (error, results, fields) => {
     if (error) throw error;
     //   console.log(results);
     return res.status(200).json({ results: results });
   });
 });
-router.post("/adduser", async (req, res) => {
+router.post("/adduser", validatetoken, async (req, res) => {
   let user = req.body;
   console.log("user", user);
   var transaction_history = {
@@ -31,7 +32,7 @@ router.post("/adduser", async (req, res) => {
     return res.status(200).json({ results: results });
   });
 });
-router.get("/checkemail", async (req, res) => {
+router.get("/checkemail", validatetoken, async (req, res) => {
   var query = await db.query(
     "SELECT distinct `email_id` FROM `users` WHERE `email_id`=?",
     [req.query.email_id],
@@ -44,7 +45,7 @@ router.get("/checkemail", async (req, res) => {
   console.log(query.sql);
 });
 
-router.delete("/deleteuser", (req, res) => {
+router.delete("/deleteuser", validatetoken, (req, res) => {
   let rowsData = req.body;
   console.log("rowsData:", rowsData);
   // deleteLocationIDAliquots(rowsData);
@@ -53,13 +54,13 @@ router.delete("/deleteuser", (req, res) => {
   res.json("deleteuser");
 });
 
-router.get("/viewlocation", async (req, res) => {
+router.get("/viewlocation", validatetoken, async (req, res) => {
   await db.query("SELECT * FROM `locations`", (error, results, fields) => {
     if (error) throw error;
     return res.status(200).json({ results: results });
   });
 });
-router.post("/addlocation", async (req, res) => {
+router.post("/addlocation", validatetoken, async (req, res) => {
   console.log(req.body);
   let location = req.body;
   var transaction_history = {
@@ -84,7 +85,7 @@ router.post("/addlocation", async (req, res) => {
     }
   );
 });
-router.get("/checklocation", async (req, res) => {
+router.get("/checklocation", validatetoken, async (req, res) => {
   var query = await db.query(
     "SELECT distinct `location_name` FROM `locations` WHERE `location_name`=?",
     [req.query.location_name],
@@ -96,7 +97,7 @@ router.get("/checklocation", async (req, res) => {
   );
   console.log(query.sql);
 });
-router.delete("/deletelocation", async (req, res) => {
+router.delete("/deletelocation", validatetoken, async (req, res) => {
   res.json("deletelocation");
 });
 router.get("/viewlogs", async (req, res) => {

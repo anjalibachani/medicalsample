@@ -70,11 +70,11 @@ class Basic2Table extends Component {
   markshipments = () => {
     const { selectedRows } = this.state;
     const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id, r.user_id, r.to_location_name]);
-    Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows })
+    Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
     this.setState(state => ({ toggleCleared: !state.toggleCleared }));
   }
   getShipmentsData = () => {
-    Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
+    Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
       console.log("response.data", response.data);
       this.setState({
         data: response.data

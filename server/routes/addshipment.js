@@ -2,8 +2,9 @@ const { response, json } = require("express");
 const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
+const validatetoken = require("./validatetoken");
 
-router.get("/select", async function (request, response) {
+router.get("/select", validatetoken, async function (request, response) {
   try {
     let query3Result = await dbQueryFunc3();
 
@@ -13,7 +14,7 @@ router.get("/select", async function (request, response) {
   }
 });
 
-router.get("/fetchlocation", async (req, res) => {
+router.get("/fetchlocation", validatetoken, async (req, res) => {
   var query = await db.query(
     "SELECT distinct `location_name` FROM `locations` order by location_name",
     (error, results, fields) => {
@@ -32,7 +33,7 @@ router.get("/fetchlocation", async (req, res) => {
   console.log(query.sql);
 });
 
-router.post("/create", async (req, res) => {
+router.post("/create", validatetoken, async (req, res) => {
   console.log(req.body);
   let aliArray = req.body.tempArray;
   let countArray = req.body.countArray;
@@ -79,7 +80,7 @@ router.post("/create", async (req, res) => {
   );
 });
 
-router.post("/addshipmentId", (req, res) => {
+router.post("/addshipmentId", validatetoken, (req, res) => {
   console.log(req.body);
   let aliquots_samples_key = req.body.aliquots_samples_key;
   let countArray = req.body.countArray;
@@ -112,7 +113,7 @@ router.post("/addshipmentId", (req, res) => {
   });
 });
 
-router.get("/locationIdbyName", async (req, res) => {
+router.get("/locationIdbyName", validatetoken, async (req, res) => {
   console.log(req.query.location);
   var query = await db.query(
     "SELECT `location_id` FROM `locations` where `location_name`= ?",
@@ -126,7 +127,7 @@ router.get("/locationIdbyName", async (req, res) => {
   console.log(query.sql);
 });
 
-router.get("/filterOpts/", async (req, res) => {
+router.get("/filterOpts/", validatetoken, async (req, res) => {
   if (req.query.fromLocation === undefined) {
     var query = await db.query(
       "select distinct S.sample_id, S.eval, COUNT(*) as aliquot_count from samples S INNER JOIN aliquots A ON S.samples_key=A.aliquots_samples_key INNER JOIN locations L ON L.location_id = A.location_id where S.type!='' AND A.status_id!=2 GROUP BY S.sample_id, S.eval,S.type,L.location_name;",
@@ -151,7 +152,7 @@ router.get("/filterOpts/", async (req, res) => {
   console.log(query.sql);
 });
 
-router.get("/aliquots/:sample_id", async (req, res) => {
+router.get("/aliquots/:sample_id", validatetoken, async (req, res) => {
   var query = await db.query(
     "SELECT distinct `aliquot_id` FROM `aliquots` WHERE `sample_id`=?",
     [req.params.sample_id],

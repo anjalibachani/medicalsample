@@ -36,7 +36,7 @@ const customStyles = {
         style: {
             fontSize: '100%',
             fontWeight: "bold",
-            paddingLeft: '8px', 
+            paddingLeft: '8px',
             paddingRight: '8px',
         },
     },
@@ -97,7 +97,7 @@ export default class UsersTable extends Component {
             alertText: 'User saved successfully with default password: ChangeMe! ',
             alertVariant: 'success',
             email_id: '',
-            admin:false,
+            admin: false,
             formErrors: {},
             filterText: ''
         }
@@ -106,12 +106,12 @@ export default class UsersTable extends Component {
     componentDidMount() {
         this.getUsersData();
     }
-    deleteUser =  async() => {
+    deleteUser = async () => {
         const { selectedRows } = this.state;
         const rows = selectedRows.map(r => r.user_id);
         console.log("user rows: ", rows);
-       
-         let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows });
+
+        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } });
         console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
     }
@@ -120,7 +120,7 @@ export default class UsersTable extends Component {
         this.setState({ selectedRows: state.selectedRows });
     };
     getUsersData = () => {
-        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewuser`).then((response) => {
+        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewuser`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -130,24 +130,24 @@ export default class UsersTable extends Component {
         prop: PropTypes
     }
     createJson = () => {
-        let { email_id, admin, formErrors } = this.state; 
+        let { email_id, admin, formErrors } = this.state;
         admin = admin === true ? 1 : 0;
         let user = {}
-        user.password ="8879fa4ebd6b4725f5d99440d5957935f614262c"
+        user.password = "8879fa4ebd6b4725f5d99440d5957935f614262c"
         user.email_id = email_id
         user.admin = admin
         user.user_id = localStorage.getItem("user_id");
-        console.log("createJson",user);
+        console.log("createJson", user);
         return user
     }
     checkEmailExist = async (email_id) => {
-        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id} })
+        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
         if (res.data.rows === 0) {
             return false;
         }
         return true;
     }
-    validateForms = async () => { 
+    validateForms = async () => {
         const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         let errorsObj = {};
         if (this.state.email_id === '') {
@@ -161,10 +161,10 @@ export default class UsersTable extends Component {
         }
         return errorsObj;
     }
-    send =  async() => {
+    send = async () => {
         const result = this.createJson();
-        console.log("result",result);
-        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`, result);
+        console.log("result", result);
+        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
         if (res.status === 200) {
             console.log("Added");
             this.setState({
@@ -178,7 +178,7 @@ export default class UsersTable extends Component {
             }, 5000)
         }
     }
-    save = async() => { 
+    save = async () => {
         this.setState({ formErrors: await this.validateForms() })
         console.log(this.state.formErrors);
         if (Object.keys(this.state.formErrors).length === 0) {
@@ -188,7 +188,7 @@ export default class UsersTable extends Component {
     }
     getSubHeaderComponent = () => {
         return (
-            <FilterComponent 
+            <FilterComponent
                 onFilter={(e) => {
                     let newFilterText = e.target.value;
 
@@ -196,7 +196,7 @@ export default class UsersTable extends Component {
                         (item) => {
                             item.email_id &&
                                 item.email_id.toLowerCase().includes(newFilterText.toLowerCase())
-                        }                    );
+                        });
                     this.setState({ filterText: newFilterText });
                 }}
                 onClear={this.handleClear}
@@ -205,7 +205,7 @@ export default class UsersTable extends Component {
         );
     };
     render() {
-        const { data,email_id,admin } = this.state; 
+        const { data, email_id, admin } = this.state;
         this.getUsersData();
         const filteredItems = data.filter(item => item.email_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         return (
@@ -229,7 +229,7 @@ export default class UsersTable extends Component {
                             </Col>
                             <Col md="1" className="mt-2">
                                 <Form.Check type="checkbox" id="admin" label="Admin?"
-                                checked={admin}
+                                    checked={admin}
                                     onChange={e => this.setState({ admin: e.target.checked })}
                                 />
                             </Col>
@@ -239,16 +239,16 @@ export default class UsersTable extends Component {
                         </Row>
                     </Form>
                     <DataTable className="block-example border border-dark rounded mb-0"
-                    columns={columns}
+                        columns={columns}
                         data={filteredItems}
-                    keyField="user_id"
-                    striped={true}
-                    highlightOnHover
-                    pointerOnHover
-                    pagination
-                    defaultSortField="admin"
-                    defaultSortAsc={false}
-                    customStyles={customStyles}
+                        keyField="user_id"
+                        striped={true}
+                        highlightOnHover
+                        pointerOnHover
+                        pagination
+                        defaultSortField="admin"
+                        defaultSortAsc={false}
+                        customStyles={customStyles}
                         onSelectedRowsChange={this.handleChange}
                         subHeader
                         persistTableHead

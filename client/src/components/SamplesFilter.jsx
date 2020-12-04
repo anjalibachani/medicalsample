@@ -34,7 +34,7 @@ export default class SamplesFilter extends Component {
         }
     }
     async getFilterOptsForShipment(fromLocation) {
-        const response = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/filterOpts`, { params: { fromLocation: fromLocation } })
+        const response = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/filterOpts`, { params: { fromLocation: fromLocation } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
         const idoptions = response.data.map(item => ({ value: item.sample_id, label: item.sample_id }))
         const evaloptions = response.data.map(item => ({ value: item.eval, label: item.eval }))
         const aliquotoptions = response.data.map(item => ({ value: item.aliquot_count, label: item.aliquot_count }))
@@ -130,17 +130,18 @@ export default class SamplesFilter extends Component {
                 <Container>
                     {this.state.setwarning === true && <p>enter valid positive integer</p>}
                     <Row className="mt-2">
-                        {this.props.fromLocation &&
-                            < Col md="4">
-                                <Select
-                                    label="Filter Type"
-                                    placeholder="filter type"
-                                    isSearchable={true}
-                                    value={this.state.selectedIdOption}
-                                    onChange={this.handleIDChange}
-                                    options={idoptions}
-                                />
-                            </Col>}
+                        {/* {this.props.fromLocation && */}
+                        < Col md="4">
+                            <Select
+                                label="Filter Type"
+                                placeholder="filter type"
+                                isSearchable={true}
+                                value={this.state.selectedIdOption}
+                                onChange={this.handleIDChange}
+                                options={idoptions}
+                            />
+                        </Col>
+                        {/* } */}
                         {selectedIdOption.value === '' ? null :
                             <Col md="4">
                                 <Select

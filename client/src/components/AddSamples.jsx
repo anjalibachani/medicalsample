@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Redirect } from 'react-router-dom';
-import { Button, Row, Col, Container, Form, Nav, Alert} from 'react-bootstrap';
+import { Button, Row, Col, Container, Form, Nav, Alert } from 'react-bootstrap';
 import Select from 'react-select';
 import FormFields from './FormFields';
 import Header from './Header';
@@ -26,7 +26,7 @@ class AddSamples extends Component {
 			multiValue: [],
 			tabsMapping: [],
 			alertVisibility: false,
-			isVisible:false,
+			isVisible: false,
 			alertText: 'Want to delete already saved samples ?',
 			alertVariant: 'info',
 			fixedValues: [],
@@ -49,25 +49,25 @@ class AddSamples extends Component {
 	};
 
 	async getsampleIdOptions() {
-		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
+		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
 		this.setState({ sampleIdOptions: ids.data.options })
 	}
-	async getSampleTypes(sample_id,eval_number) {
+	async getSampleTypes(sample_id, eval_number) {
 		const params = {
 			sample_id: sample_id,
 			eval: eval_number
 		};
-		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleTypes`, { params })
+		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleTypes`, { params }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
 		return res.data.results;
 	}
 
 	async getEvalOptions(sample_id) {
-		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
+		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
 		this.setState({ evalOptions: evals.data.options })
 	}
-	 componentDidMount() {
+	componentDidMount() {
 		if (this.props.location.state !== undefined) {
-			let sample_id = {"value":this.props.location.state.sample_id, "label":this.props.location.state.sample_id};
+			let sample_id = { "value": this.props.location.state.sample_id, "label": this.props.location.state.sample_id };
 			let evl = { "value": this.props.location.state.eval, "label": this.props.location.state.eval };
 			this.setState({ selectedIdOption: sample_id, selectedEvalOption: evl });
 		}
@@ -82,7 +82,7 @@ class AddSamples extends Component {
 		this.setState({
 			alertVisibility: false
 		});
-		this.setState({ selectedEvalOption: null, multiValue: [], tabsMapping:[], selectedIdOption: selectedOption });
+		this.setState({ selectedEvalOption: null, multiValue: [], tabsMapping: [], selectedIdOption: selectedOption });
 		this.getEvalOptions(selectedOption.value);
 	}
 	handleEvalChange = async selectedOption => {
@@ -93,7 +93,7 @@ class AddSamples extends Component {
 		let temp = await this.getSampleTypes(this.state.selectedIdOption.value, selectedOption.value)
 		let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
 		let fixedValues = multiVal.map(vals => vals.value);
-		this.setState({ multiValue: multiVal, fixedValues:fixedValues }, () => this.generateTabsMapping(temp));
+		this.setState({ multiValue: multiVal, fixedValues: fixedValues }, () => this.generateTabsMapping(temp));
 	}
 
 	generateTabsMapping = (data) => {
@@ -138,7 +138,7 @@ class AddSamples extends Component {
 				var res = this.createTabsMppping(ele.value)
 				tabsMapping.push({
 					user_id: localStorage.getItem("user_id"),
-					key:ele,
+					key: ele,
 					fields: res[0], data: {
 						type: ele.value, "sample_id": selectedIdOption.value,
 						"eval": selectedEvalOption.value, "Date": new Date()
@@ -207,13 +207,13 @@ class AddSamples extends Component {
 		console.log("tabsMapping", tabsMapping);
 		console.log("fixedValues", fixedValues);
 		tabsMapping.forEach(element => {
-			console.log("element",element);
+			console.log("element", element);
 			let index = element.fields.findIndex((key) => {
-				return (key.fieldName === "Aliquots" && !fixedValues.includes(element.key.value)) 
-					
-				
+				return (key.fieldName === "Aliquots" && !fixedValues.includes(element.key.value))
+
+
 			});
-			console.log("index",index);
+			console.log("index", index);
 			if (index !== -1) {
 				let aliquots = (element.data.Aliquots);
 				console.log("aliquots", typeof aliquots);
@@ -245,7 +245,7 @@ class AddSamples extends Component {
 		let result = this.createJson();
 		// result.user_id = localStorage.getItem("user_id");
 		console.log("result", result);
-		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
+		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
 	}
 	save = () => {
 		// this.setState({ formErrors: this.validateForms() },()=> {
@@ -261,15 +261,34 @@ class AddSamples extends Component {
 		setTimeout(() => {
 			this.props.history.push('/Home');
 		}, 5000)
-		
+
 	}
+
+
+	resestToken = () => {
+		axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+			//console.log("status is :",response.status)
+			if (response.status === 200) {
+				localStorage.setItem('token', response.data.token);
+				localStorage.setItem("expiresin", Date.now() + 6000000);
+			} else {
+				localStorage.clear();
+			}
+
+		});
+	}
+
 	render() {
 		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedValues, tabsMapping, formErrors } = this.state;
 		const size = Object.keys(tabsMapping).length;
+		{
+			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
+				this.resestToken()
+		}
 		return (
 			<div>
 				{(() => {
-					if (localStorage.getItem("user_id") !== null) {
+					if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now())) {
 						return (
 							<>
 								<Header />
@@ -280,7 +299,7 @@ class AddSamples extends Component {
 
 									</Col>
 								)}
-								{this.state.isVisible && 
+								{this.state.isVisible &&
 									<Alert variant='success'>
 										<Alert.Heading>Successfully Saved Samples.</Alert.Heading>
 									</Alert>
@@ -299,19 +318,19 @@ class AddSamples extends Component {
 											/>
 										</Col>
 										{selectedIdOption === null ? null :
-										<Col md="4">
-											<h5 className="text-dark">Please Select Eval</h5>
-											<Select
-												label="Sample Eval"
-												placeholder="Select Eval"
-												isSearchable={true}
-												value={selectedEvalOption}
-												onChange={this.handleEvalChange}
-												options={this.state.evalOptions}
-											/>
-										</Col>
+											<Col md="4">
+												<h5 className="text-dark">Please Select Eval</h5>
+												<Select
+													label="Sample Eval"
+													placeholder="Select Eval"
+													isSearchable={true}
+													value={selectedEvalOption}
+													onChange={this.handleEvalChange}
+													options={this.state.evalOptions}
+												/>
+											</Col>
 										}
-										{selectedEvalOption === null? null :
+										{selectedEvalOption === null ? null :
 											<Col md="4">
 												<h5 className="text-dark">Please Select Sample Type</h5>
 												<Select
@@ -324,7 +343,7 @@ class AddSamples extends Component {
 													onChange={this.onChange}
 													options={types}
 													isMulti
-													isClearable={multiValue!==null && multiValue.some(v => v.isFixed)}
+													isClearable={multiValue !== null && multiValue.some(v => v.isFixed)}
 												/>
 											</Col>
 										}

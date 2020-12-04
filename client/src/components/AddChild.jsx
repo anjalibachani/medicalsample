@@ -43,7 +43,7 @@ const customStyles = {
         style: {
             fontSize: '100%',
             fontWeight: "bold",
-            paddingLeft: '8px', 
+            paddingLeft: '8px',
             paddingRight: '8px',
         },
     },
@@ -119,7 +119,7 @@ export default class AddChild extends Component {
         this.getChildData();
     }
     getChildData = () => {
-        axios.get(`http://${config.server.host}:${config.server.port}/child/all`).then((response) => {
+        axios.get(`http://${config.server.host}:${config.server.port}/child/all`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -147,7 +147,7 @@ export default class AddChild extends Component {
     };
     createJson = () => {
         let child = {}
-        let { sample_id, date,hb,pb,density } = this.state; 
+        let { sample_id, date, hb, pb, density } = this.state;
         child.sample_id = sample_id;
         child.eval = this.state.eval;
         child.date = date;
@@ -187,21 +187,21 @@ export default class AddChild extends Component {
         }
         if ((this.state.eval !== '' && !(parseInt(this.state.eval) > 0))) {
             errorsObj.eval = "Please Enter Valid Eval (typically > 0)";
-        }  
+        }
         if ((this.state.sample_id !== '' && !(parseInt(this.state.sample_id) > 0))) {
             errorsObj.sample_id = "Please Enter Valid ID (typically > 0)";
-        }  
+        }
 
 
-        if (await this.checkSampleIDAndEval(this.state.eval,this.state.sample_id)) {
+        if (await this.checkSampleIDAndEval(this.state.eval, this.state.sample_id)) {
             errorsObj.id_eval = `Please enter different ID and Eval values OR Goto Add Samples for this child with ID: ${this.state.sample_id}`
         }
         if ((this.state.pb !== '' && !this.state.pb.match(regex_pb_hb)) || (this.state.pb !== '' && !(parseFloat(this.state.pb) >= 3.3 && parseFloat(this.state.pb) <= 15.0))) {
             errorsObj.pb = "Please Enter correct format for Pb (typically ranges from 3.3 - 15.0)";
-        }    
+        }
         if ((this.state.hb !== '' && !this.state.hb.match(regex_pb_hb)) || (this.state.hb !== '' && !(parseFloat(this.state.hb) >= 7.0 && parseFloat(this.state.hb) <= 19.0))) {
             errorsObj.hb = "Please Enter a valid value for Hb (typcal range between 7.0 - 19.0)";
-            }     
+        }
         if (this.state.density !== '' && (!this.state.density.match(regex_density))) {
             errorsObj.density = "Please Enter correct format for Density (typcal range between 0.000 - 9.999)";
         }
@@ -216,7 +216,7 @@ export default class AddChild extends Component {
             }, 5000)
         }
     }
-    saveAndAddSamples = async() => {
+    saveAndAddSamples = async () => {
         this.setState({ formErrors: await this.validateForms() })
         if (Object.keys(this.state.formErrors).length === 0) {
             this.send();
@@ -242,27 +242,46 @@ export default class AddChild extends Component {
             });
         }
     }
-    checkSampleIDAndEval = async (evl,sample_id) => {
-        const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/checkIDandEval`, { params: { sample_id: sample_id,eval:evl } })
-        if (res.data.rows===0) {
+    checkSampleIDAndEval = async (evl, sample_id) => {
+        const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/checkIDandEval`, { params: { sample_id: sample_id, eval: evl } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+        if (res.data.rows === 0) {
             return false;
         }
         return true;
     }
     send = async () => {
         const result = this.createJson();
-        const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
+        const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
         this.setState({
             alertVisibility: true,
         });
     }
+
+
+    resestToken = () => {
+        axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+            //console.log("status is :",response.status)
+            if (response.status === 200) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem("expiresin", Date.now() + 6000000);
+            } else {
+                localStorage.clear();
+            }
+
+        });
+    }
+
     render() {
-        const { data, email_id, admin } = this.state; 
+        const { data, email_id, admin } = this.state;
         const filteredItems = data.filter(item => item.sample_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
+        {
+            if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
+                this.resestToken()
+        }
         return (
             <div>
                 {(() => {
-                    if (localStorage.getItem("user_id") !== null) {
+                    if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now())) {
                         return (<>
                             <Header />
                             {this.state.alertVisibility &&
@@ -271,7 +290,7 @@ export default class AddChild extends Component {
                             <Container fluid>
                                 <Form.Text as={Col} className="text-danger">{this.state.formErrors.id_eval}</Form.Text>
                                 <Row> <Col className="custom-col" md="auto">
-                                    <Form.Text as={Col}className="text-danger">{this.state.formErrors.sample_id}</Form.Text>
+                                    <Form.Text as={Col} className="text-danger">{this.state.formErrors.sample_id}</Form.Text>
                                     <InputGroup className="mb-3">
                                         <InputGroup.Prepend>
                                             <InputGroup.Text>ID:</InputGroup.Text>
@@ -281,7 +300,7 @@ export default class AddChild extends Component {
                                             type="number"
                                             min="0"
                                             value={this.state.sample_id}
-                                            onChange={e => this.setState({ sample_id: e.target.value })} />                     
+                                            onChange={e => this.setState({ sample_id: e.target.value })} />
                                     </InputGroup>
                                     <Form.Text as={Col} className="text-danger">{this.state.formErrors.eval}</Form.Text>
                                     <InputGroup className="mb-3">
@@ -292,7 +311,7 @@ export default class AddChild extends Component {
                                             id="eval"
                                             type="number"
                                             value={this.state.eval}
-                                            onChange={e => this.setState({ eval: e.target.value })} />           
+                                            onChange={e => this.setState({ eval: e.target.value })} />
                                     </InputGroup>
                                     <Form.Text as={Col} className="text-danger">{this.state.formErrors.date}</Form.Text>
                                     <InputGroup className="mb-3">
@@ -318,7 +337,7 @@ export default class AddChild extends Component {
                                                 type="number"
                                                 step="0.1"
                                                 value={this.state.pb}
-                                                onChange={e => this.setState({ pb: e.target.value })} />   
+                                                onChange={e => this.setState({ pb: e.target.value })} />
                                         </InputGroup>
                                         <Form.Text as={Col} className="text-danger">{this.state.formErrors.hb}</Form.Text>
                                         <InputGroup className="mb-3">
@@ -350,7 +369,7 @@ export default class AddChild extends Component {
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndExit}> Save and Exit</Button>
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddAnother}> Save and add another</Button>
                                 <Button variant="dark" className="ml-4" size="lg" onClick={this.saveAndAddSamples}>Save and Add Samples</Button>
-                            
+
                                 <DataTable className="block-example border border-dark rounded mb-0"
                                     columns={columns}
                                     data={filteredItems}

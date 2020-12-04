@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react';
 import axios from 'axios';
+import { BrowserRouter as Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
 import CustomAlertBanner from './CustomAlertBanner'
 import Filter from './Filter';
@@ -124,7 +125,9 @@ class CreateShipments extends Component {
 			alertVisibility: false,
 			alertText: 'Please enter all required fields.',
 			alertVariant: 'danger',
-			toggledClearRows: false
+			toggledClearRows: false,
+			showWarning: false,
+			warningText: "",
 		}
 		this.save = this.save.bind(this);
 		this.removeFromShipment = this.removeFromShipment.bind(this);
@@ -199,8 +202,17 @@ class CreateShipments extends Component {
 	}
 	addFilter() {
 
-		var newFilterArray = this.state.filters.concat({ "key": this.state.filters.length + 1, "number": this.state.filters.length + 1 });
-		this.setState({ filters: newFilterArray });
+		if (this.state.returnedFilterValues.length === this.state.filters.length + 1) {
+			var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
+			var newFilterArray = this.state.filters.concat({ "key": this.state.filters.length + 1, "number": this.state.filters.length + 1 });
+
+			this.setState({ filters: newFilterArray });
+		} else {
+			this.setState({
+				showWarning: true,
+				warningText: "can't add filter, One or more filters are empty"
+			})
+		}
 	};
 
 
@@ -256,6 +268,7 @@ class CreateShipments extends Component {
 	}
 
 	handleFromLocationChange = selectedOption => {
+		this.clearFilters();
 		this.setState({ selectedFromOption: selectedOption, from: selectedOption });
 	}
 
@@ -271,7 +284,7 @@ class CreateShipments extends Component {
 
 
 	async getShipmentData() {
-		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
+		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
 			console.log("response.data", response.data);
 			this.setState({
 				data: response.data
@@ -281,7 +294,7 @@ class CreateShipments extends Component {
 	}
 
 	async getLocations() {
-		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
+		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
 		this.setState({ locationoptions: id.data.options })
 	}
 
@@ -389,8 +402,8 @@ class CreateShipments extends Component {
 	}
 	async getLocationIDByName(from_location, to_location) {
 		let locations = []
-		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location } })
-		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location } })
+		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
 		locations.push(from_location_res.data.results);
 		locations.push(to_location_res.data.results);
 		return locations
@@ -441,7 +454,7 @@ class CreateShipments extends Component {
 	}
 	send = async () => {
 		const shipment = await this.createShipmentJson();
-		const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/create`, shipment);
+		const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/create`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, shipment);
 		const aliquots = await this.createAliqoutJson(res.data.results.insertId);
 		if (res.data.results.insertId) {
 			this.setState({
@@ -453,14 +466,30 @@ class CreateShipments extends Component {
 				selectedFromOption: null,
 				selectedToOption: null
 			});
-			const res = axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, aliquots);
+			const res = axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, aliquots);
 		}
+	}
+	resestToken = () => {
+		axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+			//console.log("status is :",response.status)
+			if (response.status === 200) {
+				localStorage.setItem('token', response.data.token);
+				localStorage.setItem("expiresin", Date.now() + 6000000);
+			} else {
+				localStorage.clear();
+			}
+
+		});
 	}
 	render() {
 		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data, locationoptions, filters } = this.state;
 		let locationTooptions = locationoptions;
 		let locationFromoptions = locationoptions;
 		console.log("filters", this.state.filters);
+		{
+			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
+				this.resestToken()
+		}
 		let filteredItems = [];
 		{
 			if (selectedFromOption !== null && data) {
@@ -489,187 +518,201 @@ class CreateShipments extends Component {
 		});
 
 		return (
+
 			<div>
-				<Header />
-				{this.state.alertVisibility &&
-					<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
-				}
-
-				<h2 align="left">&nbsp;&nbsp;&nbsp;Create Shipments:</h2>
-				<hr />
-				<Row>
-					<Col>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>Date:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<DatePicker
-								className="form-control"
-								fixedHeight={false}
-								selected={this.state.date}
-
-								onChange={e => this.setState({ date: e })}
-							/>
-						</InputGroup>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>From:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Select
-
-								label="from"
-								placeholder="Select from"
-								isSearchable={true}
-								value={this.state.selectedFromOption}
-								onChange={this.handleFromLocationChange}
-								options={locationoptions}
-								styles={this.styles}
-							/>
-						</InputGroup>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>Shipping Company:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Form.Control
-								id="shippingcompany"
-								value={this.state.shippingcompany}
-								onChange={e => this.setState({ shippingcompany: e.target.value })}>
-							</Form.Control>
-						</InputGroup>
-					</Col>
-					<Col>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>Shipping Conditions:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Form.Control
-								id="shippingconditions"
-								as="select"
-								value={this.state.shippingconditions}
-								onChange={e => this.setState({ shippingconditions: e.target.value })}>
-								<option>None</option>
-								<option>Dry ice</option>
-								<option>Ice packs</option>
-							</Form.Control>
-						</InputGroup>
-						<InputGroup className="mb-3">
-							<InputGroup.Prepend>
-								<InputGroup.Text>To:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Select
-
-								label="To"
-								placeholder="Select To"
-								isSearchable={true}
-								value={this.state.selectedToOption}
-								onChange={this.handleToLocationChange}
-								options={locationTooptions}
-								styles={this.styles}
-							/>
-						</InputGroup>
-						<InputGroup>
-							<InputGroup.Prepend>
-								<InputGroup.Text>Notes:</InputGroup.Text>
-							</InputGroup.Prepend>
-							<Form.Control as="textarea" id="notes"
-								value={this.state.notes}
-								onChange={e => this.setState({ notes: e.target.value })} />
-						</InputGroup>
-					</Col>
-				</Row>
-
-				<p />
-				<hr />
-				<div>
-					{filters.map((item, key) =>
-						<SamplesFilter key={key + 1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
-					)}
-					<Row>
-						<Col md="auto" className="mt-4">
-							<ButtonGroup>
-								<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
-								<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
-								<Button variant="dark" size="lg" onClick={this.clearFilters}>Clear Filter</Button>
-							</ButtonGroup>
-						</Col>
-						<hr />
-					</Row>
-					<hr />
-					<Col align="right">
-						{movedshipementsData.length} samples in shipment
-            		    </Col>
-				</div>
-				<Row>
-					<Col>
-						{selectedFromOption !== null &&
-							<DataTable
-								columns={columns}
-								data={filteredItems}
-								keyField="sample_key"
-								selectableRows
-								onSelectedRowsChange={this.handleChange}
-								striped={true}
-								highlightOnHover
-								pagination
-								clearSelectedRows={this.state.toggledClearRows}
-								selectableRowDisabled={rowSelectCritera}
-
-							/>}
-					</Col>
-					<Col md="auto">
-						<div style={{ padding: 25 }}>
-							<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
-							<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
-						</div>
-					</Col>
-					<Col>
-						{movedshipementsData.length !== 0 &&
-							<Button variant="dark" size="lg" onClick={this.save}>Create Shipment</Button>
-						}
-						<DataTable
-							columns={movedshipementscolumns}
-							data={movedshipementsData}
-							keyField="sample_key"
-							striped={true}
-							highlightOnHover
-							pagination
-						/>
-					</Col>
-				</Row>
-				<Modal size="lg" show={this.state.showModal}>
-
-					<Modal.Header>
-						<Modal.Title>Add samples to shipment</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<p>Click 'Save' to add all aliquots for each sample you selected to your shipment by specifying the number of available aliquots to go to the shipment below.</p>
-						{
-							selectedRows.map((element, key) => {
-								let rows = []
-								for (let index = 0; index < element.aliquot_count; index++) {
-									rows.push({ "value": index + 1, "label": index + 1 })
+				{(() => {
+					if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now())) {
+						return (
+							<>
+								<Header />
+								{this.state.alertVisibility &&
+									<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
 								}
-								return (<>
-									<Row>
-										<Col><p>Select Number of Aliquots for {element.sample_id} of {element.type}</p></Col>
-										<Col><Select
-											label="Number of Aliquots"
-											placeholder="Number of Aliquots"
-											value={element.selectedAliquotValue}
-											onChange={e => this.handleAliquotNumberChange(e, key)}
-											options={rows}
-										/></Col>
-									</Row>
-								</>)
-							})
-						}
 
-					</Modal.Body>
-					<Modal.Footer>
-						<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>
-						<Button variant="primary" onClick={this.moveAliquotsToShipment}>Save</Button>
-					</Modal.Footer>
-				</Modal>
+								<h2 align="left">&nbsp;&nbsp;&nbsp;Create Shipments:</h2>
+								<hr />
+								<Row>
+									<Col>
+										<InputGroup className="mb-3">
+											<InputGroup.Prepend>
+												<InputGroup.Text>Date:</InputGroup.Text>
+											</InputGroup.Prepend>
+											<DatePicker
+												className="form-control"
+												fixedHeight={false}
+												selected={this.state.date}
+
+												onChange={e => this.setState({ date: e })}
+											/>
+										</InputGroup>
+										<InputGroup className="mb-3">
+											<InputGroup.Prepend>
+												<InputGroup.Text>From:</InputGroup.Text>
+											</InputGroup.Prepend>
+											<Select
+
+												label="from"
+												placeholder="Select from"
+												isSearchable={true}
+												value={this.state.selectedFromOption}
+												onChange={this.handleFromLocationChange}
+												options={locationoptions}
+												styles={this.styles}
+											/>
+										</InputGroup>
+										<InputGroup className="mb-3">
+											<InputGroup.Prepend>
+												<InputGroup.Text>Shipping Company:</InputGroup.Text>
+											</InputGroup.Prepend>
+											<Form.Control
+												id="shippingcompany"
+												value={this.state.shippingcompany}
+												onChange={e => this.setState({ shippingcompany: e.target.value })}>
+											</Form.Control>
+										</InputGroup>
+									</Col>
+									<Col>
+										<InputGroup className="mb-3">
+											<InputGroup.Prepend>
+												<InputGroup.Text>Shipping Conditions:</InputGroup.Text>
+											</InputGroup.Prepend>
+											<Form.Control
+												id="shippingconditions"
+												as="select"
+												value={this.state.shippingconditions}
+												onChange={e => this.setState({ shippingconditions: e.target.value })}>
+												<option>None</option>
+												<option>Dry ice</option>
+												<option>Ice packs</option>
+											</Form.Control>
+										</InputGroup>
+										<InputGroup className="mb-3">
+											<InputGroup.Prepend>
+												<InputGroup.Text>To:</InputGroup.Text>
+											</InputGroup.Prepend>
+											<Select
+
+												label="To"
+												placeholder="Select To"
+												isSearchable={true}
+												value={this.state.selectedToOption}
+												onChange={this.handleToLocationChange}
+												options={locationTooptions}
+												styles={this.styles}
+											/>
+										</InputGroup>
+										<InputGroup>
+											<InputGroup.Prepend>
+												<InputGroup.Text>Notes:</InputGroup.Text>
+											</InputGroup.Prepend>
+											<Form.Control as="textarea" id="notes"
+												value={this.state.notes}
+												onChange={e => this.setState({ notes: e.target.value })} />
+										</InputGroup>
+									</Col>
+								</Row>
+
+								<p />
+								<hr />
+								<div>
+									{this.state.showWarning &&
+										<Form.Text as={Col} className="text-danger">{this.state.warningText}</Form.Text>
+									}
+									{selectedFromOption && filters.map((item, key) =>
+										<SamplesFilter key={key + 1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
+									)}
+									<Row>
+										<Col md="auto" className="mt-4">
+											<ButtonGroup>
+												<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
+												<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
+												<Button variant="dark" size="lg" onClick={this.clearFilters}>Clear Filter</Button>
+											</ButtonGroup>
+										</Col>
+										<hr />
+									</Row>
+									<hr />
+									<Col align="right">
+										{movedshipementsData.length} samples in shipment
+            		    </Col>
+								</div>
+								<Row>
+									<Col>
+										{selectedFromOption !== null &&
+											<DataTable
+												columns={columns}
+												data={filteredItems}
+												keyField="sample_key"
+												selectableRows
+												onSelectedRowsChange={this.handleChange}
+												striped={true}
+												highlightOnHover
+												pagination
+												clearSelectedRows={this.state.toggledClearRows}
+												selectableRowDisabled={rowSelectCritera}
+
+											/>}
+									</Col>
+									<Col md="auto">
+										<div style={{ padding: 25 }}>
+											<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
+											<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
+										</div>
+									</Col>
+									<Col>
+										{movedshipementsData.length !== 0 &&
+											<Button variant="dark" size="lg" onClick={this.save}>Create Shipment</Button>
+										}
+										<DataTable
+											columns={movedshipementscolumns}
+											data={movedshipementsData}
+											keyField="sample_key"
+											striped={true}
+											highlightOnHover
+											pagination
+										/>
+									</Col>
+								</Row>
+								<Modal size="lg" show={this.state.showModal}>
+
+									<Modal.Header>
+										<Modal.Title>Add samples to shipment</Modal.Title>
+									</Modal.Header>
+									<Modal.Body>
+										<p>Click 'Save' to add all aliquots for each sample you selected to your shipment by specifying the number of available aliquots to go to the shipment below.</p>
+										{
+											selectedRows.map((element, key) => {
+												let rows = []
+												for (let index = 0; index < element.aliquot_count; index++) {
+													rows.push({ "value": index + 1, "label": index + 1 })
+												}
+												return (<>
+													<Row>
+														<Col><p>Select Number of Aliquots for {element.sample_id} of {element.type}</p></Col>
+														<Col><Select
+															label="Number of Aliquots"
+															placeholder="Number of Aliquots"
+															value={element.selectedAliquotValue}
+															onChange={e => this.handleAliquotNumberChange(e, key)}
+															options={rows}
+														/></Col>
+													</Row>
+												</>)
+											})
+										}
+
+									</Modal.Body>
+									<Modal.Footer>
+										<Button variant="secondary" onClick={this.handleCloseModal}>Cancel</Button>
+										<Button variant="primary" onClick={this.moveAliquotsToShipment}>Save</Button>
+									</Modal.Footer>
+								</Modal>
+							</>
+						);
+					} else {
+						return (<Redirect to="/login" />)
+					}
+				})()}
 			</div >
 
 		);
