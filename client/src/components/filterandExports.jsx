@@ -60,7 +60,7 @@ const columns = [
 function convertArrayOfObjectsToCSV(array){
 	let result;
   if(array.length<1){
-    return ''
+    return 
   }
 	const columnDelimiter = ',';
 	const lineDelimiter = '\n';
@@ -243,53 +243,68 @@ async processFilter(){
   if (!this.state.returnedFilterValues.length) {
     return
   }
+  console.log("in process filter ", this.state.data)
   for (var i = 1; i <= this.state.filters.length; i++) {
     //}
     //check to see if the filter's Type and Value aren't empty
     try{
     const [field,condition,value] = this.state.returnedFilterValues[i]
-    console.log("in process filter filtercals",field,condition,value);
-    const valuearray=value.map(item=>item.value)
+    console.log("in process filter filtervals",field,condition,value);
+    const valuearray=Array.from(value.map(item=>item.value))
+    // if(valuearray){
+    //   console.log("value array is undefined")
+    //   return
+    // }
     console.log("valuearray",valuearray)
+    console.log("val array",valuearray.length)
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
     
       //var filtereddata='';
-      if(field === "ID"){
-        if(condition === 'equals'){
-          var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id));
+      if(valuearray.length !== 0){
+        console.log("value array is defined")
+        if(field === "ID"){
+          if(condition === 'equals'){
+            var filtereddata = this.state.data.filter( p => valuearray.includes(p.sample_id));
+          }
+          else if(condition === 'less than'){
+            var filtereddata = this.state.data.filter( p => p.sample_id < valuearray[0] );
+          }
+          else if(condition === 'greater than'){
+            var filtereddata = this.state.data.filter( p => p.sample_id > valuearray[0] );
+          }
+        }else if(field === "Eval"){
+          if(condition === 'less than'){
+          var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
         }
-        else if(condition === 'less than'){
-          var filtereddata = this.state.data.filter( p => p.sample_id < valuearray[0] );
+          else if(condition === 'equals'){
+          var filtereddata = this.state.data.filter( p => valuearray.includes(p.eval) );
         }
-        else if(condition === 'greater than'){
-          var filtereddata = this.state.data.filter( p => p.sample_id > valuearray[0] );
+          else if(condition === 'greater than'){
+          var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
         }
-      }else if(field === "Eval"){
-        if(condition === 'less than'){
-        var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
+        }else if(field === "aliquots"){
+          if(condition === 'less than'){
+          var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
+        }
+          else if(condition === 'equals'){
+          var filtereddata = this.state.data.filter( p => valuearray.includes(p.aliquot_count) );
+        }
+          else if(condition === 'greater than'){
+          var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
+        }
+        }
+        console.log("after filtering filtered data", filtereddata)
+        await this.setState({data:filtereddata})
+      }else{
+        console.log("entered else in processfilter ", this.state.data)
+        this.setState({data:this.state.data})
       }
-        else if(condition === 'equals'){
-        var filtereddata = this.state.data.filter( p => valuearray.includes(p.eval) );
-      }
-        else if(condition === 'greater than'){
-        var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
-      }
-      }else if(field === "aliquots"){
-        if(condition === 'less than'){
-        var filtereddata = this.state.data.filter( p => p.eval < valuearray[0] );
-      }
-        else if(condition === 'equals'){
-        var filtereddata = this.state.data.filter( p => valuearray.includes(p.aliquot_count) );
-      }
-        else if(condition === 'greater than'){
-        var filtereddata = this.state.data.filter( p => p.eval > valuearray[0] );
-      }
-      }
+      
     }catch(err){
       console.log("filter failed")
     }
     
-    this.setState({data:filtereddata})
+    //this.setState({data:filtereddata})
     //this.state.data.filter(item => item.field && (item.field < value))
     //console.log(this.state.data)
   }
@@ -386,6 +401,7 @@ resestToken = () =>{
 render() {
     const { data, toggleCleared } = this.state;
     //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
+    console.log("data before filter in render", data);
     const filteredItems =  data.filter(item => item.type && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
     const tableData = {
       columns,
@@ -414,7 +430,7 @@ render() {
 								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
 								<Button className= 'ml-3' variant="dark" size="lg" onClick={this.clearFilters}>ClearFilters</Button>
                 <this.Export onExport={() => downloadCSV(this.state.selectedRows)} />
-                <this.ExportAll onExport={() => downloadCSV(this.state.data)} />
+                {/* <this.ExportAll onExport={() => downloadCSV(this.state.data)} /> */}
                 <Button className= 'ml-3' variant="dark" size="lg" onClick={this.deleteAll}>Delete</Button>
 							</ButtonGroup>
 						</Col>
