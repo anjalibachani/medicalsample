@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, ButtonGroup, Button, Container } from 'react-bootstrap';
-import CustomTable from './CustomTable'; 
+import CustomTable from './CustomTable';
 import CustomAlertBanner from './CustomAlertBanner';
 import Header from './Header';
 import Basic2Table from './Basic2Table';
@@ -13,37 +13,64 @@ const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('
 
 /* This is the 'See Shipments' page. */
 class ViewShipments extends Component {
-   	constructor(props) {
+	constructor(props) {
 		super(props);
-    	this.state = {
+		this.state = {
 
 		}
 	}
+	resestToken = () => {
+		Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+			//console.log("status is :",response.status)
+			if (response.status === 200) {
+				localStorage.setItem('token', response.data.token);
+				localStorage.setItem("expiresin", Date.now() + 6000000);
+			} else {
+				localStorage.clear();
+			}
+
+		});
+	}
+
 	render() {
-        return (
-            <div>
-                <Header />
-				{this.state.alertVisibility &&
-				<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText}/>
-				}
-					<h2 align="left">&nbsp;&nbsp;&nbsp;View Shipments</h2>
-					<Row>
-                    <Col align="left">
-                        <ButtonGroup>
-							&nbsp;&nbsp;&nbsp;&nbsp;
+		{
+			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
+				this.resestToken()
+		}
+		return (
+			<div>
+				{(() => {
+					if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now())) {
+						return (
+							<>
+								<Header />
+								{this.state.alertVisibility &&
+									<CustomAlertBanner variant={this.state.alertVariant} text={this.state.alertText} />
+								}
+								<h2 align="left">&nbsp;&nbsp;&nbsp;View Shipments</h2>
+								<Row>
+									<Col align="left">
+										<ButtonGroup>
+											&nbsp;&nbsp;&nbsp;&nbsp;
                             <Button variant="dark" size="lg" href="/AddShipments" text="Create a Shipment">Create a Shipment</Button>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                         </ButtonGroup>
-                    </Col>
-                </Row>
-				
-				<hr />
-				<Container >
-				<Basic2Table/>
-				</Container>
+									</Col>
+								</Row>
+
+								<hr />
+								<Container >
+									<Basic2Table />
+								</Container>
+							</>
+						);
+					} else {
+						return (<Redirect to="/login" />)
+					}
+				})()}
 			</div>
-        )                
-    };
+		)
+	};
 }
 
 export default ViewShipments;

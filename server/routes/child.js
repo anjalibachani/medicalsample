@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/dbconnect");
+const validatetoken = require("./validatetoken");
 
-router.post("/add", async (req, res) => {
+router.post("/add", validatetoken, async (req, res) => {
   console.log(req.body);
   var transaction_history = {
     user_id: req.body.user_id,
@@ -11,29 +12,38 @@ router.post("/add", async (req, res) => {
   };
   console.log(transaction_history);
   req.body.date = new Date(req.body.date);
-    var query = await db.query("INSERT INTO `samples` SET ?", req.body, (error,results,fields)=>{
+  var query = await db.query(
+    "INSERT INTO `samples` SET ?",
+    req.body,
+    (error, results, fields) => {
       if (error) throw error;
       console.log(results.insertId);
       return res.status(202).json({ results });
-    });
-    console.log(query.sql);
-    
-    var query = db.query("INSERT INTO `transaction_history` SET ?", transaction_history, (error, results, fields) => {
-          if (error) throw error;
-          console.log(results.insertId);
-          // return res.status(202).json({ results });
-        }
-      );
-      console.log(query.sql);
+    }
+  );
+  console.log(query.sql);
+
+  var query = db.query(
+    "INSERT INTO `transaction_history` SET ?",
+    transaction_history,
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log(results.insertId);
+      // return res.status(202).json({ results });
+    }
+  );
+  console.log(query.sql);
 });
-    
-router.get("/all", async (req, res) => {
-  await db.query("SELECT * FROM `samples`", (error, results, fields) => {
-    if (error) throw error;
-    //   console.log(results);
-    return res.status(200).json({ results: results });
-  });
+
+router.get("/all", validatetoken, async (req, res) => {
+  await db.query(
+    "SELECT * FROM medsample_db.samples GROUP BY sample_id,eval;",
+    (error, results, fields) => {
+      if (error) throw error;
+      //   console.log(results);
+      return res.status(200).json({ results: results });
+    }
+  );
 });
 
 module.exports = router;
-

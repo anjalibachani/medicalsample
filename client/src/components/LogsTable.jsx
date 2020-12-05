@@ -10,7 +10,12 @@ const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('
 
 const columns = [
     {
-        name: "Time",
+        name: "User",
+        selector: "email_id",
+        sortable: true
+    },
+    {
+        name: "Timestamp",
         selector: "timestamp",
         sortable: true
     },
@@ -22,9 +27,9 @@ const columns = [
 const customStyles = {
     headCells: {
         style: {
-            fontSize:'100%',
-            fontWeight:"bold",
-            paddingLeft: '8px', 
+            fontSize: '100%',
+            fontWeight: "bold",
+            paddingLeft: '8px',
             paddingRight: '8px',
         },
     },
@@ -90,7 +95,7 @@ export default class LogsTable extends Component {
         <Button className='ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>Export to CSV</Button>
     );
     getLogsData = () => {
-        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlogs`).then((response) => {
+        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlogs`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -108,14 +113,14 @@ export default class LogsTable extends Component {
                 <Container >
                     <this.ExportAll onExport={() => downloadCSV(this.state.data)} />
                     <DataTable className="block-example border border-dark rounded mb-0"
-                    columns={columns}
-                    data={data}
-                    keyField="transaction_id"
-                    striped={true}
-                    pagination
-                    pointerOnHover
-                    highlightOnHover
-                    defaultSortField="timestamp"
+                        columns={columns}
+                        data={data}
+                        keyField="transaction_id"
+                        striped={true}
+                        pagination
+                        pointerOnHover
+                        highlightOnHover
+                        defaultSortField="timestamp"
                         defaultSortAsc={false}
                         customStyles={customStyles}
                         paginationPerPage="25"

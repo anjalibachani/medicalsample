@@ -5,7 +5,7 @@ import Filter from './Filter';
 import ExpandedComponent from './ExpandedComponent'
 import memoize from 'memoize-one';
 import CustomAlertBanner from "./CustomAlertBanner";
-import { Button, Form, FormControl, InputGroup, Row, Col, Modal} from 'react-bootstrap';
+import { Button, Form, FormControl, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
 const contextActions = memoize(deleteHandler => (
@@ -46,8 +46,8 @@ const rowSelectCritera = row => {
 }
 class Basic2Table extends Component {
   constructor(props) {
-		super(props);
-		this.state = {
+    super(props);
+    this.state = {
       data: [],
       selectedRows: [],
       toggleCleared: false,
@@ -69,12 +69,12 @@ class Basic2Table extends Component {
   }
   markshipments = () => {
     const { selectedRows } = this.state;
-    const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id]);
-    Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows })
+    const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id, r.user_id, r.to_location_name]);
+    Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
     this.setState(state => ({ toggleCleared: !state.toggleCleared }));
   }
-  getShipmentsData=() => {
-    Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
+  getShipmentsData = () => {
+    Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
       console.log("response.data", response.data);
       this.setState({
         data: response.data
@@ -82,7 +82,7 @@ class Basic2Table extends Component {
     })
   }
   render() {
-    const { data, toggleCleared } = this.state; 
+    const { data, toggleCleared } = this.state;
     this.getShipmentsData();
     return (
       <div>
@@ -103,6 +103,7 @@ class Basic2Table extends Component {
           highlightOnHover
           pagination
           expandableRows
+          expandOnRowClicked
           selectableRowsHighlight
           expandableRowsComponent={<ExpandedComponent />}
           contextActions={contextActions(this.markshipments)}

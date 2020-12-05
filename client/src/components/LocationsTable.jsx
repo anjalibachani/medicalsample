@@ -26,7 +26,7 @@ const customStyles = {
         style: {
             fontSize: '100%',
             fontWeight: "bold",
-            paddingLeft: '8px', 
+            paddingLeft: '8px',
             paddingRight: '8px',
         },
     },
@@ -101,16 +101,16 @@ export default class LocationsTable extends Component {
 
         this.setState({ selectedRows: state.selectedRows });
     };
-    deleteLocation = async() => {
+    deleteLocation = async () => {
         const { selectedRows } = this.state;
         const rows = selectedRows.map(r => [r.location_id]);
-        console.log("location rows: ",rows);
-        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deletelocation`, { rows: rows })
+        console.log("location rows: ", rows);
+        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deletelocation`, { rows: rows }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
         console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
     }
     getLocationData = () => {
-        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlocation`).then((response) => {
+        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlocation`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -120,7 +120,7 @@ export default class LocationsTable extends Component {
         prop: PropTypes
     }
     checkLocationExist = async (location_name) => {
-        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checklocation`, { params: { location_name: location_name } })
+        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checklocation`, { params: { location_name: location_name } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
         if (res.data.rows === 0) {
             return false;
         }
@@ -137,7 +137,7 @@ export default class LocationsTable extends Component {
         return errorsObj;
     }
     createJson = () => {
-        let { location_name} = this.state;
+        let { location_name } = this.state;
         let location = {}
         location.location_name = location_name
         location['user_id'] = localStorage.getItem("user_id")
@@ -147,7 +147,7 @@ export default class LocationsTable extends Component {
     send = async () => {
         const result = this.createJson();
         console.log("result", result);
-        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/addlocation`, result);
+        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/addlocation`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
         if (res.status === 200) {
             console.log("Added");
             this.setState({
@@ -156,6 +156,9 @@ export default class LocationsTable extends Component {
             this.setState({
                 location_name: '',
             });
+            setTimeout(() => {
+                this.props.history.push('/locations');
+            }, 5000)
         }
     }
     save = async () => {
@@ -174,7 +177,7 @@ export default class LocationsTable extends Component {
                     this.filteredItems = this.state.data.filter(
                         (item) => {
                             item.location_name &&
-                                item.location_name.toLowerCase().includes(newFilterText.toLowerCase())                            
+                                item.location_name.toLowerCase().includes(newFilterText.toLowerCase())
                         }
                     );
                     this.setState({ filterText: newFilterText });
@@ -213,13 +216,13 @@ export default class LocationsTable extends Component {
                         </Row>
                     </Form>
                     <DataTable className="block-example border border-dark rounded mb-0 w-50"
-                    columns={columns}
+                        columns={columns}
                         data={filteredItems}
-                    keyField="location_id"
-                    striped={true}
-                    highlightOnHover
-                    pointerOnHover
-                    pagination
+                        keyField="location_id"
+                        striped={true}
+                        highlightOnHover
+                        pointerOnHover
+                        pagination
                         customStyles={customStyles}
                         subHeader
                         persistTableHead

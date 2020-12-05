@@ -7,11 +7,6 @@
           "fieldName": "Date",
           "fieldType": "date"
         },
-
-        {
-          "fieldName": "Fasted",
-          "fieldType": "checkbox"
-        },
         {
           "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
@@ -23,16 +18,16 @@
         {
           "fieldName": "Initial Storage Conditions",
           "fieldType": "select",
-          "values": ["Select","-20C", "-80C", "4C"]
-        },
-        {
-          "fieldName": "Sub Study",
-          "fieldType": "checkbox"
+          "values": ["Select", "-20C", "-80C", "4C"]
         },
         {
           "fieldName": "Sub Study Name",
           "fieldType": "select",
-          "values": ["Select","Scola-Exposome", "MOX-IN"]
+          "values": ["Select", "None", "Scola-Exposome", "MOX-IN"]
+        },
+        {
+          "fieldName": "Fasted",
+          "fieldType": "checkbox"
         },
         {
           "fieldName": "Additives",
@@ -48,33 +43,28 @@
           "fieldName": "Date",
           "fieldType": "date"
         },
-
-        {
-          "fieldName": "Aliquots",
-          "fieldType": "number"
-        },
         {
           "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         },
         {
-          "fieldName": "Additives",
-          "fieldType": "multicheckbox",
-          "values": ["BHT"]
+          "fieldName": "Aliquots",
+          "fieldType": "number"
         },
         {
           "fieldName": "Initial Storage Conditions",
           "fieldType": "select",
-          "values": ["Select","-20C", "-80C", "4C"]
-        },
-        {
-          "fieldName": "Sub Study",
-          "fieldType": "checkbox"
+          "values": ["Select", "-20C", "-80C", "4C"]
         },
         {
           "fieldName": "Sub Study Name",
           "fieldType": "select",
-          "values": ["Select","Scola-Exposome", "MOX-IN"]
+          "values": ["Select", "None", "Scola-Exposome", "MOX-IN"]
+        },
+        {
+          "fieldName": "Additives",
+          "fieldType": "multicheckbox",
+          "values": ["BHT"]
         }
       ]
     },
@@ -99,9 +89,8 @@
           "fieldName": "Date",
           "fieldType": "date"
         },
-
         {
-          "fieldName": "Fasted",
+          "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
         },
         {
@@ -109,11 +98,17 @@
           "fieldType": "number"
         },
         {
-          "fieldName": "Foil Wrapped",
-          "fieldType": "checkbox"
+          "fieldName": "Initial Storage Conditions",
+          "fieldType": "select",
+          "values": ["Select", "-20C", "-80C"]
         },
         {
-          "fieldName": "Unrestricted Consent",
+          "fieldName": "Sub Study Name",
+          "fieldType": "select",
+          "values": ["Select", "Scola-Exposome", "MOX-IN"]
+        },
+        {
+          "fieldName": "Foil Wrapped",
           "fieldType": "checkbox"
         },
 
@@ -122,18 +117,8 @@
           "fieldType": "text"
         },
         {
-          "fieldName": "Initial Storage Conditions",
-          "fieldType": "select",
-          "values": ["Select","-20C", "-80C"]
-        },
-        {
-          "fieldName": "Sub Study",
+          "fieldName": "Fasted",
           "fieldType": "checkbox"
-        },
-        {
-          "fieldName": "Sub Study Name",
-          "fieldType": "select",
-          "values": ["Select","Scola-Exposome", "MOX-IN"]
         }
       ]
     },
@@ -144,11 +129,6 @@
           "fieldName": "Date",
           "fieldType": "date"
         },
-
-        {
-          "fieldName": "Fasted",
-          "fieldType": "checkbox"
-        },
         {
           "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
@@ -159,6 +139,16 @@
           "fieldType": "number"
         },
         {
+          "fieldName": "Initial Storage Conditions",
+          "fieldType": "select",
+          "values": ["Select", "-20C", "-80C"]
+        },
+        {
+          "fieldName": "Sub Study Name",
+          "fieldType": "select",
+          "values": ["Select", "Scola-Exposome", "MOX-IN"]
+        },
+        {
           "fieldName": "Foil Wrapped",
           "fieldType": "checkbox"
         },
@@ -167,23 +157,13 @@
           "fieldType": "text"
         },
         {
-          "fieldName": "Initial Storage Conditions",
-          "fieldType": "select",
-          "values": ["Select","-20C", "-80C"]
-        },
-        {
-          "fieldName": "Sub Study",
-          "fieldType": "checkbox"
-        },
-        {
-          "fieldName": "Sub Study Name",
-          "fieldType": "select",
-          "values": ["Select","Scola-Exposome", "MOX-IN"]
-        },
-        {
           "fieldName": "Additives",
           "fieldType": "multicheckbox",
           "values": ["Heparin", "MPA"]
+        },
+        {
+          "fieldName": "Fasted",
+          "fieldType": "checkbox"
         }
       ]
     },
@@ -208,15 +188,14 @@
           "fieldName": "Date",
           "fieldType": "date"
         },
-
-        {
-          "fieldName": "Initial Storage Conditions",
-          "fieldType": "select",
-          "values": ["Select","-20C", "4C", "Room temperature"]
-        },
         {
           "fieldName": "Unrestricted Consent",
           "fieldType": "checkbox"
+        },
+        {
+          "fieldName": "Initial Storage Conditions",
+          "fieldType": "select",
+          "values": ["Select", "-20C", "4C", "Room temperature"]
         }
       ]
     },
