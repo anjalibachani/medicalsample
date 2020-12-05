@@ -3,7 +3,7 @@ import differenceBy from 'lodash/differenceBy';
 import DataTable from 'react-data-table-component';
 import { Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Row, Col, Container, Form } from 'react-bootstrap';
-import ExpandedComponent from './ExpandedComponent'
+import ExpandFilterRow from './ExpandFilterRow'
 
 import Axios from 'axios';
 import styled from 'styled-components';
@@ -250,7 +250,7 @@ class filterandExports extends Component {
   async processFilter() {
     if (!this.state.returnedFilterValues.length) {
       return
-    }
+    }console.log(this.state.data)
     for (var i = 1; i <= this.state.filters.length; i++) {
       //check to see if the filter's Type and Value aren't empty
         const [field, condition, value] = this.state.returnedFilterValues[i]
@@ -455,7 +455,7 @@ class filterandExports extends Component {
                   defaultSortField="Date"
                   subHeader
                   expandableRows
-                  expandableRowsComponent={<ExpandedComponent />}
+                  expandableRowsComponent={<ExpandFilterRow />}
                   persistTableHead
                   subHeaderComponent={this.getSubHeaderComponent()}
                 />
