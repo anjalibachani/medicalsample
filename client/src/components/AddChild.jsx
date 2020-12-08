@@ -11,6 +11,8 @@ import CustomAlertBanner from './CustomAlertBanner';
 
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
+const access_token = localStorage.getItem("token")
+axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
 const columns = [
     {
         name: "Child ID",
@@ -258,8 +260,9 @@ export default class AddChild extends Component {
     }
 
 
-    resestToken = () => {
-        axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+    resetToken = () => {
+        console.log("calling reset token in addchild")
+        axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }).then((response) => {
             //console.log("status is :",response.status)
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);
@@ -275,8 +278,9 @@ export default class AddChild extends Component {
         const { data, email_id, admin } = this.state;
         const filteredItems = data.filter(item => item.sample_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         {
-            if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
-                this.resestToken()
+            console.log("add child token validation",localStorage.getItem("expiresin"), Date.now()+600000, Date.now())
+            if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") <= (Date.now() + 600000)))
+                this.resetToken()
         }
         return (
             <div>

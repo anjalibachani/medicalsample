@@ -7,7 +7,7 @@ const config = process.env.MED_DEPLOY_ENV === 'deployment' ? require('../config/
 module.exports = (req,res,next)=>{
     //console.log(req)
     const token = req.get("authorization").slice(7);
-    //console.log(token)
+    console.log("token",token)
     if(token){
         // token = token.slice(7)
         jwt.verify(token,config.JWT_SECRET,(err,decoded)=>{
@@ -16,6 +16,7 @@ module.exports = (req,res,next)=>{
             if(err){
                 return res.status(401).json({message:"UnAuthorized"});
             }else{
+                console.log("token verifivation successful")
                 next()
             }
         });

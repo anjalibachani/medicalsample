@@ -12,6 +12,9 @@ import 'react-datepicker/dist/react-datepicker.css'
 const sampleTypes = require("../config/types.json");
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
+const access_token = localStorage.getItem("token")
+axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+
 class AddSamples extends Component {
 	constructor(props) {
 		super(props);
@@ -282,7 +285,7 @@ class AddSamples extends Component {
 		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedValues, tabsMapping, formErrors } = this.state;
 		const size = Object.keys(tabsMapping).length;
 		{
-			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
+			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") <= Date.now() + 600000))
 				this.resestToken()
 		}
 		return (
