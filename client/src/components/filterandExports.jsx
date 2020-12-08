@@ -380,7 +380,7 @@ class filterandExports extends Component {
     );
   };
 
-  resestToken = () => {
+  resetToken = () => {
     Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
       //console.log("status is :",response.status)
       if (response.status === 200) {
@@ -402,13 +402,14 @@ class filterandExports extends Component {
       data,
     };
     {
-      if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
-        this.resestToken()
+      console.log(Number(localStorage.getItem("expiresin")) > (Date.now() + 600000), localStorage.getItem("expiresin") , (Date.now() + 600000), Date.now())
+      if (localStorage.getItem("user_id") != null && Number((localStorage.getItem("expiresin")) <= (Date.now() + 600000)))
+        this.resetToken()
     }
     return (
       <div>
         {(() => {
-          if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now())) {
+          if (localStorage.getItem("user_id") != null && (Number(localStorage.getItem("expiresin")) > Date.now())) {
             return (<div>
               <Header />
               {/* const actionsMemo = React.useMemo(() => <this.Export onExport={() => downloadCSV(this.state.data)} />, []); */}

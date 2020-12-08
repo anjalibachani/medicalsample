@@ -26,7 +26,7 @@ export default class Manage extends Component {
     render() {
         let location = window.location.pathname;
         {
-            if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
+            if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") <= Date.now() + 600000))
                 this.resestToken()
         }
         return (
