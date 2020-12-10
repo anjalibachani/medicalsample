@@ -18,6 +18,20 @@ router.get("/viewshipments", validatetoken, (req, res) => {
     }
   );
 });
+
+router.get("/shipmentdetails", validatetoken, (req, res) => {
+  console.log(req.query);
+  var query = db.query(
+    "select S.* ,A.*,COUNT(*) as aliquot_count from samples S join aliquots A on S.samples_key=A.aliquots_samples_key where A.shipment_id=? group by A.aliquots_samples_key,A.shipment_id;",
+    [req.query.shipment_id],
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log(results);
+      return res.status(200).json(results);
+    }
+  );
+});
+
 router.post("/markshipments", validatetoken, (req, res) => {
   let rowsData = req.body.rows;
   for (let index = 0; index < rowsData.length; index++) {
