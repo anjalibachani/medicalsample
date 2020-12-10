@@ -111,7 +111,7 @@ export default class UsersTable extends Component {
         const rows = selectedRows.map(r => r.user_id);
         console.log("user rows: ", rows);
 
-        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } });
+        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows }   );
         console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
     }
@@ -120,7 +120,7 @@ export default class UsersTable extends Component {
         this.setState({ selectedRows: state.selectedRows });
     };
     getUsersData = () => {
-        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewuser`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewuser`   ).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -141,7 +141,7 @@ export default class UsersTable extends Component {
         return user
     }
     checkEmailExist = async (email_id) => {
-        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id } }   )
         if (res.data.rows === 0) {
             return false;
         }
@@ -164,7 +164,7 @@ export default class UsersTable extends Component {
     send = async () => {
         const result = this.createJson();
         console.log("result", result);
-        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
+        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`   , result);
         if (res.status === 200) {
             console.log("Added");
             this.setState({

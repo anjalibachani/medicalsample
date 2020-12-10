@@ -1,15 +1,14 @@
 import React from 'react';
 import { Button, Form, FormControl, InputGroup, Row, Col, Modal, Table } from 'react-bootstrap';
 
-export default ({ data }) => 
-{
+export default ({ data }) => {
     return (
         <Row>
             <Col>
                 <Table striped bordered hover size="sm" variant="secondary">
                     <thead>
                         <tr>
-                            <th style="font-weight: normal;">bht</th>
+                            <th >bht</th>
                             <th>density</th>
                             <th>hb</th>
                             <th>pb</th>
@@ -37,8 +36,8 @@ export default ({ data }) =>
                     </tbody>
                 </Table>
             </Col>
-        
-       
+
+
         </Row>
     )
 }

@@ -34,7 +34,7 @@ export default class SamplesFilter extends Component {
         }
     }
     async getFilterOptsForShipment(fromLocation) {
-        const response = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/filterOpts`, { params: { fromLocation: fromLocation } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+        const response = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/filterOpts`, { params: { fromLocation: fromLocation } }   )
         const idoptions = response.data.map(item => ({ value: item.sample_id, label: item.sample_id }))
         const evaloptions = response.data.map(item => ({ value: item.eval, label: item.eval }))
         const aliquotoptions = response.data.map(item => ({ value: item.aliquot_count, label: item.aliquot_count }))

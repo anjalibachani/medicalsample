@@ -52,7 +52,7 @@ class AddSamples extends Component {
 	};
 
 	async getsampleIdOptions() {
-		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+		const ids = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleIDs`)
 		this.setState({ sampleIdOptions: ids.data.options })
 	}
 	async getSampleTypes(sample_id, eval_number) {
@@ -60,12 +60,12 @@ class AddSamples extends Component {
 			sample_id: sample_id,
 			eval: eval_number
 		};
-		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleTypes`, { params }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+		const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleTypes`, { params })
 		return res.data.results;
 	}
 
 	async getEvalOptions(sample_id) {
-		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
 		this.setState({ evalOptions: evals.data.options })
 	}
 	componentDidMount() {
@@ -248,7 +248,7 @@ class AddSamples extends Component {
 		let result = this.createJson();
 		// result.user_id = localStorage.getItem("user_id");
 		console.log("result", result);
-		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
+		const res = await axios.post(`http://${config.server.host}:${config.server.port}/samples/add`, result);
 	}
 	save = () => {
 		// this.setState({ formErrors: this.validateForms() },()=> {
@@ -269,7 +269,7 @@ class AddSamples extends Component {
 
 
 	resestToken = () => {
-		axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+		axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }).then((response) => {
 			//console.log("status is :",response.status)
 			if (response.status === 200) {
 				localStorage.setItem('token', response.data.token);

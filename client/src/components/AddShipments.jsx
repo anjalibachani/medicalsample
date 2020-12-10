@@ -4,7 +4,6 @@ import axios from 'axios';
 import { BrowserRouter as Redirect } from 'react-router-dom';
 import { Button, ButtonGroup, Form, Row, Col, InputGroup, FormControl, Modal, Container } from 'react-bootstrap';
 import CustomAlertBanner from './CustomAlertBanner'
-import Filter from './Filter';
 import Select from 'react-select';
 import Header from './Header';
 import DatePicker from 'react-datepicker'
@@ -284,7 +283,7 @@ class CreateShipments extends Component {
 
 
 	async getShipmentData() {
-		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
 			console.log("response.data", response.data);
 			this.setState({
 				data: response.data
@@ -294,7 +293,7 @@ class CreateShipments extends Component {
 	}
 
 	async getLocations() {
-		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
 		this.setState({ locationoptions: id.data.options })
 	}
 
@@ -402,8 +401,8 @@ class CreateShipments extends Component {
 	}
 	async getLocationIDByName(from_location, to_location) {
 		let locations = []
-		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
-		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+		const from_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: from_location } })
+		const to_location_res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: to_location } })
 		locations.push(from_location_res.data.results);
 		locations.push(to_location_res.data.results);
 		return locations
@@ -454,7 +453,7 @@ class CreateShipments extends Component {
 	}
 	send = async () => {
 		const shipment = await this.createShipmentJson();
-		const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/create`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, shipment);
+		const res = await axios.post(`http://${config.server.host}:${config.server.port}/addshipment/create`, shipment);
 		const aliquots = await this.createAliqoutJson(res.data.results.insertId);
 		if (res.data.results.insertId) {
 			this.setState({
@@ -466,11 +465,11 @@ class CreateShipments extends Component {
 				selectedFromOption: null,
 				selectedToOption: null
 			});
-			const res = axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, aliquots);
+			const res = axios.post(`http://${config.server.host}:${config.server.port}/addshipment/addshipmentId`, aliquots);
 		}
 	}
 	resestToken = () => {
-		axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+		axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }).then((response) => {
 			//console.log("status is :",response.status)
 			if (response.status === 200) {
 				localStorage.setItem('token', response.data.token);

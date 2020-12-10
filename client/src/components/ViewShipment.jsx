@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Row, Col, ButtonGroup, Button, Container } from 'react-bootstrap';
-import CustomTable from './CustomTable';
 import CustomAlertBanner from './CustomAlertBanner';
 import Header from './Header';
 import Basic2Table from './Basic2Table';
@@ -20,7 +19,7 @@ class ViewShipments extends Component {
 		}
 	}
 	resestToken = () => {
-		Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+		Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }).then((response) => {
 			//console.log("status is :",response.status)
 			if (response.status === 200) {
 				localStorage.setItem('token', response.data.token);
@@ -34,7 +33,7 @@ class ViewShipments extends Component {
 
 	render() {
 		{
-			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
+			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") <= Date.now() + 600000))
 				this.resestToken()
 		}
 		return (

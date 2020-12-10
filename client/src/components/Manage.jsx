@@ -11,7 +11,7 @@ const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('
 
 export default class Manage extends Component {
     resestToken = () => {
-        Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+        Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }   ).then((response) => {
             //console.log("status is :",response.status)
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);

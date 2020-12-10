@@ -105,12 +105,12 @@ export default class LocationsTable extends Component {
         const { selectedRows } = this.state;
         const rows = selectedRows.map(r => [r.location_id]);
         console.log("location rows: ", rows);
-        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deletelocation`, { rows: rows }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deletelocation`, { rows: rows }   )
         console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
     }
     getLocationData = () => {
-        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlocation`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlocation`   ).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -120,7 +120,7 @@ export default class LocationsTable extends Component {
         prop: PropTypes
     }
     checkLocationExist = async (location_name) => {
-        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checklocation`, { params: { location_name: location_name } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checklocation`, { params: { location_name: location_name } }   )
         if (res.data.rows === 0) {
             return false;
         }
@@ -147,7 +147,7 @@ export default class LocationsTable extends Component {
     send = async () => {
         const result = this.createJson();
         console.log("result", result);
-        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/addlocation`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
+        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/addlocation`   , result);
         if (res.status === 200) {
             console.log("Added");
             this.setState({

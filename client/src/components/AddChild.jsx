@@ -121,7 +121,7 @@ export default class AddChild extends Component {
         this.getChildData();
     }
     getChildData = () => {
-        axios.get(`http://${config.server.host}:${config.server.port}/child/all`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }).then((response) => {
+        axios.get(`http://${config.server.host}:${config.server.port}/child/all`).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -245,7 +245,7 @@ export default class AddChild extends Component {
         }
     }
     checkSampleIDAndEval = async (evl, sample_id) => {
-        const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/checkIDandEval`, { params: { sample_id: sample_id, eval: evl } }, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } })
+        const res = await axios.get(`http://${config.server.host}:${config.server.port}/samples/checkIDandEval`, { params: { sample_id: sample_id, eval: evl } })
         if (res.data.rows === 0) {
             return false;
         }
@@ -253,7 +253,8 @@ export default class AddChild extends Component {
     }
     send = async () => {
         const result = this.createJson();
-        const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, { headers: { 'Authorization': `bearer ${localStorage.getItem("token")}` } }, result);
+        console.log("result", result);
+        const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
         this.setState({
             alertVisibility: true,
         });
@@ -278,7 +279,7 @@ export default class AddChild extends Component {
         const { data, email_id, admin } = this.state;
         const filteredItems = data.filter(item => item.sample_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         {
-            console.log("add child token validation",localStorage.getItem("expiresin"), Date.now()+600000, Date.now())
+            console.log("add child token validation", localStorage.getItem("expiresin"), Date.now() + 600000, Date.now())
             if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") <= (Date.now() + 600000)))
                 this.resetToken()
         }
