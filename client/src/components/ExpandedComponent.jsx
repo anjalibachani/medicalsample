@@ -79,7 +79,7 @@ export default class ExpandedComponent extends Component {
         const { ShipmentsData } = this.state
         console.log("ShipmentsData", this.state.ShipmentsData);
         return (
-            <div className="ml-5 mr-5">
+            <div className="mx-5">
                 <DataTable className="block-example border border-dark rounded mb-0"
                     columns={movedshipementscolumns}
                     data={ShipmentsData}
