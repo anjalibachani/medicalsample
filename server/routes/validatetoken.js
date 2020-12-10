@@ -8,7 +8,7 @@ const config =
     : require("../config/local_config.json");
 
 module.exports = (req, res, next) => {
-  console.log(req);
+  // console.log(req);
   const token = req.get("authorization").slice(7);
   console.log("token", token);
   if (token) {

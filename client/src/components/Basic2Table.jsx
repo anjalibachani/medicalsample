@@ -1,7 +1,9 @@
 import DataTable from 'react-data-table-component';
+import PropTypes from 'prop-types'
 import React, { Component } from 'react';
 import Axios from 'axios';
 import ExpandedComponent from './ExpandedComponent'
+import { Redirect } from 'react-router-dom';
 import memoize from 'memoize-one';
 import CustomAlertBanner from "./CustomAlertBanner";
 import { Button, Form, FormControl, InputGroup, Row, Col, Modal } from 'react-bootstrap';
@@ -55,7 +57,11 @@ class Basic2Table extends Component {
       alertVariant: 'success'
     }
   }
+  static propTypes = {
+    prop: PropTypes
+  }
   componentDidMount() {
+    console.log("this.props", this.props);
     this.getShipmentsData();
   }
 
@@ -70,19 +76,24 @@ class Basic2Table extends Component {
     const { selectedRows } = this.state;
     const rows = selectedRows.map(r => [r.shipment_id, r.to_location_id, r.user_id, r.to_location_name]);
     Axios.post(`http://${config.server.host}:${config.server.port}/shipment/markshipments`, { rows: rows })
+    this.setState({ alertVisibility: true })
     this.setState(state => ({ toggleCleared: !state.toggleCleared }));
+    setTimeout(() => {
+      this.setState({ alertVisibility: false })
+    }, 3000)
   }
   getShipmentsData = () => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
       console.log("response.data", response.data);
       this.setState({
-        data: response.data
+        data: response.data,
+      
       });
     })
   }
   render() {
     const { data, toggleCleared } = this.state;
-    // this.getShipmentsData();
+    this.getShipmentsData();
     return (
       <div>
         {this.state.alertVisibility && (
