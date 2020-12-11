@@ -10,6 +10,7 @@ import Modal from 'react-modal';
 import Axios from 'axios';
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
+
 /* This is the 'See Shipments' page. */
 class ViewShipments extends Component {
 	constructor(props) {
@@ -18,6 +19,11 @@ class ViewShipments extends Component {
 
 		}
 	}
+	componentDidMount() {
+		const access_token = localStorage.getItem("token")
+		Axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+	}
+
 	resestToken = () => {
 		Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }).then((response) => {
 			//console.log("status is :",response.status)

@@ -57,6 +57,18 @@ const columns = [
   }
 ];
 
+const conditionalRowStyles = [
+  {
+    when: row => row.status_id === 2,
+    style: {
+      color: 'red',
+      '&:hover': {
+        color: 'red',
+      },
+    },
+  }
+];
+
 function convertArrayOfObjectsToCSV(array) {
   let result;
   if (array.length < 1) {
@@ -250,48 +262,48 @@ class filterandExports extends Component {
   async processFilter() {
     if (!this.state.returnedFilterValues.length) {
       return
-    }console.log(this.state.data)
+    } console.log(this.state.data)
     for (var i = 1; i <= this.state.filters.length; i++) {
       //check to see if the filter's Type and Value aren't empty
-        const [field, condition, value] = this.state.returnedFilterValues[i]
-        console.log("in process filter filtercals", field, condition, value);
-        const valuearray = value.map(item => item.value)
-        console.log("valuearray", valuearray)
-        //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
+      const [field, condition, value] = this.state.returnedFilterValues[i]
+      console.log("in process filter filtercals", field, condition, value);
+      const valuearray = value.map(item => item.value)
+      console.log("valuearray", valuearray)
+      //const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
 
-        //var filtereddata='';
-        if (field === "ID") {
-          if (condition === 'equals') {
-            var filtereddata = this.state.data.filter(p => valuearray.includes(p.sample_id));
-          }
-          else if (condition === 'less than') {
-            var filtereddata = this.state.data.filter(p => p.sample_id < valuearray[0]);
-          }
-          else if (condition === 'greater than') {
-            var filtereddata = this.state.data.filter(p => p.sample_id > valuearray[0]);
-          }
-        } else if (field === "Eval") {
-          if (condition === 'less than') {
-            var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
-          }
-          else if (condition === 'equals') {
-            var filtereddata = this.state.data.filter(p => valuearray.includes(p.eval));
-          }
-          else if (condition === 'greater than') {
-            var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
-          }
-        } else if (field === "aliquots") {
-          if (condition === 'less than') {
-            var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
-          }
-          else if (condition === 'equals') {
-            var filtereddata = this.state.data.filter(p => valuearray.includes(p.aliquot_count));
-          }
-          else if (condition === 'greater than') {
-            var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
-          }
+      //var filtereddata='';
+      if (field === "ID") {
+        if (condition === 'equals') {
+          var filtereddata = this.state.data.filter(p => valuearray.includes(p.sample_id));
         }
-        await this.setState({data:filtereddata})
+        else if (condition === 'less than') {
+          var filtereddata = this.state.data.filter(p => p.sample_id < valuearray[0]);
+        }
+        else if (condition === 'greater than') {
+          var filtereddata = this.state.data.filter(p => p.sample_id > valuearray[0]);
+        }
+      } else if (field === "Eval") {
+        if (condition === 'less than') {
+          var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
+        }
+        else if (condition === 'equals') {
+          var filtereddata = this.state.data.filter(p => valuearray.includes(p.eval));
+        }
+        else if (condition === 'greater than') {
+          var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
+        }
+      } else if (field === "aliquots") {
+        if (condition === 'less than') {
+          var filtereddata = this.state.data.filter(p => p.eval < valuearray[0]);
+        }
+        else if (condition === 'equals') {
+          var filtereddata = this.state.data.filter(p => valuearray.includes(p.aliquot_count));
+        }
+        else if (condition === 'greater than') {
+          var filtereddata = this.state.data.filter(p => p.eval > valuearray[0]);
+        }
+      }
+      await this.setState({ data: filtereddata })
       //} 
       // catch (err) {
       //   console.log("filter failed")
@@ -315,7 +327,7 @@ class filterandExports extends Component {
       }
     }
     ).then((response) => {
-      //console.log(response.data);
+      console.log("filter and export", response.data);
       this.setState({
         data: response.data,
       });
@@ -402,7 +414,7 @@ class filterandExports extends Component {
       data,
     };
     {
-      console.log(Number(localStorage.getItem("expiresin")) > (Date.now() + 600000), localStorage.getItem("expiresin") , (Date.now() + 600000), Date.now())
+      console.log(Number(localStorage.getItem("expiresin")) > (Date.now() + 600000), localStorage.getItem("expiresin"), (Date.now() + 600000), Date.now())
       if (localStorage.getItem("user_id") != null && Number((localStorage.getItem("expiresin")) <= (Date.now() + 600000)))
         this.resetToken()
     }
@@ -423,6 +435,7 @@ class filterandExports extends Component {
               <Row>
 
                 <Col align="left">
+
                   <ButtonGroup>
                     <Button className='ml-3' variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
                     <Button className='ml-3' variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
@@ -434,6 +447,7 @@ class filterandExports extends Component {
                 </Col>
                 <hr />
               </Row>
+              {/* <p class="text-dark">In Transit Samples are displayed in <span class="text-danger">Red</span></p> */}
               <Container>
                 {/* <DataTableExtensions
       {...tableData}
@@ -459,6 +473,7 @@ class filterandExports extends Component {
                   expandableRowsComponent={<ExpandFilterRow />}
                   persistTableHead
                   subHeaderComponent={this.getSubHeaderComponent()}
+                  conditionalRowStyles={conditionalRowStyles}
                 />
                 {/* </DataTableExtensions> */}
               </Container>

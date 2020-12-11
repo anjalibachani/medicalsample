@@ -41,6 +41,10 @@ const columns = [
     selector: "status_name",
     sortable: true,
   },
+  {
+    name: "Shipping Company",
+    selector: "shipping_company"
+  }
 ];
 const rowSelectCritera = row => {
   return row.reached === 1;
@@ -61,7 +65,8 @@ class Basic2Table extends Component {
     prop: PropTypes
   }
   componentDidMount() {
-    console.log("this.props", this.props);
+    const access_token = localStorage.getItem("token")
+    Axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
     this.getShipmentsData();
   }
 
@@ -87,7 +92,7 @@ class Basic2Table extends Component {
       console.log("response.data", response.data);
       this.setState({
         data: response.data,
-      
+
       });
     })
   }

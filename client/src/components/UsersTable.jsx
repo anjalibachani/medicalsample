@@ -4,13 +4,13 @@ import DataTable from 'react-data-table-component';
 import Axios from 'axios';
 import Manage from './Manage';
 import styled from 'styled-components';
-import { Row, Col, ButtonGroup, Button, Container, Form } from 'react-bootstrap';
+import { Row, Col, ButtonGroup, Button, Container, Form, Alert } from 'react-bootstrap';
 import CustomAlertBanner from "./CustomAlertBanner";
 import memoize from 'memoize-one';
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 const contextActions = memoize(deleteHandler => (
     <>
-        <Button variant="dark" size="lg" onClick={deleteHandler}>Delete</Button>
+        <Button variant="dark" size="lg" onClick={deleteHandler}>Mark Disable</Button>
     </>
 ));
 
@@ -29,6 +29,10 @@ const columns = [
         name: "Admin",
         selector: "admin",
         sortable: true
+    },
+    {
+        name: "Active",
+        selector: "isActive"
     }
 ];
 const customStyles = {
@@ -86,6 +90,9 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
         <ClearButton type="button" onClick={onClear}>X</ClearButton>
     </>
 );
+const rowSelectCritera = row => {
+    return row.isActive === 0;
+}
 export default class UsersTable extends Component {
     constructor(props) {
         super(props);
@@ -97,6 +104,7 @@ export default class UsersTable extends Component {
             alertText: 'User saved successfully with default password: ChangeMe! ',
             alertVariant: 'success',
             email_id: '',
+            isVisible: false,
             admin: false,
             formErrors: {},
             filterText: ''
@@ -104,23 +112,31 @@ export default class UsersTable extends Component {
 
     }
     componentDidMount() {
+        const access_token = localStorage.getItem("token")
+        Axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
         this.getUsersData();
     }
     deleteUser = async () => {
         const { selectedRows } = this.state;
         const rows = selectedRows.map(r => r.user_id);
-        console.log("user rows: ", rows);
-
-        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows }   );
+        let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows });
         console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
+        this.setState({
+            isVisible: true
+        });
+        setTimeout(() => {
+            this.setState({
+                isVisible: false
+            })
+        }, 3000)
     }
     handleChange = state => {
 
         this.setState({ selectedRows: state.selectedRows });
     };
     getUsersData = () => {
-        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewuser`   ).then((response) => {
+        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewuser`).then((response) => {
             this.setState({
                 data: response.data.results
             });
@@ -141,7 +157,7 @@ export default class UsersTable extends Component {
         return user
     }
     checkEmailExist = async (email_id) => {
-        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id } }   )
+        const res = await Axios.get(`http://${config.server.host}:${config.server.port}/manage/checkemail`, { params: { email_id: email_id } })
         if (res.data.rows === 0) {
             return false;
         }
@@ -164,7 +180,7 @@ export default class UsersTable extends Component {
     send = async () => {
         const result = this.createJson();
         console.log("result", result);
-        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`   , result);
+        const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`, result);
         if (res.status === 200) {
             console.log("Added");
             this.setState({
@@ -205,7 +221,7 @@ export default class UsersTable extends Component {
         );
     };
     render() {
-        const { data, email_id, admin } = this.state;
+        const { data, email_id, admin, toggleCleared } = this.state;
         this.getUsersData();
         const filteredItems = data.filter(item => item.email_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         return (
@@ -218,6 +234,12 @@ export default class UsersTable extends Component {
                             text={this.state.alertText}
                         />
                     )}
+                    {this.state.isVisible &&
+                        <Alert variant='success'>
+                            <Alert.Heading>User Disabled Successfully</Alert.Heading>
+                        </Alert>
+                    }
+
                     <Form>
                         <Row>
                             <Col md="4">
@@ -244,10 +266,14 @@ export default class UsersTable extends Component {
                         keyField="user_id"
                         striped={true}
                         highlightOnHover
+                        selectableRows
+                        clearSelectedRows={toggleCleared}
+                        selectableRowDisabled={rowSelectCritera}
                         pointerOnHover
                         pagination
                         defaultSortField="admin"
                         defaultSortAsc={false}
+                        contextActions={contextActions(this.deleteUser)}
                         customStyles={customStyles}
                         onSelectedRowsChange={this.handleChange}
                         subHeader

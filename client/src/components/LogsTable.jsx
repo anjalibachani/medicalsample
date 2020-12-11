@@ -89,13 +89,15 @@ export default class LogsTable extends Component {
 
     }
     componentDidMount() {
+        const access_token = localStorage.getItem("token")
+        Axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
         this.getLogsData();
     }
     ExportAll = ({ onExport }) => (
         <Button className='ml-3' variant="dark" size="lg" onClick={e => onExport(e.target.value)}>Export to CSV</Button>
     );
     getLogsData = () => {
-        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlogs`   ).then((response) => {
+        Axios.get(`http://${config.server.host}:${config.server.port}/manage/viewlogs`).then((response) => {
             this.setState({
                 data: response.data.results
             });

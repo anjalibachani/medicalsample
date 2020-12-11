@@ -13,6 +13,9 @@ import _ from 'lodash';
 import SamplesFilter from './SamplesFilter';
 
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
+const access_token = localStorage.getItem("token")
+axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+
 const columns = [
 	{
 		name: 'ID',
@@ -261,6 +264,9 @@ class CreateShipments extends Component {
 	};
 
 	componentDidMount() {
+		const access_token = localStorage.getItem("token")
+		axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+
 		this.getLocations();
 		this.getShipmentData();
 

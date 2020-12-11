@@ -6,7 +6,7 @@ const validatetoken = require("./validatetoken");
 router.get("/viewuser", validatetoken, async (req, res) => {
   await db.query("SELECT * FROM `users`", (error, results, fields) => {
     if (error) throw error;
-    //   console.log(results);
+    console.log(results);
     return res.status(200).json({ results: results });
   });
 });
@@ -48,10 +48,14 @@ router.get("/checkemail", validatetoken, async (req, res) => {
 router.delete("/deleteuser", validatetoken, (req, res) => {
   let rowsData = req.body;
   console.log("rowsData:", rowsData);
-  // deleteLocationIDAliquots(rowsData);
-  // deleteLocationIDLocation(rowsData);
-  // deleteUserIDUser(rowsData);
-  res.json("deleteuser");
+  db.query(
+    "UPDATE `users` SET isActive=0 where user_id IN (?)",
+    [rowsData],
+    (error, results, fields) => {
+      if (error) throw error;
+      return res.status(200).json({ results: results });
+    }
+  );
 });
 
 router.get("/viewlocation", validatetoken, async (req, res) => {

@@ -34,14 +34,14 @@ class Login extends React.Component {
       email_id: response.profileObj.email
     })
     //this.state.email_id=response.profileObj.email;
-    Axios.post(`http://${config.server.host}:${config.server.port}/api/googlelogin`, { tokenId: response.tokenId }).then((response) => {
+    Axios.post(`http://${config.server.host}:${config.server.port}/api/googlelogin`, { tokenId: response.tokenId }).then(async (response) => {
       if (response.status === 200) {
-        localStorage.setItem('user_id', response.data.user_id);
-        localStorage.setItem('email_id', this.state.email_id);
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("isAdmin", response.data.admin);
-        localStorage.setItem("expiresin", Date.now() + 6000000);
+        await localStorage.setItem('token', response.data.token);
+        await localStorage.setItem('user_id', response.data.user_id);
+        await localStorage.setItem('email_id', this.state.email_id);
+        await localStorage.setItem("isLoggedIn", true);
+        await localStorage.setItem("isAdmin", response.data.admin);
+        await localStorage.setItem("expiresin", Date.now() + 6000000);
         //console.log("logging date",Date.now());
         this.redirectToHome();
       }
@@ -82,16 +82,16 @@ class Login extends React.Component {
     if (this.state.email_id && this.state.password) {
       e.preventDefault();
       let array1 = [1, 2, 3];
-      Axios.post(`http://${config.server.host}:${config.server.port}/api/login`, { email_id: this.state.email_id, password: this.state.password, array1: array1 }).then((response) => {
+      Axios.post(`http://${config.server.host}:${config.server.port}/api/login`, { email_id: this.state.email_id, password: this.state.password, array1: array1 }).then(async (response) => {
         //console.log(response);
         if (response.status === 200) {
-          localStorage.setItem('user_id', response.data.user_id);
-          localStorage.setItem('email_id', this.state.email_id);
-          localStorage.setItem('token', response.data.token);
-          localStorage.setItem('isLoggedIn', true);
-          localStorage.setItem("isAdmin", response.data.admin);
-          localStorage.setItem("expiresin", Date.now() + 6000000);
-          console.log("logging date", Date.now());
+          await localStorage.setItem('token', response.data.token);
+          await localStorage.setItem('user_id', response.data.user_id);
+          await localStorage.setItem('email_id', this.state.email_id);
+          await localStorage.setItem('isLoggedIn', true);
+          await localStorage.setItem("isAdmin", response.data.admin);
+          await localStorage.setItem("expiresin", Date.now() + 6000000);
+          await console.log("logging date", Date.now());
           this.redirectToHome();
         }
         else {

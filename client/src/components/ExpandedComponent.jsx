@@ -61,6 +61,8 @@ export default class ExpandedComponent extends Component {
         prop: PropTypes
     }
     componentDidMount() {
+        const access_token = localStorage.getItem("token")
+        Axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
         let data = this.props.data;
         let shipment_id = data.shipment_id
         this.getShipmentsData(shipment_id);
@@ -77,9 +79,17 @@ export default class ExpandedComponent extends Component {
     }
     render() {
         const { ShipmentsData } = this.state
+        let data = this.props.data;
+        console.log("data", data);
+        let notes = data.notes;
+        let shipping_conditions = data.shipping_conditions;
         console.log("ShipmentsData", this.state.ShipmentsData);
         return (
             <div className="mx-5">
+                <div className="row">
+                    <p className="col" >Shipping notes : {notes}</p>
+                    <p className="col">Shipping Conditions : {shipping_conditions} </p>
+                </div>
                 <DataTable className="block-example border border-dark rounded mb-0"
                     columns={movedshipementscolumns}
                     data={ShipmentsData}

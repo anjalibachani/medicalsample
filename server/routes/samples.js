@@ -62,7 +62,7 @@ router.post("/add", validatetoken, (req, res) => {
   let result = req.body;
   for (let index = 0; index < result.length; index++) {
     let element = result[index].data;
-    // console.log("result[index].user_id", result[index].user_id);
+    console.log("result[index].location_id", result[index].location_id);
     let select_stmt =
       "SELECT * FROM samples WHERE sample_id=? AND eval=? order by type";
     var select_query = db.query(
@@ -140,8 +140,8 @@ router.post("/add", validatetoken, (req, res) => {
               var aliquot = {
                 sample_id: element.sample_id,
                 aliquots_samples_key: results.insertId,
-                location_id: 4,
-                status_id: 1,
+                location_id: result[index].location_id,
+                status_id: 3,
               };
               for (let i = 0; i < maxItr; i++) {
                 db.query(

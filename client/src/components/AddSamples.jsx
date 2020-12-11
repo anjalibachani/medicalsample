@@ -12,9 +12,6 @@ import 'react-datepicker/dist/react-datepicker.css'
 const sampleTypes = require("../config/types.json");
 const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('../config/deploy_config.json') : require('../config/local_config.json');
 
-const access_token = localStorage.getItem("token")
-axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
-
 class AddSamples extends Component {
 	constructor(props) {
 		super(props);
@@ -23,9 +20,12 @@ class AddSamples extends Component {
 			selectedOption: null,
 			selectedIdOption: null,
 			selectedEvalOption: null,
+			selectedLocationOption: null,
+			location_id: null,
 			formFields: [],
 			sampleIdOptions: [],
 			evalOptions: [],
+			locationOptions: [],
 			multiValue: [],
 			tabsMapping: [],
 			alertVisibility: false,
@@ -68,7 +68,15 @@ class AddSamples extends Component {
 		const evals = await axios.get(`http://${config.server.host}:${config.server.port}/samples/getSampleEvals/${sample_id}`)
 		this.setState({ evalOptions: evals.data.options })
 	}
+	async getLocations() {
+		const id = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/fetchlocation`)
+		this.setState({ locationoptions: id.data.options })
+	}
+
 	componentDidMount() {
+		const access_token = localStorage.getItem("token")
+		axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+
 		if (this.props.location.state !== undefined) {
 			let sample_id = { "value": this.props.location.state.sample_id, "label": this.props.location.state.sample_id };
 			let evl = { "value": this.props.location.state.eval, "label": this.props.location.state.eval };
@@ -80,6 +88,7 @@ class AddSamples extends Component {
 		});
 		this.setState({ types: array });
 		this.getsampleIdOptions();
+		this.getLocations();
 	}
 	handleIDChange = selectedOption => {
 		this.setState({
@@ -94,18 +103,35 @@ class AddSamples extends Component {
 		});
 		this.setState({ selectedEvalOption: selectedOption });
 		let temp = await this.getSampleTypes(this.state.selectedIdOption.value, selectedOption.value)
+		console.log("temp", temp);
 		let multiVal = temp.map((item, key) => { return { 'value': item.type, 'label': item.type, 'isFixed': true } });
 		let fixedValues = multiVal.map(vals => vals.value);
 		this.setState({ multiValue: multiVal, fixedValues: fixedValues }, () => this.generateTabsMapping(temp));
 	}
 
+
+	handleLocationChange = async selectedOption => {
+
+		let location_id = await this.getLocationIDByName(selectedOption.value);
+		this.setState({ selectedLocationOption: selectedOption, location_id: location_id });
+		this.setState({ selectedIdOption: null, selectedEvalOption: null });
+
+	}
+	async getLocationIDByName(location_name) {
+		const res = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/locationIdbyName`, { params: { location: location_name } })
+		return res.data.results
+
+	}
+
 	generateTabsMapping = (data) => {
-		const { types } = this.state;
+		const { types, location_id } = this.state;
+		console.log("location_id", location_id);
 		let tabs = [];
-		data.forEach((element) => {
+		data.forEach(async (element) => {
 			element = _.mapKeys(element, (value, key) => _.startCase(_.toLower(key)));
 			let obj = {};
 			obj.user_id = localStorage.getItem("user_id");
+			obj.location_id = location_id;
 			obj["key"] = { "value": element.Type, "label": element.Type };
 			let type = element.Type;
 			let fields = sampleTypes.types.filter((val, key) => {
@@ -141,6 +167,7 @@ class AddSamples extends Component {
 				var res = this.createTabsMppping(ele.value)
 				tabsMapping.push({
 					user_id: localStorage.getItem("user_id"),
+					location_id: this.state.location_id,
 					key: ele,
 					fields: res[0], data: {
 						type: ele.value, "sample_id": selectedIdOption.value,
@@ -282,7 +309,8 @@ class AddSamples extends Component {
 	}
 
 	render() {
-		const { types, selectedIdOption, selectedEvalOption, multiValue, fixedValues, tabsMapping, formErrors } = this.state;
+		const { types, selectedIdOption, selectedEvalOption, selectedLocationOption, locationoptions, multiValue, fixedValues, tabsMapping, formErrors } = this.state;
+		console.log("locationoptions", locationoptions)
 		const size = Object.keys(tabsMapping).length;
 		{
 			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") <= Date.now() + 600000))
@@ -309,6 +337,18 @@ class AddSamples extends Component {
 								}
 								<Container>
 									<Row>
+										<Col md="4">
+											<h5 className="text-dark">Please Select Location</h5>
+											<Select
+												label="Sample Location"
+												placeholder="Select Location"
+												isSearchable={true}
+												value={selectedLocationOption}
+												onChange={this.handleLocationChange}
+												options={locationoptions}
+											/>
+										</Col>
+
 										<Col md="4">
 											<h5 className="text-dark">Please Select ID</h5>
 											<Select
