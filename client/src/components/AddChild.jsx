@@ -254,7 +254,7 @@ export default class AddChild extends Component {
     }
     send = async () => {
         const result = this.createJson();
-        console.log("result", result);
+        // console.log("result", result);
         const res = await axios.post(`http://${config.server.host}:${config.server.port}/child/add`, result);
         this.setState({
             alertVisibility: true,
@@ -263,7 +263,7 @@ export default class AddChild extends Component {
 
 
     resetToken = () => {
-        console.log("calling reset token in addchild")
+        // console.log("calling reset token in addchild")
         axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }).then((response) => {
             //console.log("status is :",response.status)
             if (response.status === 200) {
@@ -280,7 +280,7 @@ export default class AddChild extends Component {
         const { data, email_id, admin } = this.state;
         const filteredItems = data.filter(item => item.sample_id && JSON.stringify(item).toLowerCase().includes(this.state.filterText.toLowerCase()));
         {
-            console.log("add child token validation", localStorage.getItem("expiresin"), Date.now() + 600000, Date.now())
+            // console.log("add child token validation", localStorage.getItem("expiresin"), Date.now() + 600000, Date.now())
             if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") <= (Date.now() + 600000)))
                 this.resetToken()
         }

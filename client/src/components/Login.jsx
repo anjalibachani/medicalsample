@@ -12,7 +12,7 @@ const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('
 class Login extends React.Component {
 
   constructor(props) {
-    console.log("login called")
+    // console.log("login called")
     super(props)
     this.state = {
       email_id: "",

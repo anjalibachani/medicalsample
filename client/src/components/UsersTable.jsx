@@ -120,7 +120,7 @@ export default class UsersTable extends Component {
         const { selectedRows } = this.state;
         const rows = selectedRows.map(r => r.user_id);
         let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deleteuser`, { data: rows });
-        console.log("res:", res.data);
+        // console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
         this.setState({
             isVisible: true
@@ -153,7 +153,7 @@ export default class UsersTable extends Component {
         user.email_id = email_id
         user.admin = admin
         user.user_id = localStorage.getItem("user_id");
-        console.log("createJson", user);
+        // console.log("createJson", user);
         return user
     }
     checkEmailExist = async (email_id) => {
@@ -179,10 +179,10 @@ export default class UsersTable extends Component {
     }
     send = async () => {
         const result = this.createJson();
-        console.log("result", result);
+        // console.log("result", result);
         const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/adduser`, result);
         if (res.status === 200) {
-            console.log("Added");
+            // console.log("Added");
             this.setState({
                 alertVisibility: true,
             });
@@ -196,9 +196,9 @@ export default class UsersTable extends Component {
     }
     save = async () => {
         this.setState({ formErrors: await this.validateForms() })
-        console.log(this.state.formErrors);
+        // console.log(this.state.formErrors);
         if (Object.keys(this.state.formErrors).length === 0) {
-            console.log("No Error");
+            // console.log("No Error");
             this.send();
         }
     }

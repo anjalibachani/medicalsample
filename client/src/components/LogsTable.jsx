@@ -42,7 +42,7 @@ const customStyles = {
 };
 function convertArrayOfObjectsToCSV(array) {
     let result;
-    console.log("array", array)
+    // console.log("array", array)
     const columnDelimiter = ',';
     const lineDelimiter = '\n';
     const keys = Object.keys(array[0]);

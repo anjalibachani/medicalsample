@@ -75,7 +75,7 @@ class Basic2Table extends Component {
     this.setState({ selectedRows: state.selectedRows });
   };
   handleRowClicked = row => {
-    console.log(`${row.shipment_id} was clicked!`);
+    // console.log(`${row.shipment_id} was clicked!`);
   }
   markshipments = () => {
     const { selectedRows } = this.state;
@@ -89,7 +89,7 @@ class Basic2Table extends Component {
   }
   getShipmentsData = () => {
     Axios.get(`http://${config.server.host}:${config.server.port}/shipment/viewshipments`).then((response) => {
-      console.log("response.data", response.data);
+      // console.log("response.data", response.data);
       this.setState({
         data: response.data,
 

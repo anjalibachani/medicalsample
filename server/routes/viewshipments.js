@@ -20,13 +20,13 @@ router.get("/viewshipments", validatetoken, (req, res) => {
 });
 
 router.get("/shipmentdetails", validatetoken, (req, res) => {
-  console.log(req.query);
+  // console.log(req.query);
   var query = db.query(
     "select S.* ,A.*,COUNT(*) as aliquot_count from samples S join aliquots A on S.samples_key=A.aliquots_samples_key where A.shipment_id=? group by A.aliquots_samples_key,A.shipment_id;",
     [req.query.shipment_id],
     (error, results, fields) => {
       if (error) throw error;
-      console.log(results);
+      // console.log(results);
       return res.status(200).json(results);
     }
   );
@@ -36,7 +36,7 @@ router.post("/markshipments", validatetoken, (req, res) => {
   let rowsData = req.body.rows;
   for (let index = 0; index < rowsData.length; index++) {
     let item = rowsData[index];
-    console.log("item", item);
+    // console.log("item", item);
     let update_stmt = `UPDATE shipments SET reached = 1 WHERE shipment_id = ?`;
     let update_query = db.query(
       update_stmt,
@@ -53,7 +53,7 @@ router.post("/markshipments", validatetoken, (req, res) => {
           transaction_history,
           (err, res) => {
             if (err) throw err;
-            console.log(res.insertId);
+            // console.log(res.insertId);
           }
         );
       }
@@ -75,7 +75,7 @@ router.post("/markshipments", validatetoken, (req, res) => {
           transaction_history,
           (er, out) => {
             if (er) throw er;
-            console.log(out.insertId);
+            // console.log(out.insertId);
           }
         );
       }

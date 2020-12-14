@@ -6,13 +6,13 @@ const validatetoken = require("./validatetoken");
 router.get("/viewuser", validatetoken, async (req, res) => {
   await db.query("SELECT * FROM `users`", (error, results, fields) => {
     if (error) throw error;
-    console.log(results);
+    // console.log(results);
     return res.status(200).json({ results: results });
   });
 });
 router.post("/adduser", validatetoken, async (req, res) => {
   let user = req.body;
-  console.log("user", user);
+  // console.log("user", user);
   var transaction_history = {
     user_id: user.user_id,
     timestamp: new Date(),
@@ -26,7 +26,7 @@ router.post("/adduser", validatetoken, async (req, res) => {
       transaction_history,
       (err, res) => {
         if (err) throw err;
-        console.log(res.insertId);
+        // console.log(res.insertId);
       }
     );
     return res.status(200).json({ results: results });
@@ -42,12 +42,12 @@ router.get("/checkemail", validatetoken, async (req, res) => {
       return res.status(200).json({ rows: results.length });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.delete("/deleteuser", validatetoken, (req, res) => {
   let rowsData = req.body;
-  console.log("rowsData:", rowsData);
+  // console.log("rowsData:", rowsData);
   db.query(
     "UPDATE `users` SET isActive=0 where user_id IN (?)",
     [rowsData],
@@ -65,7 +65,7 @@ router.get("/viewlocation", validatetoken, async (req, res) => {
   });
 });
 router.post("/addlocation", validatetoken, async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   let location = req.body;
   var transaction_history = {
     user_id: location.user_id,
@@ -82,7 +82,7 @@ router.post("/addlocation", validatetoken, async (req, res) => {
         transaction_history,
         (err, res) => {
           if (err) throw err;
-          console.log(res.insertId);
+          // console.log(res.insertId);
         }
       );
       return res.status(200).json({ results: results });
@@ -99,7 +99,7 @@ router.get("/checklocation", validatetoken, async (req, res) => {
       return res.status(200).json({ rows: results.length });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 router.delete("/deletelocation", validatetoken, async (req, res) => {
   res.json("deletelocation");
@@ -119,7 +119,7 @@ deleteLocationIDAliquots = (userIds) => {
     "delete FROM aliquots a where a.location_id in (select l.location_id from locations l where l.user_id in (?))";
   db.query(deleteQuery, [userIds], (error, results) => {
     if (error) throw error;
-    console.log(" deleted :", results.affectedRows);
+    // console.log(" deleted :", results.affectedRows);
   });
 };
 
@@ -127,7 +127,7 @@ deleteLocationIDLocation = (userIds) => {
   let deleteQuery = "delete from locations l where l.user_id in (?)";
   db.query(deleteQuery, [userIds], (error, results) => {
     if (error) throw error;
-    console.log(" deleted :", results.affectedRows);
+    // console.log(" deleted :", results.affectedRows);
   });
 };
 
@@ -135,7 +135,7 @@ deleteUserIDUser = (userIds) => {
   let deleteQuery = "delete from user u where u.user_id in (?) ";
   db.query(deleteQuery, [userIds], (error, results) => {
     if (error) throw error;
-    console.log(" deleted :", results.affectedRows);
+    // console.log(" deleted :", results.affectedRows);
   });
 };
 

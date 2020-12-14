@@ -106,9 +106,9 @@ export default class LocationsTable extends Component {
     deleteLocation = async () => {
         const { selectedRows } = this.state;
         const rows = selectedRows.map(r => [r.location_id]);
-        console.log("location rows: ", rows);
+        // console.log("location rows: ", rows);
         let res = await Axios.delete(`http://${config.server.host}:${config.server.port}/manage/deletelocation`, { rows: rows })
-        console.log("res:", res.data);
+        // console.log("res:", res.data);
         this.setState(state => ({ toggleCleared: !state.toggleCleared }));
     }
     getLocationData = () => {
@@ -143,15 +143,15 @@ export default class LocationsTable extends Component {
         let location = {}
         location.location_name = location_name
         location['user_id'] = localStorage.getItem("user_id")
-        console.log("createJson", location);
+        // console.log("createJson", location);
         return location
     }
     send = async () => {
         const result = this.createJson();
-        console.log("result", result);
+        // console.log("result", result);
         const res = await Axios.post(`http://${config.server.host}:${config.server.port}/manage/addlocation`, result);
         if (res.status === 200) {
-            console.log("Added");
+            // console.log("Added");
             this.setState({
                 alertVisibility: true,
             });
@@ -165,9 +165,9 @@ export default class LocationsTable extends Component {
     }
     save = async () => {
         this.setState({ formErrors: await this.validateForms() })
-        console.log(this.state.formErrors);
+        // console.log(this.state.formErrors);
         if (Object.keys(this.state.formErrors).length === 0) {
-            console.log("No Error");
+            // console.log("No Error");
             this.send();
         }
     }

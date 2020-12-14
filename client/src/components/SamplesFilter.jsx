@@ -29,12 +29,14 @@ export default class SamplesFilter extends Component {
         this.getsampleIdOptions();
     }
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.fromLocation !== prevProps.fromLocation) {
-            this.getFilterOptsForShipment(this.props.fromLocation);
-        }
+        this.getFilterOptsForShipment(this.props.fromLocation);
+        // if (this.props.fromLocation === prevProps.fromLocation) {
+        //     this.getFilterOptsForShipment(this.props.fromLocation);
+        // }
     }
     async getFilterOptsForShipment(fromLocation) {
-        const response = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/filterOpts`, { params: { fromLocation: fromLocation } }   )
+        // console.log("AAA");
+        const response = await axios.get(`http://${config.server.host}:${config.server.port}/addshipment/filterOpts`, { params: { fromLocation: fromLocation } })
         const idoptions = response.data.map(item => ({ value: item.sample_id, label: item.sample_id }))
         const evaloptions = response.data.map(item => ({ value: item.eval, label: item.eval }))
         const aliquotoptions = response.data.map(item => ({ value: item.aliquot_count, label: item.aliquot_count }))

@@ -122,7 +122,7 @@ class CreateShipments extends Component {
 			resetChecksSamples: false,
 			resetChecksShipment: false,
 			filters: [{ "key": 1, "number": 1 }],
-			// filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues}  from={ this.selectedFromOption}/>],
+			// filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} fromLocation={this.getFromLocation} />],
 			returnedFilterValues: [],
 			alertVisibility: false,
 			alertText: 'Please enter all required fields.',
@@ -139,6 +139,12 @@ class CreateShipments extends Component {
 		this.send = this.send.bind(this);
 		this.handleFromLocationChange = this.handleFromLocationChange.bind(this);
 	}
+	getFromLocation = () => {
+		const { selectedFromOption } = this.state;
+		if (selectedFromOption)
+			// console.log("getFromLocation", selectedFromOption);
+		return selectedFromOption.value;
+	}
 
 	async processFilter() {
 		if (!this.state.returnedFilterValues.length) {
@@ -149,9 +155,9 @@ class CreateShipments extends Component {
 			//check to see if the filter's Type and Value aren't empty
 			try {
 				const [field, condition, value] = this.state.returnedFilterValues[i]
-				console.log("in process filter filtercals", field, condition, value);
+				// console.log("in process filter filtercals", field, condition, value);
 				const valuearray = value.map(item => item.value)
-				console.log("valuearray", valuearray)
+				// console.log("valuearray", valuearray)
 				//const filteredItems = data.filter(item => item.type && item.type.toLowerCase().includes(this.state.filterText.toLowerCase()));
 
 				//var filtereddata='';
@@ -187,7 +193,7 @@ class CreateShipments extends Component {
 					}
 				}
 			} catch (err) {
-				console.log("filter failed")
+				// console.log("filter failed")
 			}
 
 			this.setState({ data: filtereddata })
@@ -199,13 +205,14 @@ class CreateShipments extends Component {
 		//window.location.reload(false)
 		this.setState({ returnedFilterValues: [], warningText: false })
 		await this.setState({ filters: [] })
-		this.setState({ filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />] })
+		this.setState({ filters: [{ "key": 1, "number": 1 }] })
+		// this.setState({ filters: [<SamplesFilter key={1} number={1} returnVals={this.getFilterValues} />] })
 		this.getShipmentData();
 	}
 	addFilter() {
 
 		if (this.state.returnedFilterValues.length === this.state.filters.length + 1) {
-			var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
+			// var newFilterArray = this.state.filters.concat(<SamplesFilter key={this.state.filters.length + 1} number={this.state.filters.length + 1} returnVals={this.getFilterValues} />);
 			var newFilterArray = this.state.filters.concat({ "key": this.state.filters.length + 1, "number": this.state.filters.length + 1 });
 
 			this.setState({ filters: newFilterArray });
@@ -220,23 +227,23 @@ class CreateShipments extends Component {
 
 	getFilterValues = (type, equality, value, key) => {
 		this.getShipmentData();
-		console.log("enter get filter valiues", type, equality, value, key)
+		// console.log("enter get filter valiues", type, equality, value, key)
 		this.setState({
 			showWarning: false,
 			warningText: "can't add filter, One or more filters are empty"
 		})
 
 		var filterVals = this.state.returnedFilterValues;
-		console.log("filterVals", filterVals)
+		// console.log("filterVals", filterVals)
 		if (this.state.filters.length > 1) {
 			for (let i = 1; i < this.state.filters.length; i++) {
-				console.log("filter values in loop :", i, " ", filterVals[i]);
+				// console.log("filter values in loop :", i, " ", filterVals[i]);
 				var addedfilters = this.state.filters
 				if (type === filterVals[i][0]) {
-					console.log("type matched")
+					// console.log("type matched")
 					if (filterVals[i][1] === 'equals') {
 						delete addedfilters[(this.state.filters.length) - 1]
-						console.log("equality matched with equals")
+						// console.log("equality matched with equals")
 						this.setState({
 							showWarning: true,
 							warningText: "ambigious filter, cannot add filters of same type",
@@ -244,9 +251,9 @@ class CreateShipments extends Component {
 						})
 						return;
 					} else if (equality === filterVals[i][1]) {
-						console.log("equality matched with other")
+						// console.log("equality matched with other")
 						delete addedfilters[(this.state.filters.lenght)]
-						console.log("values", equality, filterVals[i][1])
+						// console.log("values", equality, filterVals[i][1])
 						this.setState({
 							showWarning: true,
 							warningText: "cannot add duplicate filters, please add unique filters",
@@ -290,7 +297,7 @@ class CreateShipments extends Component {
 
 	async getShipmentData() {
 		axios.get(`http://${config.server.host}:${config.server.port}/addshipment/select`).then((response) => {
-			console.log("response.data", response.data);
+			// console.log("response.data", response.data);
 			this.setState({
 				data: response.data
 			})
@@ -372,7 +379,7 @@ class CreateShipments extends Component {
 	}
 	createShipmentJson = async () => {
 		let { date, shippingconditions, movedshipementsData, shippingcompany, notes, selectedFromOption, selectedToOption } = this.state;
-		console.log("movedshipementsData", movedshipementsData);
+		// console.log("movedshipementsData", movedshipementsData);
 		let shipment = {}
 		let locations = await this.getLocationIDByName(selectedFromOption.value, selectedToOption.value);
 		shipment.from_location_id = locations[0];
@@ -401,7 +408,7 @@ class CreateShipments extends Component {
 		aliquots.aliquots_samples_key = sample_keys
 		aliquots.countArray = movedshipementsData.map(a => a.selectedAliquotValue);
 		aliquots.user_id = localStorage.getItem("user_id");
-		console.log("createAliqoutJson", aliquots);
+		// console.log("createAliqoutJson", aliquots);
 		return aliquots;
 
 	}
@@ -490,7 +497,7 @@ class CreateShipments extends Component {
 		const { selectedToOption, selectedFromOption, selectedRows, selectedAliquotNumber, movedshipementsData, data, locationoptions, filters } = this.state;
 		let locationTooptions = locationoptions;
 		let locationFromoptions = locationoptions;
-		console.log("filters", this.state.filters);
+		// console.log("filters", this.state.filters);
 		{
 			if (localStorage.getItem("user_id") != null && (localStorage.getItem("expiresin") > Date.now() + 600000))
 				this.resestToken()

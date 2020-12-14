@@ -4,35 +4,35 @@ const db = require("../db/dbconnect");
 const validatetoken = require("./validatetoken");
 
 router.post("/add", validatetoken, async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   var transaction_history = {
     user_id: req.body.user_id,
     timestamp: new Date(),
     desciption: "child added by user having user_id " + req.body.user_id,
   };
-  console.log(transaction_history);
+  // console.log(transaction_history);
   req.body.date = new Date(req.body.date);
   var query = await db.query(
     "INSERT INTO `samples` SET ?",
     req.body,
     (error, results, fields) => {
       if (error) throw error;
-      console.log(results.insertId);
+      // console.log(results.insertId);
       return res.status(202).json({ results });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 
   var query = db.query(
     "INSERT INTO `transaction_history` SET ?",
     transaction_history,
     (error, results, fields) => {
       if (error) throw error;
-      console.log(results.insertId);
+      // console.log(results.insertId);
       // return res.status(202).json({ results });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.get("/all", validatetoken, async (req, res) => {

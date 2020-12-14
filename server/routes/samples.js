@@ -12,7 +12,7 @@ router.get("/checkIDandEval", validatetoken, async (req, res) => {
       return res.status(200).json({ rows: results.length });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.get("/getSampleIDs", validatetoken, async (req, res) => {
@@ -27,7 +27,7 @@ router.get("/getSampleIDs", validatetoken, async (req, res) => {
       return res.status(200).json({ options: options });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.get("/getSampleEvals/:sample_id", validatetoken, async (req, res) => {
@@ -43,7 +43,7 @@ router.get("/getSampleEvals/:sample_id", validatetoken, async (req, res) => {
       return res.status(200).json({ options: options });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.get("/getSampleTypes/", validatetoken, async (req, res) => {
@@ -55,14 +55,14 @@ router.get("/getSampleTypes/", validatetoken, async (req, res) => {
       return res.status(200).json({ results: results });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.post("/add", validatetoken, (req, res) => {
   let result = req.body;
   for (let index = 0; index < result.length; index++) {
     let element = result[index].data;
-    console.log("result[index].location_id", result[index].location_id);
+    // console.log("result[index].location_id", result[index].location_id);
     let select_stmt =
       "SELECT * FROM samples WHERE sample_id=? AND eval=? order by type";
     var select_query = db.query(
@@ -101,10 +101,10 @@ router.post("/add", validatetoken, (req, res) => {
                 transaction_history,
                 (err, res) => {
                   if (err) throw err;
-                  console.log(res.insertId);
+                  // console.log(res.insertId);
                 }
               );
-              console.log("Row updated :", results.changedRows);
+              // console.log("Row updated :", results.changedRows);
             }
           );
         } else {
@@ -132,7 +132,7 @@ router.post("/add", validatetoken, (req, res) => {
                 transaction_history,
                 (err, res) => {
                   if (err) throw err;
-                  console.log(res.insertId);
+                  // console.log(res.insertId);
                 }
               );
               var maxItr =
@@ -163,10 +163,10 @@ router.post("/add", validatetoken, (req, res) => {
                       transaction_history,
                       (err, res) => {
                         if (err) throw err;
-                        console.log(res.insertId);
+                        // console.log(res.insertId);
                       }
                     );
-                    console.log("Inserted: ", aliquot_insert_results.insertId);
+                    // console.log("Inserted: ", aliquot_insert_results.insertId);
                   }
                 );
               }

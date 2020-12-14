@@ -30,11 +30,11 @@ router.get("/fetchlocation", validatetoken, async (req, res) => {
       return res.status(200).json({ options: options });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.post("/create", validatetoken, async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   let aliArray = req.body.tempArray;
   let countArray = req.body.countArray;
   let locationNames = req.body.locationNames;
@@ -60,8 +60,8 @@ router.post("/create", validatetoken, async (req, res) => {
       " to " +
       locationNames.to_location_name,
   };
-  console.log("shipment", shipment);
-  console.log("locationNames", locationNames);
+  // console.log("shipment", shipment);
+  // console.log("locationNames", locationNames);
   await db.query(
     "INSERT INTO `shipments` SET ?",
     shipment,
@@ -72,7 +72,7 @@ router.post("/create", validatetoken, async (req, res) => {
         transaction_history,
         (err, res) => {
           if (err) throw err;
-          console.log(res.insertId);
+          // console.log(res.insertId);
         }
       );
       return res.status(202).json({ results });
@@ -81,7 +81,7 @@ router.post("/create", validatetoken, async (req, res) => {
 });
 
 router.post("/addshipmentId", validatetoken, (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   let aliquots_samples_key = req.body.aliquots_samples_key;
   let countArray = req.body.countArray;
   let user_id = req.body.user_id;
@@ -103,28 +103,28 @@ router.post("/addshipmentId", validatetoken, (req, res) => {
           transaction_history,
           (err, res) => {
             if (err) throw err;
-            console.log(res.insertId);
+            // console.log(res.insertId);
           }
         );
-        console.log(results.affectedRows);
+        // console.log(results.affectedRows);
       }
     );
-    console.log(query.sql);
+    // console.log(query.sql);
   });
 });
 
 router.get("/locationIdbyName", validatetoken, async (req, res) => {
-  console.log(req.query.location);
+  // console.log(req.query.location);
   var query = await db.query(
     "SELECT `location_id` FROM `locations` where `location_name`= ?",
     [req.query.location],
     (error, results, fields) => {
       if (error) throw error;
-      console.log(results);
+      // console.log(results);
       return res.status(200).json({ results: results[0].location_id });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 router.get("/filterOpts/", validatetoken, async (req, res) => {
@@ -133,7 +133,7 @@ router.get("/filterOpts/", validatetoken, async (req, res) => {
       "select distinct S.sample_id, S.eval, COUNT(*) as aliquot_count from samples S INNER JOIN aliquots A ON S.samples_key=A.aliquots_samples_key INNER JOIN locations L ON L.location_id = A.location_id where S.type!='' AND A.status_id!=2 GROUP BY S.sample_id, S.eval,S.type,L.location_name;",
       (error, results, fields) => {
         if (error) throw error;
-        console.log(results);
+        // console.log(results);
         return res.status(200).json(results);
       }
     );
@@ -144,7 +144,7 @@ router.get("/filterOpts/", validatetoken, async (req, res) => {
       [fromLocation.value],
       (error, results, fields) => {
         if (error) throw error;
-        console.log(results);
+        // console.log(results);
         return res.status(200).json(results);
       }
     );
@@ -165,7 +165,7 @@ router.get("/aliquots/:sample_id", validatetoken, async (req, res) => {
       return res.status(200).json({ options: options });
     }
   );
-  console.log(query.sql);
+  // console.log(query.sql);
 });
 
 function dbQueryFunc3() {

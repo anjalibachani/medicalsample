@@ -5,10 +5,10 @@ const config = require('../config/config.json')
 async function deletesamples(req,res){
     //const email_id = req.body.email_id ;
     //const password = req.body.password;
-    console.log("delete called" , req.body)
-    console.log("delete called" , req.body.user_id)
+    // console.log("delete called" , req.body)
+    // console.log("delete called" , req.body.user_id)
     var sample_ids = req.body.rows.map(item => (item[0]))
-    console.log("filtered sample_keys",sample_ids)
+    // console.log("filtered sample_keys",sample_ids)
     var transaction_history = {
         user_id: req.body.user_id,
         timestamp: new Date(),
@@ -35,7 +35,7 @@ async function deletesamples(req,res){
                     return res.status(400).json({message:"No Samples Present"})
                 }
                 else{
-                    console.log("delete successful")
+                    // console.log("delete successful")
                     res.status(200).json(results)
                     
                 }
