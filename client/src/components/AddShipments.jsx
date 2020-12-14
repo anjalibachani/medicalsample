@@ -143,7 +143,7 @@ class CreateShipments extends Component {
 		const { selectedFromOption } = this.state;
 		if (selectedFromOption)
 			// console.log("getFromLocation", selectedFromOption);
-		return selectedFromOption.value;
+			return selectedFromOption.value;
 	}
 
 	async processFilter() {
@@ -543,148 +543,150 @@ class CreateShipments extends Component {
 
 								<h2 align="left">&nbsp;&nbsp;&nbsp;Create Shipments:</h2>
 								<hr />
-								<Row>
-									<Col>
-										<InputGroup className="mb-3">
-											<InputGroup.Prepend>
-												<InputGroup.Text>Date:</InputGroup.Text>
-											</InputGroup.Prepend>
-											<DatePicker
-												className="form-control"
-												fixedHeight={false}
-												selected={this.state.date}
-
-												onChange={e => this.setState({ date: e })}
-											/>
-										</InputGroup>
-										<InputGroup className="mb-3">
-											<InputGroup.Prepend>
-												<InputGroup.Text>From:</InputGroup.Text>
-											</InputGroup.Prepend>
-											<Select
-
-												label="from"
-												placeholder="Select from"
-												isSearchable={true}
-												value={this.state.selectedFromOption}
-												onChange={this.handleFromLocationChange}
-												options={locationoptions}
-												styles={this.styles}
-											/>
-										</InputGroup>
-										<InputGroup className="mb-3">
-											<InputGroup.Prepend>
-												<InputGroup.Text>Shipping Company:</InputGroup.Text>
-											</InputGroup.Prepend>
-											<Form.Control
-												id="shippingcompany"
-												value={this.state.shippingcompany}
-												onChange={e => this.setState({ shippingcompany: e.target.value })}>
-											</Form.Control>
-										</InputGroup>
-									</Col>
-									<Col>
-										<InputGroup className="mb-3">
-											<InputGroup.Prepend>
-												<InputGroup.Text>Shipping Conditions:</InputGroup.Text>
-											</InputGroup.Prepend>
-											<Form.Control
-												id="shippingconditions"
-												as="select"
-												value={this.state.shippingconditions}
-												onChange={e => this.setState({ shippingconditions: e.target.value })}>
-												<option>None</option>
-												<option>Dry ice</option>
-												<option>Ice packs</option>
-											</Form.Control>
-										</InputGroup>
-										<InputGroup className="mb-3">
-											<InputGroup.Prepend>
-												<InputGroup.Text>To:</InputGroup.Text>
-											</InputGroup.Prepend>
-											<Select
-
-												label="To"
-												placeholder="Select To"
-												isSearchable={true}
-												value={this.state.selectedToOption}
-												onChange={this.handleToLocationChange}
-												options={locationTooptions}
-												styles={this.styles}
-											/>
-										</InputGroup>
-										<InputGroup>
-											<InputGroup.Prepend>
-												<InputGroup.Text>Notes:</InputGroup.Text>
-											</InputGroup.Prepend>
-											<Form.Control as="textarea" id="notes"
-												value={this.state.notes}
-												onChange={e => this.setState({ notes: e.target.value })} />
-										</InputGroup>
-									</Col>
-								</Row>
-
-								<p />
-								<hr />
-								<div>
-									{this.state.showWarning &&
-										<Form.Text as={Col} className="text-danger">{this.state.warningText}</Form.Text>
-									}
-									{selectedFromOption && filters.map((item, key) =>
-										<SamplesFilter key={key + 1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
-									)}
+								<Container fluid>
 									<Row>
-										<Col md="auto" className="mt-4">
-											<ButtonGroup>
-												<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
-												<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
-												<Button variant="dark" size="lg" onClick={this.clearFilters}>Clear Filter</Button>
-											</ButtonGroup>
+										<Col>
+											<InputGroup className="mb-3">
+												<InputGroup.Prepend>
+													<InputGroup.Text>Date:</InputGroup.Text>
+												</InputGroup.Prepend>
+												<DatePicker
+													className="form-control"
+													fixedHeight={false}
+													selected={this.state.date}
+
+													onChange={e => this.setState({ date: e })}
+												/>
+											</InputGroup>
+											<InputGroup className="mb-3">
+												<InputGroup.Prepend>
+													<InputGroup.Text>From:</InputGroup.Text>
+												</InputGroup.Prepend>
+												<Select
+
+													label="from"
+													placeholder="Select from"
+													isSearchable={true}
+													value={this.state.selectedFromOption}
+													onChange={this.handleFromLocationChange}
+													options={locationoptions}
+													styles={this.styles}
+												/>
+											</InputGroup>
+											<InputGroup className="mb-3">
+												<InputGroup.Prepend>
+													<InputGroup.Text>Shipping Company:</InputGroup.Text>
+												</InputGroup.Prepend>
+												<Form.Control
+													id="shippingcompany"
+													value={this.state.shippingcompany}
+													onChange={e => this.setState({ shippingcompany: e.target.value })}>
+												</Form.Control>
+											</InputGroup>
 										</Col>
-										<hr />
+										<Col>
+											<InputGroup className="mb-3">
+												<InputGroup.Prepend>
+													<InputGroup.Text>Shipping Conditions:</InputGroup.Text>
+												</InputGroup.Prepend>
+												<Form.Control
+													id="shippingconditions"
+													as="select"
+													value={this.state.shippingconditions}
+													onChange={e => this.setState({ shippingconditions: e.target.value })}>
+													<option>None</option>
+													<option>Dry ice</option>
+													<option>Ice packs</option>
+												</Form.Control>
+											</InputGroup>
+											<InputGroup className="mb-3">
+												<InputGroup.Prepend>
+													<InputGroup.Text>To:</InputGroup.Text>
+												</InputGroup.Prepend>
+												<Select
+
+													label="To"
+													placeholder="Select To"
+													isSearchable={true}
+													value={this.state.selectedToOption}
+													onChange={this.handleToLocationChange}
+													options={locationTooptions}
+													styles={this.styles}
+												/>
+											</InputGroup>
+											<InputGroup>
+												<InputGroup.Prepend>
+													<InputGroup.Text>Notes:</InputGroup.Text>
+												</InputGroup.Prepend>
+												<Form.Control as="textarea" id="notes"
+													value={this.state.notes}
+													onChange={e => this.setState({ notes: e.target.value })} />
+											</InputGroup>
+										</Col>
 									</Row>
+
+									<p />
 									<hr />
-									<Col align="right">
-										{movedshipementsData.length} samples in shipment
+									<div>
+										{this.state.showWarning &&
+											<Form.Text as={Col} className="text-danger">{this.state.warningText}</Form.Text>
+										}
+										{selectedFromOption && filters.map((item, key) =>
+											<SamplesFilter key={key + 1} number={item.number} returnVals={this.getFilterValues} fromLocation={selectedFromOption} />
+										)}
+										<Row>
+											<Col md="auto" className="mt-4">
+												<ButtonGroup>
+													<Button variant="dark" size="lg" onClick={this.addFilter}>Add another filter</Button>
+													<Button variant="dark" size="lg" onClick={this.processFilter}>Filter</Button>
+													<Button variant="dark" size="lg" onClick={this.clearFilters}>Clear Filter</Button>
+												</ButtonGroup>
+											</Col>
+											<hr />
+										</Row>
+										<hr />
+										<Col align="right">
+											{movedshipementsData.length} samples in shipment
             		    </Col>
-								</div>
-								<Row>
-									<Col>
-										{selectedFromOption !== null &&
+									</div>
+									<Row>
+										<Col>
+											{selectedFromOption !== null &&
+												<DataTable
+													columns={columns}
+													data={filteredItems}
+													keyField="sample_key"
+													selectableRows
+													onSelectedRowsChange={this.handleChange}
+													striped={true}
+													highlightOnHover
+													pagination
+													clearSelectedRows={this.state.toggledClearRows}
+													selectableRowDisabled={rowSelectCritera}
+
+												/>}
+										</Col>
+										<Col md="auto">
+											<div style={{ padding: 25 }}>
+												<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
+												<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
+											</div>
+										</Col>
+										<Col>
+											{movedshipementsData.length !== 0 &&
+												<Button variant="dark" size="lg" onClick={this.save}>Create Shipment</Button>
+											}
 											<DataTable
-												columns={columns}
-												data={filteredItems}
+												columns={movedshipementscolumns}
+												data={movedshipementsData}
 												keyField="sample_key"
-												selectableRows
-												onSelectedRowsChange={this.handleChange}
 												striped={true}
 												highlightOnHover
 												pagination
-												clearSelectedRows={this.state.toggledClearRows}
-												selectableRowDisabled={rowSelectCritera}
-
-											/>}
-									</Col>
-									<Col md="auto">
-										<div style={{ padding: 25 }}>
-											<Button as="input" value=">>" variant="dark" onClick={this.handleOpenModal}></Button><p />
-											<Button as="input" value="<<" variant="dark" onClick={this.removeFromShipment}></Button>
-										</div>
-									</Col>
-									<Col>
-										{movedshipementsData.length !== 0 &&
-											<Button variant="dark" size="lg" onClick={this.save}>Create Shipment</Button>
-										}
-										<DataTable
-											columns={movedshipementscolumns}
-											data={movedshipementsData}
-											keyField="sample_key"
-											striped={true}
-											highlightOnHover
-											pagination
-										/>
-									</Col>
-								</Row>
+											/>
+										</Col>
+									</Row>
+								</Container>
 								<Modal size="lg" show={this.state.showModal}>
 
 									<Modal.Header>
