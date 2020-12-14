@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Navbar, Nav, Container, ButtonGroup } from "react-bootstrap";
+import { Navbar, Nav, Container, ButtonGroup, Jumbotron, Button } from "react-bootstrap";
 import CustomHeaderButton from "./CustomHeaderButton";
 
 export default class Header extends Component {
@@ -54,6 +54,34 @@ export default class Header extends Component {
                     </ButtonGroup>
                 </Container>
                 <hr />
+                {
+                    location === "/Home" || location === "/home" ?
+                        <Container >
+                            <div class="card border-dark mb-3" >
+                                <div class="card-header"><h2 className="text-dark">Welcome to Medical Sample Database!</h2></div>
+                                <div class="card-body text-justify text-dark">
+                                    <p><span class="badge badge-primary">Add Samples</span> - Creating Samples have never been easier! Select type of your Sample, enter data and Save. It's all dynamic, so You can see your updates anytime.</p>
+                                    <p><span class="badge badge-primary">Samples Inventory</span> - You can search for any Sample or Shipment, by any piece of Information you have of them. Making this Database quite efficient. </p>
+                                    <p><span class="badge badge-primary">Shipments</span> - Track all the records related to shipments, under 1 Tab. Create, filter and View shipment Details all just 1 click away!</p>
+
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="text-justify">
+                                <h4>INSTRUCTIONS:</h4>
+                                <ul >
+                                    <li>To Add a New Profile Information, click on "Add Child" Tab on the top of the page.</li>
+                                    <li>To Add more samples of an existing profile, click on "Add Samples" Tab.</li>
+                                    <li>To look for a specific Sample, use "Samples Inventory" Tab.</li>
+                                    <li>To look for shipment or creation of shipment, select "Shipments" Tab.</li>
+                                </ul>
+
+                            </div>
+                        </Container>
+                        :
+                        <></>
+                }
+
             </div>
         )
     }

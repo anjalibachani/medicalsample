@@ -11,7 +11,7 @@ const config = process.env.REACT_APP_MED_DEPLOY_ENV === 'deployment' ? require('
 
 export default class Manage extends Component {
     resestToken = () => {
-        Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }   ).then((response) => {
+        Axios.post(`http://${config.server.host}:${config.server.port}/api/resettoken`, { user_id: localStorage.getItem("user_id") }).then((response) => {
             //console.log("status is :",response.status)
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token);
@@ -67,6 +67,22 @@ export default class Manage extends Component {
                                     </ButtonGroup>
                                 </Container>
                                 <hr />
+                                {
+                                    location === "/Manage" || location === "/manage" ?
+                                        <Container>
+                                            <div class="card border-dark mb-3" >
+                                                <div class="card-header"><h2 className="text-dark">Welcome Admin!</h2></div>
+                                                <div class="card-body text-justify text-dark">
+                                                    <p><span class="badge badge-primary">Manage Users</span> - To add, remove and edit an user.</p>
+                                                    <p><span class="badge badge-primary">Manage Locations</span> - In order to add a new location. </p>
+                                                    <p><span class="badge badge-primary">View Logs</span> - To view recent activities going on in the database</p>
+
+                                                </div>
+                                            </div>
+                                        </Container>
+                                        :
+                                        <></>
+                                }
                             </>
                         );
                     } else {
