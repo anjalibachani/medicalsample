@@ -37,7 +37,7 @@ function forgotpassword(req, res) {
                   htmltext = `http://${config.client.host}:${config.client.port}/reset-pass/${token}`;
                   transporter.sendMail({
                     from: "medicalsample@buffalo.edu", // sender address
-                    to: `charan.elluru@gmail.com,${email_id}`, // list of receivers
+                    to: `${email_id}`, // list of receivers
                     subject: "Password Reset Request", // Subject line
                     text: `We have received a password reset request. Follow the link below to reset your password.\nIf the link doesnt work copy the link in browser`, // plain text body
                     html: `<p>We have received a password reset request. Follow the link below to reset your password.\n</p><h3>Follow this link</h3><a href=${htmltext}>password reset link</a><p>If the link doesnt work copy the link in browser</p><br/><p>${htmltext}</p>`, // html body
