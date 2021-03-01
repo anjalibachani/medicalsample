@@ -1,5 +1,5 @@
 ## Medical Sample Database
-
+	SAM Research Database is a full stack web application which helps to minimize the task of                                                                                 maintaining the record of the results obtained after conducting tests on medical samples of children 
 ## Usage
 
  - Development server
